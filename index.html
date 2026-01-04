@@ -88,11 +88,13 @@
         <div style="font-size:0.55rem; font-weight:900; color:var(--blue); text-align:center; text-transform:uppercase; margin-bottom:8px;">Prévisions Probabilistes</div>
         <div class="sim-card">
             <span id="label-j2" style="font-size:0.7rem; font-weight:900;">...</span>
+            <span id="ico-j2"></span>
             <input type="number" id="t-j2" value="1" style="background:transparent; border:none; color:var(--blue); font-weight:900; font-size:0.8rem; width:30px; outline:none;">°C
             <div id="res-j2"></div>
         </div>
         <div class="sim-card">
             <span id="label-j3" style="font-size:0.7rem; font-weight:900;">...</span>
+            <span id="ico-j3"></span>
             <input type="number" id="t-j3" value="-2" style="background:transparent; border:none; color:var(--blue); font-weight:900; font-size:0.8rem; width:30px; outline:none;">°C
             <div id="res-j3"></div>
         </div>
@@ -111,6 +113,13 @@
     const API_STATS = "https://www.api-couleur-tempo.fr/api/stats";
 
     let lastVals = {}, statsGlobal = null;
+
+    function getWeatherIcon(t) {
+        if (t <= -2) return "❄️";
+        if (t <= 5) return "🧊";
+        if (t <= 12) return "☁️";
+        return "☀️";
+    }
 
     async function updateHPHC(todayCode) {
         const h = new Date().getHours();
@@ -173,8 +182,8 @@
             const d = new Date(); d.setDate(d.getDate() + off);
             const temp = parseFloat(document.getElementById('t-j' + off).value);
             document.getElementById('label-j' + off).innerText = d.toLocaleDateString('fr-FR', {weekday: 'long', day: 'numeric'});
+            document.getElementById('ico-j' + off).innerText = getWeatherIcon(temp);
             
-            // FORMULE THERMIQUE : Base 60 GW + 2.4 GW par degré sous 15°C
             const estimConso = 60 + (2.4 * Math.max(0, 15 - temp));
             const marge = 75 - estimConso;
 
@@ -199,4 +208,3 @@
 </script>
 </body>
 </html>
-
