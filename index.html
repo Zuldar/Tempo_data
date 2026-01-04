@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tempo Expert - Live</title>
+    <style>
+        :root {
+            --bg: #080808; --blue: #2979ff; --green: #00e676; --red: #ff1744; --orange: #ff9100;
+        }
+        body { background: var(--bg); color: white; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; padding: 10px; }
+        .box { background: rgba(255,255,255,0.05); border-radius: 20px; padding: 20px; border: 1px solid rgba(255,255,255,0.1); width: 100%; max-width: 400px; position: relative; overflow: hidden; }
+        
+        #alert-bar { 
+            display: none; background: var(--red); color: white; font-size: 0.6rem; 
+            font-weight: 900; text-align: center; padding: 5px; 
+            position: absolute; top: 0; left: 0; width: 100%;
+        }
+
+        .header { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; margin-bottom: 20px; }
+        .time-val { font-size: 1.5rem; color: var(--blue); font-weight: 900; }
+        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+        .card { background: rgba(255,255,255,0.03); padding: 12px; border-radius: 12px; }
+        .label { font-size: 0.6rem; color: #666; text-transform: uppercase; font-weight: bold; }
+        .value { font-size: 1.1rem; font-weight: 900; margin-top: 5px; }
+        .flux-item { display: flex; justify-content: space-between; font-size: 0.7rem; margin-bottom: 8px; padding-bottom: 5px; border-bottom: 1px solid #222; }
+        
+        /* Bouton de rafraîchissement */
+        .btn-refresh {
+            width: 100%; background: #111; color: #555; border: 1px solid #222;
+            padding: 10px; border-radius: 12px; font-size: 0.6rem; font-weight: bold;
+            cursor: pointer; margin-top: 15px; transition: 0.3s;
+        }
+        .btn-refresh:hover { background: #222; color: #aaa; }
+    </style>
+</head>
+<body>
+
+<div class="box">
+    <div id="alert-bar">⚠️ DONNÉES NON ACTUALISÉES (RETARD RTE)</div>
+
+    <div class="header">
+        <div>
+            <div id="date-str" style="font-size: 0.7rem; color: #555;">--</div>
+            <div id="time-str" class="time-val">--:--</div>
+        </div>
+        <div id="co2-val" style="color: var(--green); font-weight: bold; font-size: 0.8rem;">-- g/kWh</div>
+    </div>
+
+    <div class="stat-grid">
+        <div class="card">
+            <div class="label">Production</div>
+            <div id="prod-val" class="value" style="color: var(--green);">--</div>
+        </div>
+        <div class="card">
+            <div class="label">Consommation</div>
+            <div id="conso-val" class="value">--</div>
+        </div>
+    </div>
+
+    <div style="font-size: 0.6rem; color: #555; margin-bottom: 10px; font-weight: bold;">FLUX COMMERCIAUX (MW)</div>
+    <div id="flux-container"></div>
+
+    <button class="btn-refresh" onclick="updateConsole()">🔄 FORCER LA MISE À JOUR</button>
+</div>
+
+<script>
+async function updateConsole() {
+    const pseudo = "Zuldar"; 
+    const depot = "Tempo_data"; 
+    // Le cb=${Date.now()} force le navigateur à ignorer sa mémoire cache
+    const url = `https://raw.githubusercontent.com/${pseudo}/${depot}/main/archive_tempo.json?cb=${Date.now()}`;
+
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+        const f = data[0];
+
+        const dateDonnee = new Date(f.date_heure);
+        const maintenant = new Date();
+        const differenceHeures = (maintenant - dateDonnee) / (1000 * 60 * 60);
+
+        // Alerte si + de 2h de retard
+        if (differenceHeures > 2) {
+            document.getElementById('alert-bar').style.display = 'block';
+            document.getElementById('time-str').style.color = 'var(--orange)';
+        } else {
+            document.getElementById('alert-bar').style.display = 'none';
+            document.getElementById('time-str').style.color = 'var(--blue)';
+        }
+
+        document.getElementById('date-str').innerText = dateDonnee.toLocaleDateString('fr-FR', {weekday:'long', day:'numeric', month:'long'});
+        document.getElementById('time-str').innerText = f.heure || "--:--";
+        document.getElementById('co2-val').innerText = (f.taux_co2 || 0) + " g/kWh";
+        
+        const totalProd = (f.nucleaire||0)+(f.hydraulique||0)+(f.eolien||0)+(f.solaire||0)+(f.gaz||0)+(f.bioenergies||0);
+        document.getElementById('prod-val').innerText = Math.round(totalProd).toLocaleString() + " MW";
+        document.getElementById('conso-val').innerText = Math.round(f.consommation || 0).toLocaleString() + " MW";
+
+        const pays = [
+            {k:'angleterre', n:'Royaume-Uni 🇬🇧'},
+            {k:'allemagne_belgique', n:'Allemagne/BE 🇩🇪'},
+            {k:'espagne', n:'Espagne 🇪🇸'},
+            {k:'italie', n:'Italie 🇮🇹'},
+            {k:'suisse', n:'Suisse 🇨🇭'}
+        ];
+
+        let html = "";
+        pays.forEach(p => {
+            const val = f['ech_comm_' + p.k] || 0;
+            const displayVal = Math.round(val * -1); 
+            const color = displayVal >= 0 ? "var(--green)" : "var(--red)";
+            html += `<div class="flux-item"><span>${p.n}</span><b style="color:${color}">${displayVal > 0 ? '+' : ''}${displayVal}</b></div>`;
+        });
+        document.getElementById('flux-container').innerHTML = html;
+
+    } catch (e) { 
+        console.error("Erreur : Fichier introuvable ou mal formé."); 
+    }
+}
+updateConsole();
+</script>
+</body>
+</html>
