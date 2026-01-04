@@ -1,35 +1,48 @@
 import requests
 import json
+import time
 
-# Nouvelle URL : Flux National Temps Réel (Données du jour uniquement)
-URL = "https://odre.opendatasoft.com/api/explore/v2.1/catalog/datasets/eco2mix-national-tr/records?order_by=date_heure%20desc&limit=15"
+# On utilise l'API v2.1 qui est la plus réactive en 2026
+# Le paramètre &cb= permet de forcer la mise à jour (Anti-Cache)
+timestamp = int(time.time())
+URL = f"https://odre.opendatasoft.com/api/explore/v2.1/catalog/datasets/eco2mix-national-tr/records?order_by=date_heure%20desc&limit=10&cb={timestamp}"
 
 def job():
     try:
-        print("Interrogation du flux Temps Réel RTE...")
+        print(f"Interrogation de RTE (Flux 2026) à {time.strftime('%H:%M:%S')}...")
         response = requests.get(URL, timeout=30)
+        response.raise_for_status()
         data = response.json()
         
-        # On cherche la donnée la plus récente qui a de la consommation
         valid_entry = None
-        if "results" in data:
+        if "results" in data and len(data["results"]) > 0:
             for entry in data["results"]:
-                # On vérifie que la conso est là ET que la date est bien 2026
-                if entry.get("consommation") is not None and "2026" in entry.get("date_heure", ""):
+                # Sécurité : On vérifie que la conso est remplie et qu'on est bien en 2026
+                conso = entry.get("consommation")
+                date_str = entry.get("date_heure", "")
+                
+                if conso is not None and conso > 0 and "2026" in date_str:
                     valid_entry = entry
+                    print(f"✅ Donnée trouvée : {date_str} | Conso: {conso} MW")
                     break
-        
-        if valid_entry:
-            filename = "archive_tempo.json"
-            # On écrase pour n'avoir que le point le plus récent d'aujourd'hui
-            with open(filename, "w", encoding="utf-8") as f:
-                json.dump([valid_entry], f, indent=4, ensure_ascii=False)
-            print(f"✅ SUCCÈS : Donnée du {valid_entry['date_heure']} sauvegardée.")
-        else:
-            print("⚠️ ATTENTION : Aucune donnée de 2026 trouvée pour l'instant. RTE a du retard.")
             
+            if valid_entry:
+                # On définit le nom du fichier que le robot doit enregistrer
+                filename = "archive_tempo.json"
+                
+                # On enregistre une LISTE contenant l'objet unique
+                # Le mode 'w' efface l'ancien contenu (ton historique pollué)
+                with open(filename, "w", encoding="utf-8") as f:
+                    json.dump([valid_entry], f, indent=4, ensure_ascii=False)
+                
+                print(f"🚀 Fichier {filename} mis à jour sur le serveur.")
+            else:
+                print("⚠️ Aucune donnée valide de 2026 trouvée dans les derniers résultats.")
+        else:
+            print("❌ L'API RTE ne renvoie aucun résultat actuellement.")
+                
     except Exception as e:
-        print(f"❌ ERREUR : {e}")
+        print(f"💥 Erreur critique : {e}")
 
 if __name__ == "__main__":
     job()
