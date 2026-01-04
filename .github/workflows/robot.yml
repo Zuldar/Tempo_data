@@ -8,21 +8,25 @@ jobs:
   travail:
     runs-on: ubuntu-latest
     permissions:
-      contents: write # TRÈS IMPORTANT : Autorise le robot à modifier tes fichiers
+      contents: write
     steps:
       - uses: actions/checkout@v3
+      
       - name: Installer Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.9'
-      - name: Installer les dépendances
+          
+      - name: Installer requests
         run: pip install requests
+        
       - name: Lancer la capture
         run: python save_data.py
+        
       - name: Enregistrer sur GitHub
         run: |
-          git config --global user.name 'MonRobot'
-          git config --global user.email 'bot@github.com'
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           git add archive_tempo.json
-          git commit -m "Mise à jour automatique" || exit 0
+          git commit -m "MAJ Données RTE" || echo "Pas de changements"
           git push
