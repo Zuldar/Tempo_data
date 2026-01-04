@@ -3,157 +3,251 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Tempo Expert - Console Console Synchro</title>
+    <title>Tempo Expert - Master Console Finale</title>
     <style>
         :root {
             --bg: #080808;
             --blue: #2979ff; --white: #ffffff; --red: #ff1744;
-            --green: #00e676; --orange: #ff9100; --grey: #222;
-            --blue-t: #0066ff; --white-t: #f5f5f5; --red-t: #ff0000;
+            --gold: linear-gradient(135deg, #FFD700 0%, #B8860B 100%);
+            --c-nuc: #BF40BF; --c-eol: #00e676; --c-hyd: #2979ff; --c-sol: #ffcc00; --c-gaz: #ff5722; --c-the: #757575;
         }
-        body { background-color: var(--bg); color: white; font-family: sans-serif; margin: 0; padding: 10px; display: flex; flex-direction: column; align-items: center; }
-        .container { width: 100%; max-width: 450px; display: flex; flex-direction: column; gap: 12px; }
+        body { 
+            background-color: var(--bg); color: white; font-family: sans-serif; 
+            margin: 0; padding: 10px; display: flex; flex-direction: column; align-items: center;
+            width: 100%; box-sizing: border-box;
+        }
+        .container { 
+            width: 100%; max-width: 450px; 
+            display: flex; flex-direction: column; gap: 12px; 
+        }
+        
+        .hphc-timer { 
+            text-align: center; font-size: 0.7rem; font-weight: 900; padding: 10px; 
+            border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);
+        }
+        .mode-bleu { background: rgba(41, 121, 255, 0.2); color: var(--blue); border-color: var(--blue); }
+        .mode-blanc { background: rgba(255, 255, 255, 0.2); color: var(--white); border-color: var(--white); }
+        .mode-rouge { background: rgba(255, 23, 68, 0.2); color: var(--red); border-color: var(--red); }
+        .mode-null { background: #111; color: #555; }
+
         .box { background: rgba(255,255,255,0.05); border-radius: 20px; padding: 15px; border: 1px solid rgba(255,255,255,0.1); }
+        .stacked-bar { height: 16px; width: 100%; background: #000; border-radius: 8px; display: flex; overflow: hidden; border: 1px solid #222; margin: 10px 0; }
+        .bar-seg { height: 100%; transition: width 1s ease; }
         
-        /* Badges Tempo */
-        .tempo-row { display: flex; gap: 6px; margin-bottom: 12px; }
-        .t-badge { flex: 1; padding: 8px 2px; border-radius: 10px; text-align: center; font-size: 0.5rem; font-weight: 900; color: black; }
-        .BLEU { background: var(--blue-t); color: white; }
-        .BLANC { background: var(--white-t); color: #333; }
-        .ROUGE { background: var(--red-t); color: white; }
-        .NON_DEFINI { background: #333; color: #777; }
+        .legend-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+        .leg-item { display: flex; align-items: center; gap: 5px; background: rgba(255,255,255,0.03); padding: 6px; border-radius: 10px; font-size: 0.55rem; }
+        .leg-color { width: 7px; height: 7px; border-radius: 50%; }
 
-        .master-grid { display: grid; grid-template-columns: 1fr 1.15fr; gap: 12px; }
-        .timestamp { font-size: 0.6rem; color: var(--blue); font-weight: 900; margin-bottom: 5px; }
-        .big-val { font-size: 1.1rem; font-weight: 900; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .card-rt { border-radius: 20px; padding: 15px; position: relative; border: 1px solid rgba(255,255,255,0.1); min-height: 80px; }
+        .is-bleu { background: linear-gradient(135deg, #0044ff 0%, #001133 100%); color: white; }
+        .is-blanc { background: linear-gradient(135deg, #ffffff 0%, #777777 100%); color: #000 !important; }
+        .is-rouge { background: linear-gradient(135deg, #ff0000 0%, #440000 100%); color: white; }
+        .is-null { background: #111; color: #444; }
         
-        .data-item { display: flex; justify-content: space-between; background: rgba(255,255,255,0.02); padding: 5px; border-radius: 6px; font-size: 0.55rem; margin-bottom: 2px; }
-        
-        /* Stats Jours Restants */
-        .stats-row { display: flex; justify-content: space-between; background: rgba(0,0,0,0.3); padding: 8px; border-radius: 12px; margin-top: 10px; border: 1px solid #222; }
-        .stat-i { text-align: center; flex: 1; }
-        .stat-v { font-size: 0.8rem; font-weight: 900; display: block; }
-        .stat-l { font-size: 0.4rem; color: #555; text-transform: uppercase; }
+        .badge-rt { 
+            position: absolute; top: 12px; right: 12px; font-size: 0.45rem; padding: 3px 8px; 
+            border-radius: 8px; font-weight: 900; background: var(--gold); color: #000;
+            box-shadow: 0 0 8px rgba(255, 215, 0, 0.4);
+            animation: shine 3s infinite;
+        }
+        @keyframes shine { 0% { opacity: 0.8; } 50% { opacity: 1; } 100% { opacity: 0.8; } }
 
-        button { width: 100%; padding: 12px; border-radius: 12px; background: #111; color: #888; font-weight: 900; cursor: pointer; border: 1px solid #222; font-size: 0.6rem; }
-        #debug-console { font-family: monospace; font-size: 0.4rem; color: #ff9100; background: #1a1a1a; padding: 5px; border-radius: 5px; margin-top: 10px; display: none; }
+        .analytics-box { background: #111; border-radius: 20px; padding: 15px; border: 1px solid #222; }
+        .sim-card { background: #000; padding: 12px; border-radius: 15px; border: 1px solid #222; margin-top: 8px; }
+        .day-label { font-size: 0.75rem; color: #ffffff; font-weight: 900; text-transform: uppercase; margin-bottom: 8px; display: block; }
+        
+        .prob-container { display: flex; height: 5px; border-radius: 3px; overflow: hidden; margin: 8px 0; background: #222; }
+        .prob-item { height: 100%; transition: width 0.5s ease; }
+
+        button { width: 100%; padding: 12px; border-radius: 12px; border: none; background: #222; color: #fff; font-weight: 900; cursor: pointer; text-transform: uppercase; border: 1px solid #333; font-size: 0.7rem; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="tempo-row">
-        <div id="t-today" class="t-badge NON_DEFINI">AUJOURD'HUI<br>-</div>
-        <div id="t-tomorrow" class="t-badge NON_DEFINI">DEMAIN<br>-</div>
-    </div>
+    <div id="hphc-display" class="hphc-timer mode-null">Analyse des tarifs...</div>
 
-    <div class="box master-grid">
-        <div class="side-col">
-            <div style="font-size:0.45rem; color:#555;">RELEVÉ ARCHIVE</div>
-            <div id="data-time" class="timestamp">--:--</div>
-            <div style="font-size:0.38rem; color:#666;">PRODUCTION</div>
-            <div id="big-prod" class="big-val" style="color: var(--green);">--</div>
-            <div style="font-size:0.38rem; color:#666; margin-top:5px;">CONSOMMATION</div>
-            <div id="big-conso" class="big-val">--</div>
-            
-            <div style="margin-top:10px; font-size:0.4rem; color:#555;">STOCKAGE</div>
-            <div class="data-item"><span>STEP</span><span id="val-step" style="color:var(--blue)">--</span></div>
-        </div>
-
-        <div style="border-left: 1px dashed #333; padding-left:12px;">
-            <div style="font-size:0.45rem; color:#555;">ÉCHANGES COMMERCIAUX (MW)</div>
-            <div id="export-list" style="margin-top:10px;"></div>
-            <div style="margin-top:5px; border-top:1px solid #333; padding-top:5px; display:flex; justify-content:space-between; font-size:0.6rem; font-weight:900;">
-                <span>SOLDE</span><span id="total-val">--</span>
+    <div class="box">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div style="display:flex; align-items:center;">
+                <span style="font-size:0.5rem; font-weight:900; color:#555;">PRODUCTION RÉELLE (ARCHIVE)</span>
+                <span id="capa-status" style="font-size:0.55rem; font-weight:900; margin-left:8px; padding:3px 8px; border-radius:8px; border:1px solid #333;">SYNC...</span>
             </div>
+            <span id="total-gw" style="color:#0088ff; font-size:1.4rem; font-weight:900;">-- GW</span>
+        </div>
+        <div id="stacked-bar" class="stacked-bar"></div>
+        <div id="legend-grid" class="legend-grid"></div>
+    </div>
+
+    <div id="rt-days" class="grid-2"></div>
+
+    <div class="analytics-box">
+        <div style="font-size:0.55rem; font-weight:900; color:#0088ff; text-align:center; text-transform:uppercase; margin-bottom:8px;">Prédictions Probabilistes J+2 & J+3</div>
+        <div class="sim-card">
+            <span id="label-j2" class="day-label">...</span>
+            <input type="number" id="t-j2" value="1" style="background:transparent; border:none; color:#0088ff; font-weight:900; font-size:0.9rem; width:35px; outline:none;">°C
+            <div id="res-j2"></div>
+        </div>
+        <div class="sim-card">
+            <span id="label-j3" class="day-label">...</span>
+            <input type="number" id="t-j3" value="-2" style="background:transparent; border:none; color:#0088ff; font-weight:900; font-size:0.9rem; width:35px; outline:none;">°C
+            <div id="res-j3"></div>
         </div>
     </div>
 
-    <div class="stats-row">
-        <div class="stat-i"><span id="rem-bleu" class="stat-v" style="color:var(--blue-t)">-</span><span class="stat-l">Bleus</span></div>
-        <div class="stat-i"><span id="rem-blanc" class="stat-v" style="color:var(--white-t)">-</span><span class="stat-l">Blancs</span></div>
-        <div class="stat-i"><span id="rem-rouge" class="stat-v" style="color:var(--red-t)">-</span><span class="stat-l">Rouges</span></div>
-    </div>
-
-    <button id="refresh-btn">🔄 SYNCHRONISER AVEC GITHUB ARCHIVE</button>
-    <div id="debug-console"></div>
+    <div class="box"><div id="stock-container"></div></div>
+    <button id="refresh-btn">🔄 SYNCHRONISER LA CONSOLE</button>
 </div>
 
 <script>
 (function() {
-    const neighbors = [
-        {k:'angleterre', n:'UK 🇬🇧'}, {k:'allemagne_belgique', n:'DE/BE 🇩🇪'},
-        {k:'espagne', n:'ES 🇪🇸'}, {k:'italie', n:'IT 🇮🇹'}, {k:'suisse', n:'CH 🇨H'}
-    ];
+    const pseudo = "Zuldar"; 
+    const depot = "Tempo_data";
+    const API_LOCAL = `https://raw.githubusercontent.com/${pseudo}/${depot}/main/archive_tempo.json?cb=`;
+    
+    // APIs Tempo Officielles
+    const API_TEMPO = "https://www.api-couleur-tempo.fr/api/jourTempo/today";
+    const API_TMW = "https://www.api-couleur-tempo.fr/api/jourTempo/tomorrow";
+    const API_YEST = "https://www.api-couleur-tempo.fr/api/jourTempo/yesterday";
+    const API_STATS = "https://www.api-couleur-tempo.fr/api/stats";
 
-    async function fetchTempo() {
-        try {
-            const [t, tm, s] = await Promise.all([
-                fetch(`https://www.api-couleur-tempo.fr/api/jourTempo/today`).then(r => r.json()),
-                fetch(`https://www.api-couleur-tempo.fr/api/jourTempo/tomorrow`).then(r => r.json()),
-                fetch(`https://www.api-couleur-tempo.fr/api/stats`).then(r => r.json())
-            ]);
-            updateBadge('t-today', t.codeJour, "AUJOURD'HUI");
-            updateBadge('t-tomorrow', tm.codeJour, "DEMAIN");
-            document.getElementById('rem-bleu').innerText = s.restantBleu;
-            document.getElementById('rem-blanc').innerText = s.restantBlanc;
-            document.getElementById('rem-rouge').innerText = s.restantRouge;
-        } catch (e) { console.log("Tempo API Error"); }
-    }
+    let lastMixValues = {}, lastCapa = null, currentCapa = 0, statsGlobal = null;
 
-    function updateBadge(id, code, label) {
-        const el = document.getElementById(id);
-        const map = { 1: ["BLEU", "BLEU"], 2: ["BLANC", "BLANC"], 3: ["ROUGE", "ROUGE"] };
-        const [css, txt] = map[code] || ["NON_DEFINI", "ATTENTE"];
-        el.className = `t-badge ${css}`;
-        el.innerHTML = `${label}<br>${txt}`;
-    }
-
-    async function refreshData() {
-        const debug = document.getElementById('debug-console');
-        const pseudo = "Zuldar"; // TON PSEUDO GITHUB
-        const depot = "Tempo_data"; // TON DEPOT
+    async function updateHPHC(todayCode) {
+        const now = new Date(), h = now.getHours(), m = now.getMinutes();
+        const display = document.getElementById('hphc-display');
+        const colorMap = { 1: "bleu", 2: "blanc", 3: "rouge" };
+        let colorCode = todayCode;
+        let label = (h >= 6 && h < 22) ? "⚡ HEURES PLEINES" : "🌙 HEURES CREUSES";
         
+        if (h < 6) {
+            try {
+                const yest = await fetch(API_YEST).then(r => r.json());
+                colorCode = yest.codeJour;
+                label = "🌙 HEURES CREUSES (VEILLE)";
+            } catch(e) { colorCode = todayCode; }
+        }
+        
+        const colorName = colorMap[colorCode] || "null";
+        display.className = `hphc-timer mode-${colorName}`;
+        const next = (h >= 6 && h < 22) ? `HC DANS ${21-h}h ${59-m}m` : `HP DANS ${h < 6 ? 5-h : 29-h}h ${59-m}m`;
+        display.innerHTML = `<span>${label}</span> <span style="opacity:0.3; margin:0 5px;">|</span> <span>${next}</span>`;
+    }
+
+    async function refreshRT() {
         try {
-            const url = `https://raw.githubusercontent.com/${pseudo}/${depot}/main/archive_tempo.json?cb=${Date.now()}`;
-            const response = await fetch(url);
-            const data = await response.json();
-            const f = data[0];
+            // 1. Lecture de ton ARCHIVE LOCALE sur GitHub
+            const respMix = await fetch(API_LOCAL + Date.now());
+            const mixData = await respMix.json();
+            const f = mixData[0];
 
-            // Heure
-            document.getElementById('data-time').innerText = f.heure || "--:--";
-
-            // Prod & Conso
-            const prod = (f.nucleaire||0)+(f.hydraulique||0)+(f.eolien||0)+(f.solaire||0)+(f.gaz||0)+(f.bioenergies||0);
-            document.getElementById('big-prod').innerText = Math.round(prod).toLocaleString() + " MW";
-            document.getElementById('big-conso').innerText = Math.round(f.consommation || 0).toLocaleString() + " MW";
-            document.getElementById('val-step').innerText = (f.pompage || 0) + " MW";
-
-            // Flux
-            let solde = 0; let html = "";
-            neighbors.forEach(c => {
-                const valRaw = f['ech_comm_' + c.k];
-                if (valRaw !== undefined) {
-                    const valDisplay = Math.round(valRaw * -1);
-                    solde += valDisplay;
-                    html += `<div class="data-item"><span>${c.n}</span><span style="color:${valDisplay>=0?'var(--green)':'var(--red)'}">${valDisplay>0?'+':''}${valDisplay}</span></div>`;
+            if (f) {
+                const total = (f.nucleaire||0)+(f.eolien||0)+(f.hydraulique||0)+(f.solaire||0)+(f.gaz||0)+(f.charbon||0)+(f.bioenergies||0);
+                const newVal = total / 1000;
+                
+                if (lastCapa !== null) {
+                    const diff = newVal - lastCapa;
+                    document.getElementById('capa-status').innerText = Math.abs(diff) < 0.1 ? "STABLE" : (diff > 0 ? "EN HAUSSE" : "EN BAISSE");
+                } else {
+                    document.getElementById('capa-status').innerText = "À JOUR";
                 }
+                
+                lastCapa = newVal; currentCapa = newVal;
+                document.getElementById('total-gw').innerText = currentCapa.toFixed(1) + " GW";
+
+                const sources = [
+                    {id:'nuc', l:'NUC', v:f.nucleaire, c:'var(--c-nuc)'}, 
+                    {id:'gaz', l:'GAZ', v:f.gaz, c:'var(--c-gaz)'}, 
+                    {id:'eol', l:'EOL', v:f.eolien, c:'var(--c-eol)'}, 
+                    {id:'hyd', l:'HYD', v:f.hydraulique, c:'var(--c-hyd)'}, 
+                    {id:'sol', l:'SOL', v:f.solaire, c:'var(--c-sol)'}, 
+                    {id:'the', l:'THE', v:(f.charbon||0)+(f.bioenergies||0), c:'var(--c-the)'}
+                ];
+
+                document.getElementById('stacked-bar').innerHTML = sources.map(s => 
+                    `<div class="bar-seg" style="width:${(s.v/total)*100}%; background:${s.c}"></div>`
+                ).join('');
+
+                document.getElementById('legend-grid').innerHTML = sources.map(s => {
+                    const symb = !lastMixValues[s.id] ? '•' : (s.v > lastMixValues[s.id] ? '▲' : (s.v < lastMixValues[s.id] ? '▼' : '•'));
+                    lastMixValues[s.id] = s.v;
+                    return `<div class="leg-item"><div class="leg-color" style="background:${s.c}"></div>${s.l} ${Math.round((s.v/total)*100)}% <span style="margin-left:auto">${symb}</span></div>`;
+                }).join('');
+            }
+
+            // 2. Lecture des APIs Officielles Tempo
+            const [j0, j1, stats] = await Promise.all([
+                fetch(API_TEMPO).then(r => r.json()), 
+                fetch(API_TMW).then(r => r.json()), 
+                fetch(API_STATS).then(r => r.json())
+            ]);
+
+            statsGlobal = stats; 
+            updateHPHC(j0.codeJour);
+
+            const rtContainer = document.getElementById('rt-days');
+            rtContainer.innerHTML = "";
+            const colorMap = { 1: "BLEU", 2: "BLANC", 3: "ROUGE" };
+
+            [0, 1].forEach(i => {
+                const d = new Date(); d.setDate(d.getDate() + i);
+                const info = (i === 0) ? j0 : j1;
+                let color = "ATTENTE", visClass = "is-null";
+                if (info && info.codeJour > 0) { 
+                    color = colorMap[info.codeJour]; 
+                    visClass = "is-" + color.toLowerCase(); 
+                }
+                rtContainer.innerHTML += `<div class="card-rt ${visClass}"><span class="badge-rt">OFFICIEL</span><div style="font-size:0.7rem; font-weight:900; text-transform:uppercase;">${d.toLocaleDateString('fr-FR', {weekday: 'long', day: 'numeric'})}</div><div style="font-size:1.4rem; font-weight:900;">${color}</div></div>`;
             });
 
-            document.getElementById('export-list').innerHTML = html;
-            document.getElementById('total-val').innerText = (solde>=0?"+":"")+solde+" MW";
-            document.getElementById('total-val').style.color = solde>=0?"var(--green)":"var(--red)";
-            debug.style.display = "none";
+            document.getElementById('stock-container').innerHTML = [
+                {l:'BLEU', r:stats.restantBleu, t:300, c:'var(--blue)'}, 
+                {l:'BLANC', r:stats.restantBlanc, t:43, c:'var(--white)'}, 
+                {l:'ROUGE', r:stats.restantRouge, t:22, c:'var(--red)'}
+            ].map(s => `
+                <div style="margin-bottom:8px;">
+                    <div style="display:flex; justify-content:space-between; font-size:0.5rem; font-weight:900;"><span>${s.l}</span><span>${s.r} RESTANTS</span></div>
+                    <div style="height:3px; width:100%; background:#222; border-radius:2px; margin-top:3px; overflow:hidden;">
+                        <div style="height:100%; width:${(s.r/s.t)*100}%; background:${s.c}"></div>
+                    </div>
+                </div>`).join('');
 
-        } catch (e) {
-            debug.style.display = "block";
-            debug.innerText = "ERREUR FICHIER: " + e.message;
-        }
+            updateSim();
+        } catch (e) { console.error("Erreur Synchro:", e); }
     }
 
-    document.getElementById('refresh-btn').addEventListener('click', () => { refreshData(); fetchTempo(); });
-    refreshData();
-    fetchTempo();
+    function updateSim() {
+        if (!statsGlobal) return;
+        [2, 3].forEach(offset => {
+            const d = new Date(); d.setDate(d.getDate() + offset);
+            const temp = parseFloat(document.getElementById('t-j' + offset).value);
+            document.getElementById('label-j' + offset).innerText = d.toLocaleDateString('fr-FR', {weekday: 'long', day: 'numeric'});
+            const conso = 62 + (2.6 * Math.max(0, 7 - temp));
+            const marge = currentCapa - (conso > 0 ? conso : 60);
+            let pRo = 0, pBl = 0, pBe = 0;
+            if (d.getDay() === 0 || d.toISOString().slice(5,10) === "01-01") { pBe = 100; }
+            else {
+                if (marge < 3 && (d.getMonth()+1 <= 3 || d.getMonth()+1 >= 11) && d.getDay() !== 6) { pRo = 85; pBl = 15; }
+                else if (marge < 7) { pBl = 80; pBe = 20; }
+                else { pBe = 100; }
+            }
+            document.getElementById('res-j' + offset).innerHTML = `
+                <div style="display:flex; justify-content:space-between; font-size:0.6rem; font-weight:900; margin-top:5px;">
+                    <span style="color:var(--blue)">${pBe}% BLEU</span> <span style="color:#ddd">${pBl}% BLANC</span> <span style="color:var(--red)">${pRo}% ROUGE</span>
+                </div>
+                <div class="prob-container"><div class="prob-item" style="width:${pBe}%; background:var(--blue)"></div><div class="prob-item" style="width:${pBl}%; background:#ddd"></div><div class="prob-item" style="width:${pRo}%; background:var(--red)"></div></div>
+            `;
+        });
+    }
+
+    document.getElementById('refresh-btn').addEventListener('click', refreshRT);
+    document.getElementById('t-j2').addEventListener('input', updateSim);
+    document.getElementById('t-j3').addEventListener('input', updateSim);
+    
+    refreshRT();
+    setInterval(refreshRT, 300000); // Auto-refresh toutes les 5 min
+    setInterval(() => updateHPHC(0), 60000);
 })();
 </script>
 </body>
