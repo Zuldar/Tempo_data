@@ -3,95 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Tempo Expert - Master Console Finale</title>
+    <title>Tempo Expert - Flux & Prod</title>
     <style>
         :root {
             --bg: #080808;
             --blue: #2979ff; --white: #ffffff; --red: #ff1744;
             --gold: linear-gradient(135deg, #FFD700 0%, #B8860B 100%);
-            --c-nuc: #BF40BF; --c-eol: #00e676; --c-hyd: #2979ff; --c-sol: #ffcc00; --c-gaz: #ff5722; --c-the: #757575;
+            --green: #00e676; --grey: #1a1a1a;
         }
         body { 
             background-color: var(--bg); color: white; font-family: sans-serif; 
             margin: 0; padding: 10px; display: flex; flex-direction: column; align-items: center;
-            width: 100%; box-sizing: border-box;
         }
-        .container { 
-            width: 100%; max-width: 450px; 
-            display: flex; flex-direction: column; gap: 12px; 
-        }
+        .container { width: 100%; max-width: 450px; display: flex; flex-direction: column; gap: 12px; }
         
-        .hphc-timer { 
-            text-align: center; font-size: 0.7rem; font-weight: 900; padding: 10px; 
-            border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);
-        }
+        /* BANDEAU HP/HC */
+        .hphc-timer { text-align: center; font-size: 0.7rem; font-weight: 900; padding: 10px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); }
         .mode-bleu { background: rgba(41, 121, 255, 0.2); color: var(--blue); border-color: var(--blue); }
         .mode-blanc { background: rgba(255, 255, 255, 0.2); color: var(--white); border-color: var(--white); }
         .mode-rouge { background: rgba(255, 23, 68, 0.2); color: var(--red); border-color: var(--red); }
-        .mode-null { background: #111; color: #555; }
 
+        /* BOX PRINCIPALE */
         .box { background: rgba(255,255,255,0.05); border-radius: 20px; padding: 15px; border: 1px solid rgba(255,255,255,0.1); }
-        .stacked-bar { height: 16px; width: 100%; background: #000; border-radius: 8px; display: flex; overflow: hidden; border: 1px solid #222; margin: 10px 0; }
-        .bar-seg { height: 100%; transition: width 1s ease; }
+        .split-grid { display: grid; grid-template-columns: 1fr 1.1fr; gap: 15px; }
         
-        .legend-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
-        .leg-item { display: flex; align-items: center; gap: 5px; background: rgba(255,255,255,0.03); padding: 6px; border-radius: 10px; font-size: 0.55rem; }
-        .leg-color { width: 7px; height: 7px; border-radius: 50%; }
+        .update-tag { font-size: 0.45rem; color: #555; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; display: block; }
+        .side-title { font-size: 0.55rem; font-weight: 900; color: var(--blue); margin-bottom: 8px; text-transform: uppercase; }
+        
+        /* ITEMS DATA */
+        .data-row { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.02); padding: 6px 8px; border-radius: 8px; margin-bottom: 4px; font-size: 0.6rem; border: 1px solid rgba(255,255,255,0.03); }
+        .val-bold { font-weight: 900; }
+        .trend { font-size: 0.5rem; margin-left: 4px; }
 
+        /* CARTES TEMPO */
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .card-rt { border-radius: 20px; padding: 15px; position: relative; border: 1px solid rgba(255,255,255,0.1); min-height: 80px; }
-        .is-bleu { background: linear-gradient(135deg, #0044ff 0%, #001133 100%); color: white; }
+        .card-rt { border-radius: 20px; padding: 15px; position: relative; border: 1px solid rgba(255,255,255,0.1); }
+        .is-bleu { background: linear-gradient(135deg, #0044ff 0%, #001133 100%); }
         .is-blanc { background: linear-gradient(135deg, #ffffff 0%, #777777 100%); color: #000 !important; }
-        .is-rouge { background: linear-gradient(135deg, #ff0000 0%, #440000 100%); color: white; }
-        .is-null { background: #111; color: #444; }
-        
-        .badge-rt { 
-            position: absolute; top: 12px; right: 12px; font-size: 0.45rem; padding: 3px 8px; 
-            border-radius: 8px; font-weight: 900; background: var(--gold); color: #000;
-            box-shadow: 0 0 8px rgba(255, 215, 0, 0.4);
-            animation: shine 3s infinite;
-        }
-        @keyframes shine { 0% { opacity: 0.8; } 50% { opacity: 1; } 100% { opacity: 0.8; } }
+        .is-rouge { background: linear-gradient(135deg, #ff0000 0%, #440000 100%); }
+        .badge-rt { position: absolute; top: 12px; right: 12px; font-size: 0.45rem; padding: 3px 8px; border-radius: 8px; font-weight: 900; background: var(--gold); color: #000; animation: shine 3s infinite; }
 
+        /* ANALYTICS */
         .analytics-box { background: #111; border-radius: 20px; padding: 15px; border: 1px solid #222; }
         .sim-card { background: #000; padding: 12px; border-radius: 15px; border: 1px solid #222; margin-top: 8px; }
-        .day-label { font-size: 0.75rem; color: #ffffff; font-weight: 900; text-transform: uppercase; margin-bottom: 8px; display: block; }
-        
         .prob-container { display: flex; height: 5px; border-radius: 3px; overflow: hidden; margin: 8px 0; background: #222; }
         .prob-item { height: 100%; transition: width 0.5s ease; }
 
-        button { width: 100%; padding: 12px; border-radius: 12px; border: none; background: #222; color: #fff; font-weight: 900; cursor: pointer; text-transform: uppercase; border: 1px solid #333; font-size: 0.7rem; }
+        button { width: 100%; padding: 12px; border-radius: 12px; border: none; background: #222; color: #fff; font-weight: 900; cursor: pointer; border: 1px solid #333; font-size: 0.7rem; }
+        @keyframes shine { 0% { opacity: 0.8; } 50% { opacity: 1; } 100% { opacity: 0.8; } }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div id="hphc-display" class="hphc-timer mode-null">Analyse des tarifs...</div>
+    <div id="hphc-display" class="hphc-timer">Analyse...</div>
 
     <div class="box">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-            <div style="display:flex; align-items:center;">
-                <span style="font-size:0.5rem; font-weight:900; color:#555;">PRODUCTION RÉELLE (ARCHIVE)</span>
-                <span id="capa-status" style="font-size:0.55rem; font-weight:900; margin-left:8px; padding:3px 8px; border-radius:8px; border:1px solid #333;">SYNC...</span>
+        <span class="update-tag">Mise à jour archive : <b id="sync-time" style="color:white">--:--</b></span>
+        
+        <div class="split-grid">
+            <div class="prod-col">
+                <div class="side-title">Production FR</div>
+                <div id="prod-list"></div>
+                <div style="margin-top:10px; padding-top:5px; border-top:1px dashed #333;">
+                    <div style="font-size:0.5rem; color:#555;">TOTAL RÉEL</div>
+                    <div id="total-gw" style="font-size:1.1rem; font-weight:900; color:var(--green);">-- GW</div>
+                </div>
             </div>
-            <span id="total-gw" style="color:#0088ff; font-size:1.4rem; font-weight:900;">-- GW</span>
+
+            <div class="flux-col" style="border-left: 1px solid #222; padding-left:12px;">
+                <div class="side-title">Flux Voisins</div>
+                <div id="flux-list"></div>
+                <div style="margin-top:10px; padding-top:5px; border-top:1px dashed #333;">
+                    <div style="font-size:0.5rem; color:#555;">SOLDE ÉCHANGES</div>
+                    <div id="total-solde" style="font-size:1.1rem; font-weight:900;">-- MW</div>
+                </div>
+            </div>
         </div>
-        <div id="stacked-bar" class="stacked-bar"></div>
-        <div id="legend-grid" class="legend-grid"></div>
     </div>
 
     <div id="rt-days" class="grid-2"></div>
 
     <div class="analytics-box">
-        <div style="font-size:0.55rem; font-weight:900; color:#0088ff; text-align:center; text-transform:uppercase; margin-bottom:8px;">Prédictions Probabilistes J+2 & J+3</div>
+        <div style="font-size:0.55rem; font-weight:900; color:var(--blue); text-align:center; text-transform:uppercase; margin-bottom:8px;">Prévisions Probabilistes</div>
         <div class="sim-card">
-            <span id="label-j2" class="day-label">...</span>
-            <input type="number" id="t-j2" value="1" style="background:transparent; border:none; color:#0088ff; font-weight:900; font-size:0.9rem; width:35px; outline:none;">°C
+            <span id="label-j2" style="font-size:0.7rem; font-weight:900;">...</span>
+            <input type="number" id="t-j2" value="1" style="background:transparent; border:none; color:var(--blue); font-weight:900; font-size:0.8rem; width:30px; outline:none;">°C
             <div id="res-j2"></div>
         </div>
         <div class="sim-card">
-            <span id="label-j3" class="day-label">...</span>
-            <input type="number" id="t-j3" value="-2" style="background:transparent; border:none; color:#0088ff; font-weight:900; font-size:0.9rem; width:35px; outline:none;">°C
+            <span id="label-j3" style="font-size:0.7rem; font-weight:900;">...</span>
+            <input type="number" id="t-j3" value="-2" style="background:transparent; border:none; color:var(--blue); font-weight:900; font-size:0.8rem; width:30px; outline:none;">°C
             <div id="res-j3"></div>
         </div>
     </div>
@@ -102,152 +104,95 @@
 
 <script>
 (function() {
-    const pseudo = "Zuldar"; 
-    const depot = "Tempo_data";
+    const pseudo = "Zuldar", depot = "Tempo_data";
     const API_LOCAL = `https://raw.githubusercontent.com/${pseudo}/${depot}/main/archive_tempo.json?cb=`;
-    
-    // APIs Tempo Officielles
     const API_TEMPO = "https://www.api-couleur-tempo.fr/api/jourTempo/today";
     const API_TMW = "https://www.api-couleur-tempo.fr/api/jourTempo/tomorrow";
-    const API_YEST = "https://www.api-couleur-tempo.fr/api/jourTempo/yesterday";
     const API_STATS = "https://www.api-couleur-tempo.fr/api/stats";
 
-    let lastMixValues = {}, lastCapa = null, currentCapa = 0, statsGlobal = null;
+    let lastVals = {}, statsGlobal = null;
 
     async function updateHPHC(todayCode) {
-        const now = new Date(), h = now.getHours(), m = now.getMinutes();
-        const display = document.getElementById('hphc-display');
+        const h = new Date().getHours();
         const colorMap = { 1: "bleu", 2: "blanc", 3: "rouge" };
-        let colorCode = todayCode;
-        let label = (h >= 6 && h < 22) ? "⚡ HEURES PLEINES" : "🌙 HEURES CREUSES";
-        
-        if (h < 6) {
-            try {
-                const yest = await fetch(API_YEST).then(r => r.json());
-                colorCode = yest.codeJour;
-                label = "🌙 HEURES CREUSES (VEILLE)";
-            } catch(e) { colorCode = todayCode; }
-        }
-        
-        const colorName = colorMap[colorCode] || "null";
-        display.className = `hphc-timer mode-${colorName}`;
-        const next = (h >= 6 && h < 22) ? `HC DANS ${21-h}h ${59-m}m` : `HP DANS ${h < 6 ? 5-h : 29-h}h ${59-m}m`;
-        display.innerHTML = `<span>${label}</span> <span style="opacity:0.3; margin:0 5px;">|</span> <span>${next}</span>`;
+        const label = (h >= 6 && h < 22) ? "⚡ HEURES PLEINES" : "🌙 HEURES CREUSES";
+        const display = document.getElementById('hphc-display');
+        display.className = `hphc-timer mode-${colorMap[todayCode] || "null"}`;
+        display.innerHTML = `<span>${label}</span>`;
     }
 
-    async function refreshRT() {
+    async function refresh() {
         try {
-            // 1. Lecture de ton ARCHIVE LOCALE sur GitHub
-            const respMix = await fetch(API_LOCAL + Date.now());
-            const mixData = await respMix.json();
-            const f = mixData[0];
-
+            const mix = await fetch(API_LOCAL + Date.now()).then(r => r.json());
+            const f = mix[0];
             if (f) {
-                const total = (f.nucleaire||0)+(f.eolien||0)+(f.hydraulique||0)+(f.solaire||0)+(f.gaz||0)+(f.charbon||0)+(f.bioenergies||0);
-                const newVal = total / 1000;
+                document.getElementById('sync-time').innerText = f.heure;
                 
-                if (lastCapa !== null) {
-                    const diff = newVal - lastCapa;
-                    document.getElementById('capa-status').innerText = Math.abs(diff) < 0.1 ? "STABLE" : (diff > 0 ? "EN HAUSSE" : "EN BAISSE");
-                } else {
-                    document.getElementById('capa-status').innerText = "À JOUR";
-                }
-                
-                lastCapa = newVal; currentCapa = newVal;
-                document.getElementById('total-gw').innerText = currentCapa.toFixed(1) + " GW";
-
+                // PRODUCTION
                 const sources = [
-                    {id:'nuc', l:'NUC', v:f.nucleaire, c:'var(--c-nuc)'}, 
-                    {id:'gaz', l:'GAZ', v:f.gaz, c:'var(--c-gaz)'}, 
-                    {id:'eol', l:'EOL', v:f.eolien, c:'var(--c-eol)'}, 
-                    {id:'hyd', l:'HYD', v:f.hydraulique, c:'var(--c-hyd)'}, 
-                    {id:'sol', l:'SOL', v:f.solaire, c:'var(--c-sol)'}, 
-                    {id:'the', l:'THE', v:(f.charbon||0)+(f.bioenergies||0), c:'var(--c-the)'}
+                    {l:'NUC', v:f.nucleaire, c:'#BF40BF'}, {l:'EOL', v:f.eolien, c:'#00e676'},
+                    {l:'HYD', v:f.hydraulique, c:'#2979ff'}, {l:'GAZ', v:f.gaz, c:'#ff5722'}
                 ];
-
-                document.getElementById('stacked-bar').innerHTML = sources.map(s => 
-                    `<div class="bar-seg" style="width:${(s.v/total)*100}%; background:${s.c}"></div>`
-                ).join('');
-
-                document.getElementById('legend-grid').innerHTML = sources.map(s => {
-                    const symb = !lastMixValues[s.id] ? '•' : (s.v > lastMixValues[s.id] ? '▲' : (s.v < lastMixValues[s.id] ? '▼' : '•'));
-                    lastMixValues[s.id] = s.v;
-                    return `<div class="leg-item"><div class="leg-color" style="background:${s.c}"></div>${s.l} ${Math.round((s.v/total)*100)}% <span style="margin-left:auto">${symb}</span></div>`;
+                let total = 0;
+                document.getElementById('prod-list').innerHTML = sources.map(s => {
+                    total += s.v;
+                    const symb = !lastVals[s.l] ? '•' : (s.v > lastVals[s.l] ? '▲' : '▼');
+                    lastVals[s.l] = s.v;
+                    return `<div class="data-row"><span>${s.l}</span><span class="val-bold">${Math.round(s.v/1000)}k <small class="trend">${symb}</small></span></div>`;
                 }).join('');
+                document.getElementById('total-gw').innerText = (total/1000).toFixed(1) + " GW";
+
+                // FLUX
+                const neighbors = [{k:'angleterre', n:'UK 🇬🇧'}, {k:'allemagne_belgique', n:'DE 🇩🇪'}, {k:'espagne', n:'ES 🇪🇸'}, {k:'italie', n:'IT 🇮🇹'}];
+                let solde = 0;
+                document.getElementById('flux-list').innerHTML = neighbors.map(n => {
+                    const val = Math.round((f['ech_comm_' + n.k] || 0) * -1);
+                    solde += val;
+                    return `<div class="data-row"><span>${n.n}</span><span class="val-bold" style="color:${val>=0?'var(--green)':'var(--red)'}">${val>0?'+':''}${val}</span></div>`;
+                }).join('');
+                const sEl = document.getElementById('total-solde');
+                sEl.innerText = (solde>=0?"+":"")+solde+" MW";
+                sEl.style.color = solde>=0?"var(--green)":"var(--red)";
             }
 
-            // 2. Lecture des APIs Officielles Tempo
-            const [j0, j1, stats] = await Promise.all([
-                fetch(API_TEMPO).then(r => r.json()), 
-                fetch(API_TMW).then(r => r.json()), 
-                fetch(API_STATS).then(r => r.json())
-            ]);
-
-            statsGlobal = stats; 
-            updateHPHC(j0.codeJour);
-
-            const rtContainer = document.getElementById('rt-days');
-            rtContainer.innerHTML = "";
+            const [j0, j1, stats] = await Promise.all([fetch(API_TEMPO).then(r => r.json()), fetch(API_TMW).then(r => r.json()), fetch(API_STATS).then(r => r.json())]);
+            statsGlobal = stats; updateHPHC(j0.codeJour);
+            
+            // CARTES TEMPO
             const colorMap = { 1: "BLEU", 2: "BLANC", 3: "ROUGE" };
-
-            [0, 1].forEach(i => {
+            document.getElementById('rt-days').innerHTML = [j0, j1].map((info, i) => {
                 const d = new Date(); d.setDate(d.getDate() + i);
-                const info = (i === 0) ? j0 : j1;
-                let color = "ATTENTE", visClass = "is-null";
-                if (info && info.codeJour > 0) { 
-                    color = colorMap[info.codeJour]; 
-                    visClass = "is-" + color.toLowerCase(); 
-                }
-                rtContainer.innerHTML += `<div class="card-rt ${visClass}"><span class="badge-rt">OFFICIEL</span><div style="font-size:0.7rem; font-weight:900; text-transform:uppercase;">${d.toLocaleDateString('fr-FR', {weekday: 'long', day: 'numeric'})}</div><div style="font-size:1.4rem; font-weight:900;">${color}</div></div>`;
-            });
+                const color = info.codeJour > 0 ? colorMap[info.codeJour] : "ATTENTE";
+                return `<div class="card-rt is-${color.toLowerCase()}"><span class="badge-rt">OFFICIEL</span><div style="font-size:0.6rem; font-weight:900;">${d.toLocaleDateString('fr-FR', {weekday: 'long', day: 'numeric'})}</div><div style="font-size:1.2rem; font-weight:900;">${color}</div></div>`;
+            }).join('');
 
-            document.getElementById('stock-container').innerHTML = [
-                {l:'BLEU', r:stats.restantBleu, t:300, c:'var(--blue)'}, 
-                {l:'BLANC', r:stats.restantBlanc, t:43, c:'var(--white)'}, 
-                {l:'ROUGE', r:stats.restantRouge, t:22, c:'var(--red)'}
-            ].map(s => `
-                <div style="margin-bottom:8px;">
-                    <div style="display:flex; justify-content:space-between; font-size:0.5rem; font-weight:900;"><span>${s.l}</span><span>${s.r} RESTANTS</span></div>
-                    <div style="height:3px; width:100%; background:#222; border-radius:2px; margin-top:3px; overflow:hidden;">
-                        <div style="height:100%; width:${(s.r/s.t)*100}%; background:${s.c}"></div>
-                    </div>
-                </div>`).join('');
-
+            // STOCK
+            document.getElementById('stock-container').innerHTML = [{l:'BLEU', r:stats.restantBleu, t:300, c:'var(--blue)'}, {l:'BLANC', r:stats.restantBlanc, t:43, c:'var(--white)'}, {l:'ROUGE', r:stats.restantRouge, t:22, c:'var(--red)'}].map(s => `
+                <div style="margin-bottom:6px;"><div style="display:flex; justify-content:space-between; font-size:0.45rem; font-weight:900;"><span>${s.l}</span><span>${s.r} RESTANTS</span></div>
+                <div style="height:3px; background:#222; margin-top:2px; overflow:hidden;"><div style="height:100%; width:${(s.r/s.t)*100}%; background:${s.c}"></div></div></div>`).join('');
+            
             updateSim();
-        } catch (e) { console.error("Erreur Synchro:", e); }
+        } catch (e) { console.log(e); }
     }
 
     function updateSim() {
         if (!statsGlobal) return;
-        [2, 3].forEach(offset => {
-            const d = new Date(); d.setDate(d.getDate() + offset);
-            const temp = parseFloat(document.getElementById('t-j' + offset).value);
-            document.getElementById('label-j' + offset).innerText = d.toLocaleDateString('fr-FR', {weekday: 'long', day: 'numeric'});
-            const conso = 62 + (2.6 * Math.max(0, 7 - temp));
-            const marge = currentCapa - (conso > 0 ? conso : 60);
-            let pRo = 0, pBl = 0, pBe = 0;
-            if (d.getDay() === 0 || d.toISOString().slice(5,10) === "01-01") { pBe = 100; }
-            else {
-                if (marge < 3 && (d.getMonth()+1 <= 3 || d.getMonth()+1 >= 11) && d.getDay() !== 6) { pRo = 85; pBl = 15; }
-                else if (marge < 7) { pBl = 80; pBe = 20; }
-                else { pBe = 100; }
-            }
-            document.getElementById('res-j' + offset).innerHTML = `
-                <div style="display:flex; justify-content:space-between; font-size:0.6rem; font-weight:900; margin-top:5px;">
-                    <span style="color:var(--blue)">${pBe}% BLEU</span> <span style="color:#ddd">${pBl}% BLANC</span> <span style="color:var(--red)">${pRo}% ROUGE</span>
-                </div>
-                <div class="prob-container"><div class="prob-item" style="width:${pBe}%; background:var(--blue)"></div><div class="prob-item" style="width:${pBl}%; background:#ddd"></div><div class="prob-item" style="width:${pRo}%; background:var(--red)"></div></div>
-            `;
+        [2, 3].forEach(off => {
+            const d = new Date(); d.setDate(d.getDate() + off);
+            const t = parseFloat(document.getElementById('t-j' + off).value);
+            document.getElementById('label-j' + off).innerText = d.toLocaleDateString('fr-FR', {weekday: 'long', day: 'numeric'});
+            const marge = 10 + (t * 0.5); // Simulation simplifiée
+            let pRo = marge < 5 ? 70 : 0, pBe = marge > 8 ? 90 : 20, pBl = 100 - pRo - pBe;
+            document.getElementById('res-j' + off).innerHTML = `
+                <div style="display:flex; justify-content:space-between; font-size:0.55rem; font-weight:900; margin-top:4px;"><span style="color:var(--blue)">${pBe}%</span> <span style="color:#ddd">${pBl}%</span> <span style="color:var(--red)">${pRo}%</span></div>
+                <div class="prob-container"><div class="prob-item" style="width:${pBe}%; background:var(--blue)"></div><div class="prob-item" style="width:${pBl}%; background:#ddd"></div><div class="prob-item" style="width:${pRo}%; background:var(--red)"></div></div>`;
         });
     }
 
-    document.getElementById('refresh-btn').addEventListener('click', refreshRT);
+    document.getElementById('refresh-btn').addEventListener('click', refresh);
     document.getElementById('t-j2').addEventListener('input', updateSim);
     document.getElementById('t-j3').addEventListener('input', updateSim);
-    
-    refreshRT();
-    setInterval(refreshRT, 300000); // Auto-refresh toutes les 5 min
-    setInterval(() => updateHPHC(0), 60000);
+    refresh();
 })();
 </script>
 </body>
