@@ -1,0 +1,28 @@
+name: Robot RTE
+on:
+  workflow_dispatch: # Permet de cliquer sur un bouton pour tester
+  schedule:
+    - cron: '0 * * * *' # Tourne toutes les heures
+
+jobs:
+  travail:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Donne le droit au robot d'écrire dans ton dépôt
+    steps:
+      - uses: actions/checkout@v3
+      - name: Installer Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+      - name: Installer la bibliothèque
+        run: pip install requests
+      - name: Lancer la capture
+        run: python save_data.py
+      - name: Enregistrer les changements
+        run: |
+          git config --global user.name 'MonRobot'
+          git config --global user.email 'bot@github.com'
+          git add archive_tempo.json
+          git commit -m "Nouvelle donnée" || exit 0
+          git push
