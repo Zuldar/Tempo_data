@@ -17,18 +17,20 @@
         }
         .container { width: 100%; max-width: 450px; display: flex; flex-direction: column; gap: 12px; }
         
-        /* BANDEAUX D'ÉTAT */
-        #delay-alert { display: none; background: var(--red); color: white; font-size: 0.6rem; font-weight: 900; text-align: center; padding: 8px; border-radius: 10px; margin-bottom: 5px; }
-        .update-banner { background: var(--green); color: #000; font-size: 0.6rem; font-weight: 900; text-align: center; padding: 6px; border-radius: 8px 8px 0 0; text-transform: uppercase; }
-        .forecast-header-banner { background: var(--grey-light); color: #aaa; font-size: 0.55rem; font-weight: 900; text-align: center; padding: 6px; border-radius: 0 0 8px 8px; text-transform: uppercase; margin-bottom: 5px; }
+        /* BANDEAUX D'ÉTAT AVEC ESPACEMENT */
+        #delay-alert { display: none; background: var(--red); color: white; font-size: 0.6rem; font-weight: 900; text-align: center; padding: 10px; border-radius: 10px; margin: 10px 0; }
+        
+        .update-banner { background: var(--green); color: #000; font-size: 0.6rem; font-weight: 900; text-align: center; padding: 8px; border-radius: 8px; text-transform: uppercase; margin-bottom: 15px; margin-top: 15px; }
+        
+        .forecast-header-banner { background: var(--grey-light); color: #aaa; font-size: 0.55rem; font-weight: 900; text-align: center; padding: 8px; border-radius: 8px; text-transform: uppercase; margin-top: 15px; margin-bottom: 15px; }
 
-        .hphc-timer { text-align: center; font-size: 0.7rem; font-weight: 900; padding: 10px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 5px; }
+        .hphc-timer { text-align: center; font-size: 0.7rem; font-weight: 900; padding: 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 10px; }
         .mode-bleu { background: rgba(41, 121, 255, 0.2); color: var(--blue); border-color: var(--blue); }
         .mode-blanc { background: rgba(255, 255, 255, 0.2); color: var(--white); border-color: var(--white); }
         .mode-rouge { background: rgba(255, 23, 68, 0.2); color: var(--red); border-color: var(--red); }
 
         /* BOX PRINCIPALE */
-        .box { background: rgba(255,255,255,0.05); border-radius: 20px; padding: 15px; border: 1px solid rgba(255,255,255,0.1); }
+        .box { background: rgba(255,255,255,0.05); border-radius: 20px; padding: 15px; border: 1px solid rgba(255,255,255,0.1); margin: 5px 0; }
         .split-grid { display: grid; grid-template-columns: 1fr 1.15fr; gap: 12px; }
         .side-title { font-size: 0.55rem; font-weight: 900; color: var(--blue); margin-bottom: 8px; text-transform: uppercase; }
         
@@ -37,7 +39,7 @@
         .arrow { font-size: 0.7rem; margin-right: 4px; font-weight: bold; }
 
         /* CARTES TEMPO */
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 5px; }
         .card-rt { border-radius: 20px; padding: 15px; position: relative; border: 1px solid rgba(255,255,255,0.1); }
         .is-bleu { background: linear-gradient(135deg, #0044ff 0%, #001133 100%); color: white;}
         .is-blanc { background: linear-gradient(135deg, #ffffff 0%, #777777 100%); color: #000 !important; }
@@ -50,7 +52,7 @@
         .prob-container { display: flex; height: 5px; border-radius: 3px; overflow: hidden; margin: 8px 0; background: #222; }
         .prob-item { height: 100%; transition: width 0.5s ease; }
 
-        button { width: 100%; padding: 12px; border-radius: 12px; border: none; background: #222; color: #fff; font-weight: 900; cursor: pointer; border: 1px solid #333; font-size: 0.7rem; }
+        button { width: 100%; padding: 15px; border-radius: 12px; border: none; background: #222; color: #fff; font-weight: 900; cursor: pointer; border: 1px solid #333; font-size: 0.7rem; margin-top: 10px; }
     </style>
 </head>
 <body>
@@ -61,7 +63,7 @@
     <div id="hphc-display" class="hphc-timer">Analyse...</div>
 
     <div class="box">
-        <div style="font-size: 0.45rem; color: #555; text-transform: uppercase; margin-bottom: 10px;">Archive GitHub : <b id="sync-time" style="color:white">--:--</b></div>
+        <div style="font-size: 0.45rem; color: #555; text-transform: uppercase; margin-bottom: 10px;">Données Archivées : <b id="sync-time" style="color:white">--:--</b></div>
         <div class="split-grid">
             <div class="prod-col">
                 <div class="side-title">Production FR</div>
@@ -84,9 +86,9 @@
     </div>
 
     <div style="width:100%">
-        <div class="update-banner">CALENDRIER MIS À JOUR LE <span id="tempo-date">--/--</span></div>
+        <div class="update-banner">CALENDRIER DU <span id="tempo-date">--/--/----</span></div>
         <div class="grid-2" id="rt-days"></div>
-        <div class="forecast-header-banner">Prévisions de Risques (Expert)</div>
+        <div class="forecast-header-banner">Analyse Prévisionnelle de Charge</div>
     </div>
 
     <div class="analytics-box">
@@ -105,6 +107,7 @@
     </div>
 
     <div class="box"><div id="stock-container"></div></div>
+    
     <button id="refresh-btn">🔄 SYNCHRONISER LA CONSOLE</button>
 </div>
 
@@ -131,6 +134,10 @@
 
     async function refresh() {
         try {
+            // Date du jour pour le bandeau vert
+            const now = new Date();
+            document.getElementById('tempo-date').innerText = now.toLocaleDateString('fr-FR', {day:'2-digit', month:'2-digit', year:'numeric'});
+
             const mix = await fetch(API_LOCAL + Date.now()).then(r => r.json());
             const f = mix[0];
             if (f) {
@@ -138,9 +145,7 @@
                 const diffHeures = (new Date() - dateData) / (1000 * 60 * 60);
                 document.getElementById('delay-alert').style.display = diffHeures > 2 ? 'block' : 'none';
                 document.getElementById('sync-time').innerText = f.heure;
-                document.getElementById('tempo-date').innerText = dateData.toLocaleDateString('fr-FR', {day:'2-digit', month:'2-digit'});
 
-                // PROD
                 const sources = [{l:'NUC', v:f.nucleaire}, {l:'EOL', v:f.eolien}, {l:'HYD', v:f.hydraulique}, {l:'GAZ', v:f.gaz}];
                 let total = 0;
                 document.getElementById('prod-list').innerHTML = sources.map(s => {
@@ -149,12 +154,7 @@
                 }).join('');
                 document.getElementById('total-gw').innerText = (total/1000).toFixed(1) + " GW";
 
-                // FLUX VOISINS
-                const neighbors = [
-                    {k:'angleterre', n:'UK 🇬🇧'}, {k:'allemagne_belgique', n:'DE 🇩🇪'}, 
-                    {k:'espagne', n:'ES 🇪🇸'}, {k:'italie', n:'IT 🇮🇹'}, 
-                    {k:'suisse', n:'CH 🇨H'}, {k:'belgique', n:'BE 🇧🇪'}
-                ];
+                const neighbors = [{k:'angleterre', n:'UK 🇬🇧'}, {k:'allemagne_belgique', n:'DE 🇩🇪'}, {k:'espagne', n:'ES 🇪🇸'}, {k:'italie', n:'IT 🇮🇹'}, {k:'suisse', n:'CH 🇨🇭'}, {k:'belgique', n:'BE 🇧🇪'}];
                 let solde = 0;
                 document.getElementById('flux-list').innerHTML = neighbors.map(n => {
                     const val = Math.round((f['ech_comm_' + n.k] || 0) * -1);
