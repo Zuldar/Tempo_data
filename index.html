@@ -17,6 +17,14 @@
         }
         .container { width: 100%; max-width: 450px; display: flex; flex-direction: column; gap: 12px; }
         
+        /* BANDEAU ALERTE RETARD */
+        #delay-alert { 
+            display: none; background: var(--red); color: white; font-size: 0.6rem; 
+            font-weight: 900; text-align: center; padding: 8px; border-radius: 10px; 
+            animation: blink 2s infinite;
+        }
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; } }
+
         /* BANDEAU HP/HC */
         .hphc-timer { text-align: center; font-size: 0.7rem; font-weight: 900; padding: 10px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); }
         .mode-bleu { background: rgba(41, 121, 255, 0.2); color: var(--blue); border-color: var(--blue); }
@@ -30,7 +38,6 @@
         .update-tag { font-size: 0.45rem; color: #555; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; display: block; }
         .side-title { font-size: 0.55rem; font-weight: 900; color: var(--blue); margin-bottom: 8px; text-transform: uppercase; }
         
-        /* ITEMS DATA */
         .data-row { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.02); padding: 6px 8px; border-radius: 8px; margin-bottom: 4px; font-size: 0.6rem; border: 1px solid rgba(255,255,255,0.03); }
         .val-bold { font-weight: 900; }
         .trend { font-size: 0.5rem; margin-left: 4px; }
@@ -43,7 +50,7 @@
         .is-rouge { background: linear-gradient(135deg, #ff0000 0%, #440000 100%); color: white;}
         .badge-rt { position: absolute; top: 12px; right: 12px; font-size: 0.45rem; padding: 3px 8px; border-radius: 8px; font-weight: 900; background: var(--gold); color: #000; animation: shine 3s infinite; }
 
-        /* ANALYTICS J+2 J+3 */
+        /* ANALYTICS */
         .analytics-box { background: #111; border-radius: 20px; padding: 15px; border: 1px solid #222; }
         .sim-card { background: #000; padding: 12px; border-radius: 15px; border: 1px solid #222; margin-top: 8px; }
         .prob-container { display: flex; height: 5px; border-radius: 3px; overflow: hidden; margin: 8px 0; background: #222; }
@@ -56,6 +63,8 @@
 <body>
 
 <div class="container">
+    <div id="delay-alert">⚠️ FLUX ET CONSOMMATION : RETARD DE +2H (RTE)</div>
+    
     <div id="hphc-display" class="hphc-timer">Analyse...</div>
 
     <div class="box">
@@ -82,6 +91,7 @@
         </div>
     </div>
 
+    <div style="text-align: center; font-size: 0.5rem; color: #555; text-transform: uppercase; letter-spacing: 1px;">Calendrier mis à jour le <b id="tempo-date" style="color:#888">--/--</b></div>
     <div id="rt-days" class="grid-2"></div>
 
     <div class="analytics-box">
@@ -115,10 +125,7 @@
     let lastVals = {}, statsGlobal = null;
 
     function getWeatherIcon(t) {
-        if (t <= -2) return "❄️";
-        if (t <= 5) return "🧊";
-        if (t <= 12) return "☁️";
-        return "☀️";
+        if (t <= -2) return "❄️"; if (t <= 5) return "🧊"; if (t <= 12) return "☁️"; return "☀️";
     }
 
     async function updateHPHC(todayCode) {
@@ -135,7 +142,14 @@
             const mix = await fetch(API_LOCAL + Date.now()).then(r => r.json());
             const f = mix[0];
             if (f) {
+                // Gestion Alerte Retard
+                const dateData = new Date(f.date_heure);
+                const diffHeures = (new Date() - dateData) / (1000 * 60 * 60);
+                document.getElementById('delay-alert').style.display = diffHeures > 2 ? 'block' : 'none';
+                
                 document.getElementById('sync-time').innerText = f.heure;
+                document.getElementById('tempo-date').innerText = dateData.toLocaleDateString('fr-FR', {day:'2-digit', month:'2-digit'});
+
                 const sources = [{l:'NUC', v:f.nucleaire, c:'#BF40BF'}, {l:'EOL', v:f.eolien, c:'#00e676'}, {l:'HYD', v:f.hydraulique, c:'#2979ff'}, {l:'GAZ', v:f.gaz, c:'#ff5722'}];
                 let total = 0;
                 document.getElementById('prod-list').innerHTML = sources.map(s => {
@@ -183,16 +197,11 @@
             const temp = parseFloat(document.getElementById('t-j' + off).value);
             document.getElementById('label-j' + off).innerText = d.toLocaleDateString('fr-FR', {weekday: 'long', day: 'numeric'});
             document.getElementById('ico-j' + off).innerText = getWeatherIcon(temp);
-            
             const estimConso = 60 + (2.4 * Math.max(0, 15 - temp));
             const marge = 75 - estimConso;
-
             let pRo = 0, pBl = 0, pBe = 0;
-            if (d.getDay() === 0) { pBe = 100; } 
-            else {
-                if (marge < 5) { pRo = 80; pBl = 20; }
-                else if (marge < 12) { pBl = 70; pBe = 30; }
-                else { pBe = 100; }
+            if (d.getDay() === 0) { pBe = 100; } else {
+                if (marge < 5) { pRo = 80; pBl = 20; } else if (marge < 12) { pBl = 70; pBe = 30; } else { pBe = 100; }
             }
             document.getElementById('res-j' + off).innerHTML = `
                 <div style="display:flex; justify-content:space-between; font-size:0.55rem; font-weight:900; margin-top:4px;"><span style="color:var(--blue)">${pBe}%</span> <span style="color:#ddd">${pBl}%</span> <span style="color:var(--red)">${pRo}%</span></div>
