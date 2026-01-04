@@ -2,142 +2,159 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tempo Expert - Console Officielle</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Tempo Expert - Console Console Synchro</title>
     <style>
         :root {
-            --bg: #080808; --blue-t: #0066ff; --white-t: #f5f5f5; --red-t: #ff0000;
-            --green: #00e676; --blue-d: #2979ff; --red-d: #ff1744; --grey: #222;
+            --bg: #080808;
+            --blue: #2979ff; --white: #ffffff; --red: #ff1744;
+            --green: #00e676; --orange: #ff9100; --grey: #222;
+            --blue-t: #0066ff; --white-t: #f5f5f5; --red-t: #ff0000;
         }
-        body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; align-items: center; padding: 10px; margin: 0; }
-        .box { background: rgba(255,255,255,0.05); border-radius: 24px; padding: 20px; border: 1px solid rgba(255,255,255,0.1); width: 100%; max-width: 420px; box-sizing: border-box; }
-
+        body { background-color: var(--bg); color: white; font-family: sans-serif; margin: 0; padding: 10px; display: flex; flex-direction: column; align-items: center; }
+        .container { width: 100%; max-width: 450px; display: flex; flex-direction: column; gap: 12px; }
+        .box { background: rgba(255,255,255,0.05); border-radius: 20px; padding: 15px; border: 1px solid rgba(255,255,255,0.1); }
+        
         /* Badges Tempo */
-        .tempo-row { display: flex; gap: 8px; margin-bottom: 20px; }
-        .t-badge { flex: 1; padding: 12px 5px; border-radius: 12px; text-align: center; font-size: 0.6rem; font-weight: 900; color: black; line-height: 1.2; }
+        .tempo-row { display: flex; gap: 6px; margin-bottom: 12px; }
+        .t-badge { flex: 1; padding: 8px 2px; border-radius: 10px; text-align: center; font-size: 0.5rem; font-weight: 900; color: black; }
         .BLEU { background: var(--blue-t); color: white; }
         .BLANC { background: var(--white-t); color: #333; }
         .ROUGE { background: var(--red-t); color: white; }
         .NON_DEFINI { background: #333; color: #777; }
 
-        /* Stats Jours Restants */
-        .stats-row { display: flex; justify-content: space-between; gap: 10px; margin-bottom: 25px; background: rgba(255,255,255,0.02); padding: 10px; border-radius: 16px; }
-        .stat-item { text-align: center; flex: 1; }
-        .stat-val { font-size: 1rem; font-weight: 900; display: block; }
-        .stat-lbl { font-size: 0.5rem; color: #555; text-transform: uppercase; font-weight: bold; }
-
-        .header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 20px; border-bottom: 1px solid #111; padding-bottom: 15px; }
-        .time-val { font-size: 1.8rem; color: var(--blue-d); font-weight: 900; }
+        .master-grid { display: grid; grid-template-columns: 1fr 1.15fr; gap: 12px; }
+        .timestamp { font-size: 0.6rem; color: var(--blue); font-weight: 900; margin-bottom: 5px; }
+        .big-val { font-size: 1.1rem; font-weight: 900; }
         
-        .section-title { font-size: 0.6rem; color: #555; text-transform: uppercase; font-weight: 900; margin-bottom: 10px; letter-spacing: 1px; }
-        .main-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
-        .card { background: rgba(255,255,255,0.02); padding: 12px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.05); }
-        .val { font-size: 1.1rem; font-weight: 900; }
+        .data-item { display: flex; justify-content: space-between; background: rgba(255,255,255,0.02); padding: 5px; border-radius: 6px; font-size: 0.55rem; margin-bottom: 2px; }
+        
+        /* Stats Jours Restants */
+        .stats-row { display: flex; justify-content: space-between; background: rgba(0,0,0,0.3); padding: 8px; border-radius: 12px; margin-top: 10px; border: 1px solid #222; }
+        .stat-i { text-align: center; flex: 1; }
+        .stat-v { font-size: 0.8rem; font-weight: 900; display: block; }
+        .stat-l { font-size: 0.4rem; color: #555; text-transform: uppercase; }
 
-        .flux-item { display: flex; justify-content: space-between; font-size: 0.75rem; padding: 8px 5px; border-bottom: 1px solid #1a1a1a; }
-        .btn-refresh { width: 100%; background: none; color: #444; border: 1px solid #222; padding: 12px; border-radius: 14px; font-size: 0.65rem; font-weight: bold; cursor: pointer; margin-top: 15px; }
+        button { width: 100%; padding: 12px; border-radius: 12px; background: #111; color: #888; font-weight: 900; cursor: pointer; border: 1px solid #222; font-size: 0.6rem; }
+        #debug-console { font-family: monospace; font-size: 0.4rem; color: #ff9100; background: #1a1a1a; padding: 5px; border-radius: 5px; margin-top: 10px; display: none; }
     </style>
 </head>
 <body>
 
-<div class="box">
-    <div class="section-title">Calendrier Officiel</div>
+<div class="container">
     <div class="tempo-row">
-        <div id="t-yesterday" class="t-badge NON_DEFINI">HIER<br>-</div>
         <div id="t-today" class="t-badge NON_DEFINI">AUJOURD'HUI<br>-</div>
         <div id="t-tomorrow" class="t-badge NON_DEFINI">DEMAIN<br>-</div>
     </div>
 
-    <div class="section-title">Jours Restants (Saison)</div>
+    <div class="box master-grid">
+        <div class="side-col">
+            <div style="font-size:0.45rem; color:#555;">RELEVÉ ARCHIVE</div>
+            <div id="data-time" class="timestamp">--:--</div>
+            <div style="font-size:0.38rem; color:#666;">PRODUCTION</div>
+            <div id="big-prod" class="big-val" style="color: var(--green);">--</div>
+            <div style="font-size:0.38rem; color:#666; margin-top:5px;">CONSOMMATION</div>
+            <div id="big-conso" class="big-val">--</div>
+            
+            <div style="margin-top:10px; font-size:0.4rem; color:#555;">STOCKAGE</div>
+            <div class="data-item"><span>STEP</span><span id="val-step" style="color:var(--blue)">--</span></div>
+        </div>
+
+        <div style="border-left: 1px dashed #333; padding-left:12px;">
+            <div style="font-size:0.45rem; color:#555;">ÉCHANGES COMMERCIAUX (MW)</div>
+            <div id="export-list" style="margin-top:10px;"></div>
+            <div style="margin-top:5px; border-top:1px solid #333; padding-top:5px; display:flex; justify-content:space-between; font-size:0.6rem; font-weight:900;">
+                <span>SOLDE</span><span id="total-val">--</span>
+            </div>
+        </div>
+    </div>
+
     <div class="stats-row">
-        <div class="stat-item"><span id="rem-bleu" class="stat-val" style="color:var(--blue-t)">-</span><span class="stat-lbl">Bleus</span></div>
-        <div class="stat-item"><span id="rem-blanc" class="stat-val" style="color:var(--white-t)">-</span><span class="stat-lbl">Blancs</span></div>
-        <div class="stat-item"><span id="rem-rouge" class="stat-val" style="color:var(--red-t)">-</span><span class="stat-lbl">Rouges</span></div>
+        <div class="stat-i"><span id="rem-bleu" class="stat-v" style="color:var(--blue-t)">-</span><span class="stat-l">Bleus</span></div>
+        <div class="stat-i"><span id="rem-blanc" class="stat-v" style="color:var(--white-t)">-</span><span class="stat-l">Blancs</span></div>
+        <div class="stat-i"><span id="rem-rouge" class="stat-v" style="color:var(--red-t)">-</span><span class="stat-l">Rouges</span></div>
     </div>
 
-    <div class="header">
-        <div>
-            <div id="date-str" style="font-size: 0.7rem; color: #555; font-weight: bold;">--</div>
-            <div id="time-str" class="time-val">--:--</div>
-        </div>
-        <div id="co2-val" style="color: var(--green); font-size: 0.8rem; font-weight: bold; background: rgba(0,230,118,0.1); padding: 5px 10px; border-radius: 8px;">-- g/kWh</div>
-    </div>
-
-    <div class="main-grid">
-        <div class="card">
-            <div class="section-title" style="margin-bottom:5px;">PRODUCTION</div>
-            <div id="prod-val" class="val" style="color: var(--green);">--</div>
-        </div>
-        <div class="card">
-            <div class="section-title" style="margin-bottom:5px;">CONSO RÉELLE</div>
-            <div id="conso-val" class="val">--</div>
-        </div>
-    </div>
-
-    <div class="section-title">Échanges Réseau (MW)</div>
-    <div id="flux-list"></div>
-
-    <button class="btn-refresh" onclick="updateAll()">🔄 ACTUALISER TOUT</button>
+    <button id="refresh-btn">🔄 SYNCHRONISER AVEC GITHUB ARCHIVE</button>
+    <div id="debug-console"></div>
 </div>
 
 <script>
-const apiBase = "https://www.api-couleur-tempo.fr/api";
+(function() {
+    const neighbors = [
+        {k:'angleterre', n:'UK 🇬🇧'}, {k:'allemagne_belgique', n:'DE/BE 🇩🇪'},
+        {k:'espagne', n:'ES 🇪🇸'}, {k:'italie', n:'IT 🇮🇹'}, {k:'suisse', n:'CH 🇨H'}
+    ];
 
-async function fetchTempo() {
-    try {
-        const [y, t, tm, s] = await Promise.all([
-            fetch(`${apiBase}/jourTempo/yesterday`).then(r => r.json()),
-            fetch(`${apiBase}/jourTempo/today`).then(r => r.json()),
-            fetch(`${apiBase}/jourTempo/tomorrow`).then(r => r.json()),
-            fetch(`${apiBase}/stats`).then(r => r.json())
-        ]);
+    async function fetchTempo() {
+        try {
+            const [t, tm, s] = await Promise.all([
+                fetch(`https://www.api-couleur-tempo.fr/api/jourTempo/today`).then(r => r.json()),
+                fetch(`https://www.api-couleur-tempo.fr/api/jourTempo/tomorrow`).then(r => r.json()),
+                fetch(`https://www.api-couleur-tempo.fr/api/stats`).then(r => r.json())
+            ]);
+            updateBadge('t-today', t.codeJour, "AUJOURD'HUI");
+            updateBadge('t-tomorrow', tm.codeJour, "DEMAIN");
+            document.getElementById('rem-bleu').innerText = s.restantBleu;
+            document.getElementById('rem-blanc').innerText = s.restantBlanc;
+            document.getElementById('rem-rouge').innerText = s.restantRouge;
+        } catch (e) { console.log("Tempo API Error"); }
+    }
 
-        updateBadge('t-yesterday', y.codeJour, "HIER");
-        updateBadge('t-today', t.codeJour, "AUJOURD'HUI");
-        updateBadge('t-tomorrow', tm.codeJour, "DEMAIN");
+    function updateBadge(id, code, label) {
+        const el = document.getElementById(id);
+        const map = { 1: ["BLEU", "BLEU"], 2: ["BLANC", "BLANC"], 3: ["ROUGE", "ROUGE"] };
+        const [css, txt] = map[code] || ["NON_DEFINI", "ATTENTE"];
+        el.className = `t-badge ${css}`;
+        el.innerHTML = `${label}<br>${txt}`;
+    }
 
-        document.getElementById('rem-bleu').innerText = s.restantBleu;
-        document.getElementById('rem-blanc').innerText = s.restantBlanc;
-        document.getElementById('rem-rouge').innerText = s.restantRouge;
-    } catch (e) { console.error("Tempo API down"); }
-}
-
-function updateBadge(id, code, label) {
-    const el = document.getElementById(id);
-    const colors = { 1: ["BLEU", "BLEU"], 2: ["BLANC", "BLANC"], 3: ["ROUGE", "ROUGE"] };
-    const [css, txt] = colors[code] || ["NON_DEFINI", "ATTENTE"];
-    el.className = `t-badge ${css}`;
-    el.innerHTML = `${label}<br>${txt}`;
-}
-
-async function updateData() {
-    const url = `https://raw.githubusercontent.com/Zuldar/Tempo_data/main/archive_tempo.json?cb=${Date.now()}`;
-    try {
-        const response = await fetch(url);
-        const data = await response.json();
-        const f = data[0];
-
-        document.getElementById('date-str').innerText = new Date(f.date_heure).toLocaleDateString('fr-FR', {day:'numeric', month:'long'}).toUpperCase();
-        document.getElementById('time-str').innerText = f.heure;
-        document.getElementById('co2-val').innerText = (f.taux_co2 || 0) + " g/kWh";
+    async function refreshData() {
+        const debug = document.getElementById('debug-console');
+        const pseudo = "Zuldar"; // TON PSEUDO GITHUB
+        const depot = "Tempo_data"; // TON DEPOT
         
-        const totalProd = (f.nucleaire||0)+(f.hydraulique||0)+(f.eolien||0)+(f.solaire||0)+(f.gaz||0)+(f.bioenergies||0);
-        document.getElementById('prod-val').innerText = Math.round(totalProd).toLocaleString() + " MW";
-        document.getElementById('conso-val').innerText = Math.round(f.consommation || 0).toLocaleString() + " MW";
+        try {
+            const url = `https://raw.githubusercontent.com/${pseudo}/${depot}/main/archive_tempo.json?cb=${Date.now()}`;
+            const response = await fetch(url);
+            const data = await response.json();
+            const f = data[0];
 
-        const pays = [{k:'angleterre', n:'UK 🇬🇧'},{k:'allemagne_belgique', n:'DE/BE 🇩🇪'},{k:'espagne', n:'ES 🇪🇸'},{k:'italie', n:'IT 🇮🇹'},{k:'suisse', n:'CH 🇨H'}];
-        let html = "";
-        pays.forEach(p => {
-            const val = f['ech_comm_' + p.k] || 0;
-            const dv = Math.round(val * -1); 
-            html += `<div class="flux-item"><span>${p.n}</span><b style="color:${dv>=0?'var(--green)':'var(--red-d)'}">${dv>0?'+':''}${dv}</b></div>`;
-        });
-        document.getElementById('flux-list').innerHTML = html;
-    } catch (e) { console.error("Data error"); }
-}
+            // Heure
+            document.getElementById('data-time').innerText = f.heure || "--:--";
 
-function updateAll() { fetchTempo(); updateData(); }
-updateAll();
+            // Prod & Conso
+            const prod = (f.nucleaire||0)+(f.hydraulique||0)+(f.eolien||0)+(f.solaire||0)+(f.gaz||0)+(f.bioenergies||0);
+            document.getElementById('big-prod').innerText = Math.round(prod).toLocaleString() + " MW";
+            document.getElementById('big-conso').innerText = Math.round(f.consommation || 0).toLocaleString() + " MW";
+            document.getElementById('val-step').innerText = (f.pompage || 0) + " MW";
+
+            // Flux
+            let solde = 0; let html = "";
+            neighbors.forEach(c => {
+                const valRaw = f['ech_comm_' + c.k];
+                if (valRaw !== undefined) {
+                    const valDisplay = Math.round(valRaw * -1);
+                    solde += valDisplay;
+                    html += `<div class="data-item"><span>${c.n}</span><span style="color:${valDisplay>=0?'var(--green)':'var(--red)'}">${valDisplay>0?'+':''}${valDisplay}</span></div>`;
+                }
+            });
+
+            document.getElementById('export-list').innerHTML = html;
+            document.getElementById('total-val').innerText = (solde>=0?"+":"")+solde+" MW";
+            document.getElementById('total-val').style.color = solde>=0?"var(--green)":"var(--red)";
+            debug.style.display = "none";
+
+        } catch (e) {
+            debug.style.display = "block";
+            debug.innerText = "ERREUR FICHIER: " + e.message;
+        }
+    }
+
+    document.getElementById('refresh-btn').addEventListener('click', () => { refreshData(); fetchTempo(); });
+    refreshData();
+    fetchTempo();
+})();
 </script>
 </body>
 </html>
