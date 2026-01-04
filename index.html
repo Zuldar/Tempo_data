@@ -3,72 +3,88 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tempo Expert - Live</title>
+    <title>Tempo Expert - Console Totale</title>
     <style>
         :root {
-            --bg: #080808; --blue: #2979ff; --green: #00e676; --red: #ff1744; --orange: #ff9100;
+            --bg: #080808; --blue: #2979ff; --green: #00e676; --red: #ff1744; --orange: #ff9100; --grey: #222;
         }
-        body { background: var(--bg); color: white; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; padding: 10px; }
-        .box { background: rgba(255,255,255,0.05); border-radius: 20px; padding: 20px; border: 1px solid rgba(255,255,255,0.1); width: 100%; max-width: 400px; position: relative; overflow: hidden; }
+        body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; align-items: center; padding: 10px; margin: 0; }
+        .box { background: rgba(255,255,255,0.05); border-radius: 24px; padding: 20px; border: 1px solid rgba(255,255,255,0.1); width: 100%; max-width: 420px; position: relative; box-sizing: border-box; }
         
-        #alert-bar { 
-            display: none; background: var(--red); color: white; font-size: 0.6rem; 
-            font-weight: 900; text-align: center; padding: 5px; 
-            position: absolute; top: 0; left: 0; width: 100%;
-        }
+        #alert-bar { display: none; background: var(--red); color: white; font-size: 0.65rem; font-weight: 900; text-align: center; padding: 6px; position: absolute; top: 0; left: 0; width: 100%; z-index: 10; }
 
-        .header { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; margin-bottom: 20px; }
-        .time-val { font-size: 1.5rem; color: var(--blue); font-weight: 900; }
-        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
-        .card { background: rgba(255,255,255,0.03); padding: 12px; border-radius: 12px; }
-        .label { font-size: 0.6rem; color: #666; text-transform: uppercase; font-weight: bold; }
-        .value { font-size: 1.1rem; font-weight: 900; margin-top: 5px; }
-        .flux-item { display: flex; justify-content: space-between; font-size: 0.7rem; margin-bottom: 8px; padding-bottom: 5px; border-bottom: 1px solid #222; }
+        .header { display: flex; justify-content: space-between; align-items: flex-start; margin-top: 15px; margin-bottom: 25px; }
+        .time-val { font-size: 1.8rem; color: var(--blue); font-weight: 900; line-height: 1; }
+        .co2-badge { background: rgba(0,230,118,0.1); color: var(--green); padding: 5px 10px; border-radius: 8px; font-size: 0.7rem; font-weight: bold; border: 1px solid rgba(0,230,118,0.2); }
+
+        .section-title { font-size: 0.6rem; color: #555; text-transform: uppercase; font-weight: 900; margin-bottom: 10px; letter-spacing: 1px; }
         
-        /* Bouton de rafraîchissement */
-        .btn-refresh {
-            width: 100%; background: #111; color: #555; border: 1px solid #222;
-            padding: 10px; border-radius: 12px; font-size: 0.6rem; font-weight: bold;
-            cursor: pointer; margin-top: 15px; transition: 0.3s;
-        }
-        .btn-refresh:hover { background: #222; color: #aaa; }
+        /* Grille Production & Conso */
+        .main-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+        .card { background: rgba(255,255,255,0.02); padding: 12px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.05); }
+        .val { font-size: 1.1rem; font-weight: 900; margin-top: 4px; }
+        
+        /* Prévisions */
+        .prev-box { display: flex; justify-content: space-between; font-size: 0.65rem; color: #888; margin-top: 8px; border-top: 1px solid #222; padding-top: 8px; }
+
+        /* Stockage & Badges */
+        .badge-row { display: flex; gap: 8px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 5px; }
+        .badge { background: var(--grey); padding: 6px 12px; border-radius: 20px; font-size: 0.6rem; font-weight: bold; white-space: nowrap; }
+
+        /* Flux */
+        .flux-container { background: rgba(255,255,255,0.02); border-radius: 16px; padding: 10px; }
+        .flux-item { display: flex; justify-content: space-between; font-size: 0.75rem; padding: 8px 5px; border-bottom: 1px solid #1a1a1a; }
+        .flux-item:last-child { border: none; }
+
+        .btn-refresh { width: 100%; background: none; color: #444; border: 1px solid #222; padding: 12px; border-radius: 14px; font-size: 0.65rem; font-weight: bold; cursor: pointer; margin-top: 20px; transition: 0.2s; }
+        .btn-refresh:hover { color: #fff; border-color: #444; }
     </style>
 </head>
 <body>
 
 <div class="box">
-    <div id="alert-bar">⚠️ DONNÉES NON ACTUALISÉES (RETARD RTE)</div>
+    <div id="alert-bar">⚠️ RETARD DE RÉCEPTION RTE</div>
 
     <div class="header">
         <div>
-            <div id="date-str" style="font-size: 0.7rem; color: #555;">--</div>
+            <div id="date-str" style="font-size: 0.75rem; color: #666; font-weight: bold; margin-bottom: 4px;">--</div>
             <div id="time-str" class="time-val">--:--</div>
         </div>
-        <div id="co2-val" style="color: var(--green); font-weight: bold; font-size: 0.8rem;">-- g/kWh</div>
+        <div id="co2-val" class="co2-badge">-- g/kWh</div>
     </div>
 
-    <div class="stat-grid">
+    <div class="section-title">Bilan National</div>
+    <div class="main-grid">
         <div class="card">
-            <div class="label">Production</div>
-            <div id="prod-val" class="value" style="color: var(--green);">--</div>
+            <div style="font-size:0.55rem; color:#888;">PRODUCTION</div>
+            <div id="prod-val" class="val" style="color: var(--green);">--</div>
         </div>
         <div class="card">
-            <div class="label">Consommation</div>
-            <div id="conso-val" class="value">--</div>
+            <div style="font-size:0.55rem; color:#888;">CONSOMMATION</div>
+            <div id="conso-val" class="val">--</div>
+            <div class="prev-box">
+                <div>Prév. J : <b id="prev-j" style="color:white;">--</b></div>
+                <div>J+1 : <b id="prev-j1" style="color:white;">--</b></div>
+            </div>
         </div>
     </div>
 
-    <div style="font-size: 0.6rem; color: #555; margin-bottom: 10px; font-weight: bold;">FLUX COMMERCIAUX (MW)</div>
-    <div id="flux-container"></div>
+    <div class="section-title">Stockage & Flexibilité</div>
+    <div class="badge-row">
+        <div class="badge">STEPS : <span id="val-step" style="color:var(--blue)">--</span></div>
+        <div class="badge">BATTERIES : <span id="val-batt" style="color:var(--blue)">--</span></div>
+    </div>
 
-    <button class="btn-refresh" onclick="updateConsole()">🔄 FORCER LA MISE À JOUR</button>
+    <div class="section-title">Échanges Transfrontaliers (MW)</div>
+    <div class="flux-container" id="flux-list"></div>
+
+    <button class="btn-refresh" onclick="updateConsole()">🔄 ACTUALISER LES DONNÉES</button>
 </div>
 
 <script>
 async function updateConsole() {
     const pseudo = "Zuldar"; 
     const depot = "Tempo_data"; 
-    // Le cb=${Date.now()} force le navigateur à ignorer sa mémoire cache
     const url = `https://raw.githubusercontent.com/${pseudo}/${depot}/main/archive_tempo.json?cb=${Date.now()}`;
 
     try {
@@ -76,33 +92,36 @@ async function updateConsole() {
         const data = await response.json();
         const f = data[0];
 
+        // 1. Fraîcheur
         const dateDonnee = new Date(f.date_heure);
-        const maintenant = new Date();
-        const differenceHeures = (maintenant - dateDonnee) / (1000 * 60 * 60);
+        const difference = (new Date() - dateDonnee) / (1000 * 60 * 60);
+        document.getElementById('alert-bar').style.display = difference > 2 ? 'block' : 'none';
 
-        // Alerte si + de 2h de retard
-        if (differenceHeures > 2) {
-            document.getElementById('alert-bar').style.display = 'block';
-            document.getElementById('time-str').style.color = 'var(--orange)';
-        } else {
-            document.getElementById('alert-bar').style.display = 'none';
-            document.getElementById('time-str').style.color = 'var(--blue)';
-        }
-
-        document.getElementById('date-str').innerText = dateDonnee.toLocaleDateString('fr-FR', {weekday:'long', day:'numeric', month:'long'});
-        document.getElementById('time-str').innerText = f.heure || "--:--";
+        // 2. Header
+        document.getElementById('date-str').innerText = dateDonnee.toLocaleDateString('fr-FR', {weekday:'long', day:'numeric', month:'long'}).toUpperCase();
+        document.getElementById('time-str').innerText = f.heure;
         document.getElementById('co2-val').innerText = (f.taux_co2 || 0) + " g/kWh";
         
+        // 3. Bilans & Prévisions
         const totalProd = (f.nucleaire||0)+(f.hydraulique||0)+(f.eolien||0)+(f.solaire||0)+(f.gaz||0)+(f.bioenergies||0);
         document.getElementById('prod-val').innerText = Math.round(totalProd).toLocaleString() + " MW";
         document.getElementById('conso-val').innerText = Math.round(f.consommation || 0).toLocaleString() + " MW";
+        document.getElementById('prev-j').innerText = f.prevision_j ? Math.round(f.prevision_j/1000) + "k" : "--";
+        document.getElementById('prev-j1').innerText = f.prevision_j1 ? Math.round(f.prevision_j1/1000) + "k" : "--";
 
+        // 4. Stockage (Pompage + Batteries)
+        // Note : RTE indique le pompage en négatif, on l'affiche tel quel ou en valeur absolue selon ta préférence
+        document.getElementById('val-step').innerText = (f.pompage || 0) + " MW";
+        const batt = (f.destockage_batterie || 0) + (f.stockage_batterie || 0);
+        document.getElementById('val-batt').innerText = batt + " MW";
+
+        // 5. Flux
         const pays = [
             {k:'angleterre', n:'Royaume-Uni 🇬🇧'},
             {k:'allemagne_belgique', n:'Allemagne/BE 🇩🇪'},
             {k:'espagne', n:'Espagne 🇪🇸'},
             {k:'italie', n:'Italie 🇮🇹'},
-            {k:'suisse', n:'Suisse 🇨🇭'}
+            {k:'suisse', n:'Suisse 🇨H'}
         ];
 
         let html = "";
@@ -112,11 +131,9 @@ async function updateConsole() {
             const color = displayVal >= 0 ? "var(--green)" : "var(--red)";
             html += `<div class="flux-item"><span>${p.n}</span><b style="color:${color}">${displayVal > 0 ? '+' : ''}${displayVal}</b></div>`;
         });
-        document.getElementById('flux-container').innerHTML = html;
+        document.getElementById('flux-list').innerHTML = html;
 
-    } catch (e) { 
-        console.error("Erreur : Fichier introuvable ou mal formé."); 
-    }
+    } catch (e) { console.error("Erreur de synchro"); }
 }
 updateConsole();
 </script>
