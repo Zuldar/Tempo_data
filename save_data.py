@@ -1,45 +1,35 @@
 import requests
 import json
-import sys
 
-# On repasse sur l'URL classique search qui est parfois plus réactive
-URL = "https://odre.opendatasoft.com/api/records/1.0/search/?dataset=eco2mix-national-tr&rows=10&sort=-date_heure"
+# Nouvelle URL : Flux National Temps Réel (Données du jour uniquement)
+URL = "https://odre.opendatasoft.com/api/explore/v2.1/catalog/datasets/eco2mix-national-tr/records?order_by=date_heure%20desc&limit=15"
 
 def job():
     try:
-        print("--- DEBUT DU DIAGNOSTIC ---")
+        print("Interrogation du flux Temps Réel RTE...")
         response = requests.get(URL, timeout=30)
         data = response.json()
         
-        # On affiche ce qu'on reçoit pour débugger
-        if "records" not in data:
-            print("ERREUR: 'records' absent du JSON. Voici le JSON reçu :")
-            print(data)
-            return
-
-        records = data["records"]
-        print(f"Nombre de lignes reçues : {len(records)}")
-
+        # On cherche la donnée la plus récente qui a de la consommation
         valid_entry = None
-        for r in records:
-            f = r["fields"]
-            conso = f.get("consommation")
-            print(f"Vérification ligne {f.get('date_heure')} : Conso = {conso}")
-            
-            if conso is not None and conso > 0:
-                valid_entry = f
-                break
-
+        if "results" in data:
+            for entry in data["results"]:
+                # On vérifie que la conso est là ET que la date est bien 2026
+                if entry.get("consommation") is not None and "2026" in entry.get("date_heure", ""):
+                    valid_entry = entry
+                    break
+        
         if valid_entry:
-            print(f"SUCCÈS: Donnée trouvée pour {valid_entry['date_heure']}")
-            with open("archive_tempo.json", "w", encoding="utf-8") as file:
-                json.dump([valid_entry], file, indent=4, ensure_ascii=False)
-            print("Fichier écrit sur le disque du serveur.")
+            filename = "archive_tempo.json"
+            # On écrase pour n'avoir que le point le plus récent d'aujourd'hui
+            with open(filename, "w", encoding="utf-8") as f:
+                json.dump([valid_entry], f, indent=4, ensure_ascii=False)
+            print(f"✅ SUCCÈS : Donnée du {valid_entry['date_heure']} sauvegardée.")
         else:
-            print("ERREUR: Aucune donnée avec conso > 0 trouvée.")
+            print("⚠️ ATTENTION : Aucune donnée de 2026 trouvée pour l'instant. RTE a du retard.")
             
     except Exception as e:
-        print(f"ERREUR CRITIQUE: {e}")
+        print(f"❌ ERREUR : {e}")
 
 if __name__ == "__main__":
     job()
