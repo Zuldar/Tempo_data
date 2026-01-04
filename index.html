@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Tempo Expert - Master Console Finale</title>
+    <title>Tempo Expert - Console Master</title>
     <style>
         :root {
             --bg: #080808;
             --blue: #2979ff; --white: #ffffff; --red: #ff1744;
             --gold: linear-gradient(135deg, #FFD700 0%, #B8860B 100%);
-            --green: #00e676; --grey: #1a1a1a;
+            --green: #00e676; --grey-b: #1a1a1a;
         }
         body { 
             background-color: var(--bg); color: white; font-family: sans-serif; 
@@ -17,15 +17,13 @@
         }
         .container { width: 100%; max-width: 450px; display: flex; flex-direction: column; gap: 12px; }
         
-        /* BANDEAU ALERTE RETARD */
-        #delay-alert { 
-            display: none; background: var(--red); color: white; font-size: 0.6rem; 
-            font-weight: 900; text-align: center; padding: 8px; border-radius: 10px; 
-            animation: blink 2s infinite;
-        }
-        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; } }
+        /* BANDEAUX DE STATUT */
+        .status-banner { font-size: 0.6rem; font-weight: 900; text-align: center; padding: 8px; border-radius: 10px; text-transform: uppercase; letter-spacing: 1px; }
+        #delay-alert { display: none; background: var(--red); color: white; margin-bottom: -5px; }
+        .sync-banner { background: rgba(0, 230, 118, 0.15); color: var(--green); border: 1px solid rgba(0, 230, 118, 0.3); }
+        .prev-banner { background: #222; color: #888; border: 1px solid #333; margin-top: 5px; }
 
-        /* BANDEAU HP/HC */
+        /* HP/HC */
         .hphc-timer { text-align: center; font-size: 0.7rem; font-weight: 900; padding: 10px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); }
         .mode-bleu { background: rgba(41, 121, 255, 0.2); color: var(--blue); border-color: var(--blue); }
         .mode-blanc { background: rgba(255, 255, 255, 0.2); color: var(--white); border-color: var(--white); }
@@ -33,22 +31,22 @@
 
         /* BOX PRINCIPALE */
         .box { background: rgba(255,255,255,0.05); border-radius: 20px; padding: 15px; border: 1px solid rgba(255,255,255,0.1); }
-        .split-grid { display: grid; grid-template-columns: 1fr 1.1fr; gap: 15px; }
-        
-        .update-tag { font-size: 0.45rem; color: #555; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; display: block; }
+        .split-grid { display: grid; grid-template-columns: 1fr 1.15fr; gap: 15px; }
         .side-title { font-size: 0.55rem; font-weight: 900; color: var(--blue); margin-bottom: 8px; text-transform: uppercase; }
         
-        .data-row { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.02); padding: 6px 8px; border-radius: 8px; margin-bottom: 4px; font-size: 0.6rem; border: 1px solid rgba(255,255,255,0.03); }
-        .val-bold { font-weight: 900; }
-        .trend { font-size: 0.5rem; margin-left: 4px; }
+        /* DATA ROWS & FLÈCHES */
+        .data-row { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.02); padding: 6px 8px; border-radius: 8px; margin-bottom: 4px; font-size: 0.6rem; }
+        .arrow { font-size: 0.7rem; font-weight: 900; margin-left: 4px; }
+        .up { color: var(--blue); } /* Export */
+        .down { color: var(--red); } /* Import */
 
-        /* CARTES TEMPO J / J+1 */
+        /* CARTES TEMPO */
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .card-rt { border-radius: 20px; padding: 15px; position: relative; border: 1px solid rgba(255,255,255,0.1); }
-        .is-bleu { background: linear-gradient(135deg, #0044ff 0%, #001133 100%); color: white;}
+        .is-bleu { background: linear-gradient(135deg, #0044ff 0%, #001133 100%); }
         .is-blanc { background: linear-gradient(135deg, #ffffff 0%, #777777 100%); color: #000 !important; }
-        .is-rouge { background: linear-gradient(135deg, #ff0000 0%, #440000 100%); color: white;}
-        .badge-rt { position: absolute; top: 12px; right: 12px; font-size: 0.45rem; padding: 3px 8px; border-radius: 8px; font-weight: 900; background: var(--gold); color: #000; animation: shine 3s infinite; }
+        .is-rouge { background: linear-gradient(135deg, #ff0000 0%, #440000 100%); }
+        .badge-rt { position: absolute; top: 12px; right: 12px; font-size: 0.45rem; padding: 3px 8px; border-radius: 8px; font-weight: 900; background: var(--gold); color: #000; }
 
         /* ANALYTICS */
         .analytics-box { background: #111; border-radius: 20px; padding: 15px; border: 1px solid #222; }
@@ -57,26 +55,23 @@
         .prob-item { height: 100%; transition: width 0.5s ease; }
 
         button { width: 100%; padding: 12px; border-radius: 12px; border: none; background: #222; color: #fff; font-weight: 900; cursor: pointer; border: 1px solid #333; font-size: 0.7rem; }
-        @keyframes shine { 0% { opacity: 0.8; } 50% { opacity: 1; } 100% { opacity: 0.8; } }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div id="delay-alert">⚠️ FLUX ET CONSOMMATION : RETARD DE +2H (RTE)</div>
+    <div id="delay-alert" class="status-banner">⚠️ RETARD ARCHIVE +2H (RTE)</div>
+    <div class="status-banner sync-banner">Mise à jour : <span id="sync-time">--/-- à --:--</span></div>
     
     <div id="hphc-display" class="hphc-timer">Analyse...</div>
 
     <div class="box">
-        <span class="update-tag">Mise à jour archive : <b id="sync-time" style="color:white">--:--</b></span>
-        
         <div class="split-grid">
             <div class="prod-col">
                 <div class="side-title">Production FR</div>
                 <div id="prod-list"></div>
                 <div style="margin-top:10px; padding-top:5px; border-top:1px dashed #333;">
-                    <div style="font-size:0.5rem; color:#555;">TOTAL RÉEL</div>
-                    <div id="total-gw" style="font-size:1.1rem; font-weight:900; color:var(--green);">-- GW</div>
+                    <div id="total-gw" style="font-size:1rem; font-weight:900; color:var(--green);">-- GW</div>
                 </div>
             </div>
 
@@ -84,18 +79,16 @@
                 <div class="side-title">Flux Voisins</div>
                 <div id="flux-list"></div>
                 <div style="margin-top:10px; padding-top:5px; border-top:1px dashed #333;">
-                    <div style="font-size:0.5rem; color:#555;">SOLDE ÉCHANGES</div>
-                    <div id="total-solde" style="font-size:1.1rem; font-weight:900;">-- MW</div>
+                    <div id="total-solde" style="font-size:1rem; font-weight:900;">-- MW</div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div style="text-align: center; font-size: 0.5rem; color: #555; text-transform: uppercase; letter-spacing: 1px;">Calendrier mis à jour le <b id="tempo-date" style="color:#888">--/--</b></div>
+    <div class="status-banner prev-banner">Prévisions Probabilistes Tempo</div>
     <div id="rt-days" class="grid-2"></div>
 
     <div class="analytics-box">
-        <div style="font-size:0.55rem; font-weight:900; color:var(--blue); text-align:center; text-transform:uppercase; margin-bottom:8px;">Prévisions Probabilistes</div>
         <div class="sim-card">
             <span id="label-j2" style="font-size:0.7rem; font-weight:900;">...</span>
             <span id="ico-j2"></span>
@@ -128,44 +121,34 @@
         if (t <= -2) return "❄️"; if (t <= 5) return "🧊"; if (t <= 12) return "☁️"; return "☀️";
     }
 
-    async function updateHPHC(todayCode) {
-        const h = new Date().getHours();
-        const colorMap = { 1: "bleu", 2: "blanc", 3: "rouge" };
-        const label = (h >= 6 && h < 22) ? "⚡ HEURES PLEINES" : "🌙 HEURES CREUSES";
-        const display = document.getElementById('hphc-display');
-        display.className = `hphc-timer mode-${colorMap[todayCode] || "null"}`;
-        display.innerHTML = `<span>${label}</span>`;
-    }
-
     async function refresh() {
         try {
             const mix = await fetch(API_LOCAL + Date.now()).then(r => r.json());
             const f = mix[0];
             if (f) {
-                // Gestion Alerte Retard
                 const dateData = new Date(f.date_heure);
                 const diffHeures = (new Date() - dateData) / (1000 * 60 * 60);
                 document.getElementById('delay-alert').style.display = diffHeures > 2 ? 'block' : 'none';
-                
-                document.getElementById('sync-time').innerText = f.heure;
-                document.getElementById('tempo-date').innerText = dateData.toLocaleDateString('fr-FR', {day:'2-digit', month:'2-digit'});
+                document.getElementById('sync-time').innerText = dateData.toLocaleDateString('fr-FR', {day:'2-digit', month:'2-digit'}) + " à " + f.heure;
 
                 const sources = [{l:'NUC', v:f.nucleaire, c:'#BF40BF'}, {l:'EOL', v:f.eolien, c:'#00e676'}, {l:'HYD', v:f.hydraulique, c:'#2979ff'}, {l:'GAZ', v:f.gaz, c:'#ff5722'}];
                 let total = 0;
                 document.getElementById('prod-list').innerHTML = sources.map(s => {
                     total += s.v;
-                    const symb = !lastVals[s.l] ? '•' : (s.v > lastVals[s.l] ? '▲' : '▼');
-                    lastVals[s.l] = s.v;
-                    return `<div class="data-row"><span>${s.l}</span><span class="val-bold">${Math.round(s.v/1000)}k <small class="trend">${symb}</small></span></div>`;
+                    return `<div class="data-row"><span>${s.l}</span><span style="font-weight:900;">${Math.round(s.v/1000)}k</span></div>`;
                 }).join('');
                 document.getElementById('total-gw').innerText = (total/1000).toFixed(1) + " GW";
 
-                const neighbors = [{k:'angleterre', n:'UK 🇬🇧'}, {k:'allemagne_belgique', n:'DE 🇩🇪'}, {k:'espagne', n:'ES 🇪🇸'}, {k:'italie', n:'IT 🇮🇹'}];
+                const neighbors = [
+                    {k:'angleterre', n:'UK 🇬🇧'}, {k:'allemagne_belgique', n:'DE/BE 🇩🇪'}, 
+                    {k:'espagne', n:'ES 🇪🇸'}, {k:'italie', n:'IT 🇮🇹'}, {k:'suisse', n:'CH 🇨H'}
+                ];
                 let solde = 0;
                 document.getElementById('flux-list').innerHTML = neighbors.map(n => {
                     const val = Math.round((f['ech_comm_' + n.k] || 0) * -1);
                     solde += val;
-                    return `<div class="data-row"><span>${n.n}</span><span class="val-bold" style="color:${val>=0?'var(--green)':'var(--red)'}">${val>0?'+':''}${val}</span></div>`;
+                    const arrow = val > 0 ? '<span class="arrow up">↑</span>' : (val < 0 ? '<span class="arrow down">↓</span>' : '');
+                    return `<div class="data-row"><span>${n.n}</span><span style="font-weight:900; color:${val>=0?'var(--green)':'var(--red)'}">${val>0?'+':''}${val}${arrow}</span></div>`;
                 }).join('');
                 const sEl = document.getElementById('total-solde');
                 sEl.innerText = (solde>=0?"+":"")+solde+" MW";
@@ -173,19 +156,20 @@
             }
 
             const [j0, j1, stats] = await Promise.all([fetch(API_TEMPO).then(r => r.json()), fetch(API_TMW).then(r => r.json()), fetch(API_STATS).then(r => r.json())]);
-            statsGlobal = stats; updateHPHC(j0.codeJour);
+            statsGlobal = stats;
+            const colorMap = { 1: "bleu", 2: "blanc", 3: "rouge" };
+            document.getElementById('hphc-display').className = `hphc-timer mode-${colorMap[j0.codeJour] || "null"}`;
+            document.getElementById('hphc-display').innerHTML = (new Date().getHours() >= 6 && new Date().getHours() < 22) ? "⚡ HEURES PLEINES" : "🌙 HEURES CREUSES";
             
-            const colorMap = { 1: "BLEU", 2: "BLANC", 3: "ROUGE" };
             document.getElementById('rt-days').innerHTML = [j0, j1].map((info, i) => {
                 const d = new Date(); d.setDate(d.getDate() + i);
-                const color = info.codeJour > 0 ? colorMap[info.codeJour] : "ATTENTE";
+                const color = info.codeJour > 0 ? colorMap[info.codeJour].toUpperCase() : "ATTENTE";
                 return `<div class="card-rt is-${color.toLowerCase()}"><span class="badge-rt">OFFICIEL</span><div style="font-size:0.6rem; font-weight:900;">${d.toLocaleDateString('fr-FR', {weekday: 'long', day: 'numeric'})}</div><div style="font-size:1.2rem; font-weight:900;">${color}</div></div>`;
             }).join('');
 
             document.getElementById('stock-container').innerHTML = [{l:'BLEU', r:stats.restantBleu, t:300, c:'var(--blue)'}, {l:'BLANC', r:stats.restantBlanc, t:43, c:'var(--white)'}, {l:'ROUGE', r:stats.restantRouge, t:22, c:'var(--red)'}].map(s => `
                 <div style="margin-bottom:6px;"><div style="display:flex; justify-content:space-between; font-size:0.45rem; font-weight:900;"><span>${s.l}</span><span>${s.r} RESTANTS</span></div>
                 <div style="height:3px; background:#222; margin-top:2px; overflow:hidden;"><div style="height:100%; width:${(s.r/s.t)*100}%; background:${s.c}"></div></div></div>`).join('');
-            
             updateSim();
         } catch (e) { console.log(e); }
     }
@@ -200,12 +184,10 @@
             const estimConso = 60 + (2.4 * Math.max(0, 15 - temp));
             const marge = 75 - estimConso;
             let pRo = 0, pBl = 0, pBe = 0;
-            if (d.getDay() === 0) { pBe = 100; } else {
-                if (marge < 5) { pRo = 80; pBl = 20; } else if (marge < 12) { pBl = 70; pBe = 30; } else { pBe = 100; }
+            if (d.getDay() === 0) pBe = 100; else {
+                if (marge < 5) { pRo = 80; pBl = 20; } else if (marge < 12) { pBl = 70; pBe = 30; } else pBe = 100;
             }
-            document.getElementById('res-j' + off).innerHTML = `
-                <div style="display:flex; justify-content:space-between; font-size:0.55rem; font-weight:900; margin-top:4px;"><span style="color:var(--blue)">${pBe}%</span> <span style="color:#ddd">${pBl}%</span> <span style="color:var(--red)">${pRo}%</span></div>
-                <div class="prob-container"><div class="prob-item" style="width:${pBe}%; background:var(--blue)"></div><div class="prob-item" style="width:${pBl}%; background:#ddd"></div><div class="prob-item" style="width:${pRo}%; background:var(--red)"></div></div>`;
+            document.getElementById('res-j' + off).innerHTML = `<div style="display:flex; justify-content:space-between; font-size:0.55rem; font-weight:900; margin-top:4px;"><span style="color:var(--blue)">${pBe}%</span> <span style="color:#ddd">${pBl}%</span> <span style="color:var(--red)">${pRo}%</span></div><div class="prob-container"><div class="prob-item" style="width:${pBe}%; background:var(--blue)"></div><div class="prob-item" style="width:${pBl}%; background:#ddd"></div><div class="prob-item" style="width:${pRo}%; background:var(--red)"></div></div>`;
         });
     }
 
