@@ -23,6 +23,6 @@ jobs:
         run: |
           git config --global user.name 'MonRobot'
           git config --global user.email 'bot@github.com'
-          git add archive_tempo.json
-          git commit -m "Nouvelle donnée" || exit 0
+          git add archive_tempo.json  # <-- VERIFIE QUE C'EST LE BON NOM ICI
+          git commit -m "Mise à jour automatique" || exit 0
           git push
