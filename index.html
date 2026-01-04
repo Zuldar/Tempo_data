@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Tempo Expert - Flux & Prod</title>
+    <title>Tempo Expert - Master Console Finale</title>
     <style>
         :root {
             --bg: #080808;
@@ -35,15 +35,15 @@
         .val-bold { font-weight: 900; }
         .trend { font-size: 0.5rem; margin-left: 4px; }
 
-        /* CARTES TEMPO */
+        /* CARTES TEMPO J / J+1 */
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .card-rt { border-radius: 20px; padding: 15px; position: relative; border: 1px solid rgba(255,255,255,0.1); }
-        .is-bleu { background: linear-gradient(135deg, #0044ff 0%, #001133 100%); }
+        .is-bleu { background: linear-gradient(135deg, #0044ff 0%, #001133 100%); color: white;}
         .is-blanc { background: linear-gradient(135deg, #ffffff 0%, #777777 100%); color: #000 !important; }
-        .is-rouge { background: linear-gradient(135deg, #ff0000 0%, #440000 100%); }
+        .is-rouge { background: linear-gradient(135deg, #ff0000 0%, #440000 100%); color: white;}
         .badge-rt { position: absolute; top: 12px; right: 12px; font-size: 0.45rem; padding: 3px 8px; border-radius: 8px; font-weight: 900; background: var(--gold); color: #000; animation: shine 3s infinite; }
 
-        /* ANALYTICS */
+        /* ANALYTICS J+2 J+3 */
         .analytics-box { background: #111; border-radius: 20px; padding: 15px; border: 1px solid #222; }
         .sim-card { background: #000; padding: 12px; border-radius: 15px; border: 1px solid #222; margin-top: 8px; }
         .prob-container { display: flex; height: 5px; border-radius: 3px; overflow: hidden; margin: 8px 0; background: #222; }
@@ -127,12 +127,7 @@
             const f = mix[0];
             if (f) {
                 document.getElementById('sync-time').innerText = f.heure;
-                
-                // PRODUCTION
-                const sources = [
-                    {l:'NUC', v:f.nucleaire, c:'#BF40BF'}, {l:'EOL', v:f.eolien, c:'#00e676'},
-                    {l:'HYD', v:f.hydraulique, c:'#2979ff'}, {l:'GAZ', v:f.gaz, c:'#ff5722'}
-                ];
+                const sources = [{l:'NUC', v:f.nucleaire, c:'#BF40BF'}, {l:'EOL', v:f.eolien, c:'#00e676'}, {l:'HYD', v:f.hydraulique, c:'#2979ff'}, {l:'GAZ', v:f.gaz, c:'#ff5722'}];
                 let total = 0;
                 document.getElementById('prod-list').innerHTML = sources.map(s => {
                     total += s.v;
@@ -142,7 +137,6 @@
                 }).join('');
                 document.getElementById('total-gw').innerText = (total/1000).toFixed(1) + " GW";
 
-                // FLUX
                 const neighbors = [{k:'angleterre', n:'UK 🇬🇧'}, {k:'allemagne_belgique', n:'DE 🇩🇪'}, {k:'espagne', n:'ES 🇪🇸'}, {k:'italie', n:'IT 🇮🇹'}];
                 let solde = 0;
                 document.getElementById('flux-list').innerHTML = neighbors.map(n => {
@@ -158,7 +152,6 @@
             const [j0, j1, stats] = await Promise.all([fetch(API_TEMPO).then(r => r.json()), fetch(API_TMW).then(r => r.json()), fetch(API_STATS).then(r => r.json())]);
             statsGlobal = stats; updateHPHC(j0.codeJour);
             
-            // CARTES TEMPO
             const colorMap = { 1: "BLEU", 2: "BLANC", 3: "ROUGE" };
             document.getElementById('rt-days').innerHTML = [j0, j1].map((info, i) => {
                 const d = new Date(); d.setDate(d.getDate() + i);
@@ -166,7 +159,6 @@
                 return `<div class="card-rt is-${color.toLowerCase()}"><span class="badge-rt">OFFICIEL</span><div style="font-size:0.6rem; font-weight:900;">${d.toLocaleDateString('fr-FR', {weekday: 'long', day: 'numeric'})}</div><div style="font-size:1.2rem; font-weight:900;">${color}</div></div>`;
             }).join('');
 
-            // STOCK
             document.getElementById('stock-container').innerHTML = [{l:'BLEU', r:stats.restantBleu, t:300, c:'var(--blue)'}, {l:'BLANC', r:stats.restantBlanc, t:43, c:'var(--white)'}, {l:'ROUGE', r:stats.restantRouge, t:22, c:'var(--red)'}].map(s => `
                 <div style="margin-bottom:6px;"><div style="display:flex; justify-content:space-between; font-size:0.45rem; font-weight:900;"><span>${s.l}</span><span>${s.r} RESTANTS</span></div>
                 <div style="height:3px; background:#222; margin-top:2px; overflow:hidden;"><div style="height:100%; width:${(s.r/s.t)*100}%; background:${s.c}"></div></div></div>`).join('');
@@ -179,10 +171,20 @@
         if (!statsGlobal) return;
         [2, 3].forEach(off => {
             const d = new Date(); d.setDate(d.getDate() + off);
-            const t = parseFloat(document.getElementById('t-j' + off).value);
+            const temp = parseFloat(document.getElementById('t-j' + off).value);
             document.getElementById('label-j' + off).innerText = d.toLocaleDateString('fr-FR', {weekday: 'long', day: 'numeric'});
-            const marge = 10 + (t * 0.5); // Simulation simplifiée
-            let pRo = marge < 5 ? 70 : 0, pBe = marge > 8 ? 90 : 20, pBl = 100 - pRo - pBe;
+            
+            // FORMULE THERMIQUE : Base 60 GW + 2.4 GW par degré sous 15°C
+            const estimConso = 60 + (2.4 * Math.max(0, 15 - temp));
+            const marge = 75 - estimConso;
+
+            let pRo = 0, pBl = 0, pBe = 0;
+            if (d.getDay() === 0) { pBe = 100; } 
+            else {
+                if (marge < 5) { pRo = 80; pBl = 20; }
+                else if (marge < 12) { pBl = 70; pBe = 30; }
+                else { pBe = 100; }
+            }
             document.getElementById('res-j' + off).innerHTML = `
                 <div style="display:flex; justify-content:space-between; font-size:0.55rem; font-weight:900; margin-top:4px;"><span style="color:var(--blue)">${pBe}%</span> <span style="color:#ddd">${pBl}%</span> <span style="color:var(--red)">${pRo}%</span></div>
                 <div class="prob-container"><div class="prob-item" style="width:${pBe}%; background:var(--blue)"></div><div class="prob-item" style="width:${pBl}%; background:#ddd"></div><div class="prob-item" style="width:${pRo}%; background:var(--red)"></div></div>`;
@@ -197,3 +199,4 @@
 </script>
 </body>
 </html>
+
