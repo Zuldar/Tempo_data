@@ -2,32 +2,39 @@ import requests
 import json
 import os
 
-# L'adresse où on récupère les données
-URL = "https://odre.opendatasoft.com/api/records/1.0/search/?dataset=eco2mix-national-tr&rows=1&sort=-date_heure"
+# URL optimisée pour le 4 janvier 2026
+URL = "https://odre.opendatasoft.com/api/explore/v2.1/catalog/datasets/eco2mix-national-tr/records?order_by=date_heure%20desc&limit=1"
 
-def capturer():
-    # 1. On demande les données à RTE
-    reponse = requests.get(URL)
-    donnees = reponse.json()
-    
-    # 2. On extrait la ligne qui nous intéresse
-    info = donnees["records"][0]["fields"]
-    
-    # 3. On prépare notre fichier d'archive
-    nom_fichier = "archive_tempo.json"
-    
-    if os.path.exists(nom_fichier):
-        with open(nom_fichier, "r") as f:
-            historique = json.load(f)
-    else:
-        historique = []
-    
-    # 4. On ajoute la donnée si elle est nouvelle
-    historique.append(info)
-    
-    # 5. On enregistre le fichier
-    with open(nom_fichier, "w") as f:
-        json.dump(historique, f, indent=4)
+def job():
+    try:
+        response = requests.get(URL)
+        data = response.json()
+        
+        # Dans l'API v2.1, les données sont dans "results"
+        if "results" in data and len(data["results"]) > 0:
+            entry = data["results"][0]
+            filename = "archive_tempo.json"
+            
+            # Charger l'historique
+            if os.path.exists(filename):
+                with open(filename, "r", encoding="utf-8") as f:
+                    history = json.load(f)
+            else:
+                history = []
+            
+            # Vérifier si c'est une nouvelle donnée (comparaison date_heure)
+            if not any(item.get("date_heure") == entry["date_heure"] for item in history):
+                history.append(entry)
+                # On ne garde que les 100 dernières pour ne pas alourdir le fichier
+                history = history[-100:] 
+                
+                with open(filename, "w", encoding="utf-8") as f:
+                    json.dump(history, f, indent=4, ensure_ascii=False)
+                print(f"Succès : Donnée du {entry['date_heure']} ajoutée.")
+            else:
+                print("Donnée déjà archivée.")
+    except Exception as e:
+        print(f"Erreur : {e}")
 
 if __name__ == "__main__":
-    capturer()
+    job()
