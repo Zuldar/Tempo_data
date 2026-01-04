@@ -3,22 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Tempo Expert - Console Dynamique</title>
+    <title>Tempo Expert - Master Console Finale</title>
     <style>
         :root {
             --bg: #080808;
             --blue: #2979ff; --white: #ffffff; --red: #ff1744;
+            --gold: linear-gradient(135deg, #FFD700 0%, #B8860B 100%);
             --green: #00e676; --grey-light: #333;
         }
         body { background-color: var(--bg); color: white; font-family: sans-serif; margin: 0; padding: 10px; display: flex; flex-direction: column; align-items: center; }
         .container { width: 100%; max-width: 450px; display: flex; flex-direction: column; gap: 12px; }
         
         /* BANDEAU DYNAMIQUE */
-        #status-banner { 
-            font-size: 0.65rem; font-weight: 900; text-align: center; padding: 12px; 
-            border-radius: 12px; text-transform: uppercase; margin-bottom: 5px;
-            transition: all 0.5s ease;
-        }
+        #status-banner { font-size: 0.65rem; font-weight: 900; text-align: center; padding: 12px; border-radius: 12px; text-transform: uppercase; margin-bottom: 5px; transition: all 0.5s ease; }
         .status-ok { background: var(--green); color: #000; }
         .status-delayed { background: var(--blue); color: #fff; }
         .status-archive { background: var(--red); color: #fff; }
@@ -33,9 +30,15 @@
         .side-title { font-size: 0.55rem; font-weight: 900; color: var(--blue); margin-bottom: 8px; text-transform: uppercase; }
         .data-row { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.02); padding: 5px 8px; border-radius: 8px; margin-bottom: 4px; font-size: 0.55rem; }
         .val-bold { font-weight: 900; }
-        .arrow { font-size: 0.7rem; margin-right: 4px; font-weight: bold; }
-
-        .update-banner { background: var(--green); color: #000; font-size: 0.6rem; font-weight: 900; text-align: center; padding: 8px; border-radius: 8px; text-transform: uppercase; margin: 10px 0; }
+        
+        /* ANALYTICS & SIMU */
+        .analytics-box { background: #111; border-radius: 20px; padding: 15px; border: 1px solid #222; }
+        .sim-card { background: #000; padding: 10px; border-radius: 15px; border: 1px solid #222; margin-top: 8px; }
+        .prob-container { display: flex; height: 5px; border-radius: 3px; overflow: hidden; margin: 8px 0; background: #222; }
+        .prob-item { height: 100%; transition: width 0.5s ease; }
+        .update-banner { background: var(--green); color: #000; font-size: 0.6rem; font-weight: 900; text-align: center; padding: 8px; border-radius: 8px; text-transform: uppercase; margin: 15px 0; }
+        .forecast-header-banner { background: var(--grey-light); color: #aaa; font-size: 0.55rem; font-weight: 900; text-align: center; padding: 8px; border-radius: 8px; text-transform: uppercase; margin: 15px 0; }
+        
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .card-rt { border-radius: 20px; padding: 15px; position: relative; border: 1px solid rgba(255,255,255,0.1); }
         .is-bleu { background: linear-gradient(135deg, #0044ff 0%, #001133 100%); color: white;}
@@ -43,13 +46,13 @@
         .is-rouge { background: linear-gradient(135deg, #ff0000 0%, #440000 100%); color: white;}
         
         button { width: 100%; padding: 15px; border-radius: 12px; border: none; background: #222; color: #fff; font-weight: 900; cursor: pointer; border: 1px solid #333; margin-top: 10px; }
+        input { background:transparent; border:none; color:var(--blue); font-weight:900; font-size:0.7rem; width:25px; outline:none; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div id="status-banner">Initialisation...</div>
-    
+    <div id="status-banner">Connexion...</div>
     <div id="hphc-display" class="hphc-timer">Analyse Tempo...</div>
 
     <div class="box">
@@ -69,10 +72,25 @@
         </div>
     </div>
 
-    <div class="update-banner">Calendrier Officiel Tempo</div>
+    <div class="update-banner">Calendrier Officiel Tempo <span id="tempo-date">--/--</span></div>
     <div class="grid-2" id="rt-days"></div>
+    <div class="forecast-header-banner">Prévisions Risques & Météo</div>
 
-    <button id="refresh-btn">🔄 SYNCHRONISER LA CONSOLE</button>
+    <div class="analytics-box">
+        <div class="sim-card">
+            <span id="label-j2" style="font-size:0.65rem; font-weight:900;">J+2</span> <span id="ico-j2"></span>
+            <input type="number" id="t-j2" value="2">°C
+            <div id="res-j2"></div>
+        </div>
+        <div class="sim-card">
+            <span id="label-j3" style="font-size:0.65rem; font-weight:900;">J+3</span> <span id="ico-j3"></span>
+            <input type="number" id="t-j3" value="-1">°C
+            <div id="res-j3"></div>
+        </div>
+    </div>
+
+    <div class="box"><div id="stock-container"></div></div>
+    <button id="refresh-btn">🔄 ACTUALISER LES DONNÉES</button>
 </div>
 
 <script>
@@ -81,6 +99,11 @@
     const API_LOCAL = `https://raw.githubusercontent.com/${pseudo}/${depot}/main/archive_tempo.json?cb=`;
     const API_TEMPO = "https://www.api-couleur-tempo.fr/api/jourTempo/today";
     const API_TMW = "https://www.api-couleur-tempo.fr/api/jourTempo/tomorrow";
+    const API_STATS = "https://www.api-couleur-tempo.fr/api/stats";
+
+    let statsGlobal = null;
+
+    function getWeatherIcon(t) { return t <= -2 ? "❄️" : t <= 5 ? "🧊" : t <= 12 ? "☁️" : "☀️"; }
 
     async function refresh() {
         try {
@@ -91,67 +114,85 @@
             if (f) {
                 const now = new Date();
                 const dataDate = new Date(f.date_heure);
-                const diffMs = now - dataDate;
-                const diffHours = diffMs / (1000 * 60 * 60);
-                
+                const diffHours = (now - dataDate) / (1000 * 60 * 60);
                 const banner = document.getElementById('status-banner');
                 const isSameDay = now.toDateString() === dataDate.toDateString();
 
-                // LOGIQUE DES COULEURS
                 if (!isSameDay) {
                     banner.className = "status-archive";
-                    banner.innerHTML = `⚠️ MODE ARCHIVE : DONNÉES DU ${dataDate.toLocaleDateString('fr-FR')}`;
+                    banner.innerHTML = `⚠️ ARCHIVE : DONNÉES DU ${dataDate.toLocaleDateString('fr-FR')}`;
                 } else if (diffHours > 2) {
                     banner.className = "status-delayed";
-                    banner.innerHTML = `⏳ FLUX RETARDÉ (+2H) : RÉCEPTION À ${f.heure}`;
+                    banner.innerHTML = `⏳ RETARDÉ (+2H) : MESURE À ${f.heure}`;
                 } else {
                     banner.className = "status-ok";
-                    banner.innerHTML = `✅ FLUX EN DIRECT : MIS À JOUR À ${f.heure}`;
+                    banner.innerHTML = `✅ DIRECT : MIS À JOUR À ${f.heure}`;
                 }
 
-                // AFFICHAGE PROD
                 const sources = [{l:'NUC', v:f.nucleaire}, {l:'EOL', v:f.eolien}, {l:'HYD', v:f.hydraulique}, {l:'GAZ', v:f.gaz}];
-                let totalProd = 0;
+                let tP = 0;
                 document.getElementById('prod-list').innerHTML = sources.map(s => {
-                    totalProd += (s.v || 0);
+                    tP += (s.v || 0);
                     return `<div class="data-row"><span>${s.l}</span><span class="val-bold">${Math.round(s.v/1000)}k</span></div>`;
                 }).join('');
-                document.getElementById('total-gw').innerText = (totalProd/1000).toFixed(1) + " GW";
+                document.getElementById('total-gw').innerText = (tP/1000).toFixed(1) + " GW";
 
-                // AFFICHAGE FLUX
                 const neighbors = [{k:'angleterre', n:'UK 🇬🇧'}, {k:'allemagne_belgique', n:'DE 🇩🇪'}, {k:'espagne', n:'ES 🇪🇸'}, {k:'italie', n:'IT 🇮🇹'}, {k:'suisse', n:'CH 🇨H'}, {k:'belgique', n:'BE 🇧🇪'}];
                 let solde = 0;
                 document.getElementById('flux-list').innerHTML = neighbors.map(n => {
-                    const val = Math.round((f['ech_comm_' + n.k] || 0) * -1);
-                    solde += val;
-                    const arrow = val >= 0 ? '<span class="arrow" style="color:var(--blue)">↑</span>' : '<span class="arrow" style="color:var(--red)">↓</span>';
-                    return `<div class="data-row"><span>${n.n}</span><span class="val-bold">${arrow}${Math.abs(val)}</span></div>`;
+                    const v = Math.round((f['ech_comm_' + n.k] || 0) * -1);
+                    solde += v;
+                    return `<div class="data-row"><span>${n.n}</span><span class="val-bold" style="color:${v>=0?'var(--green)':'var(--red)'}">${v>=0?'↑':'↓'}${Math.abs(v)}</span></div>`;
                 }).join('');
                 document.getElementById('total-solde').innerText = (solde>=0?"+":"")+solde+" MW";
                 document.getElementById('total-solde').style.color = solde>=0?"var(--green)":"var(--red)";
             }
 
-            // TEMPO
-            const [j0, j1] = await Promise.all([fetch(API_TEMPO).then(r => r.json()), fetch(API_TMW).then(r => r.json())]);
+            const [j0, j1, s] = await Promise.all([fetch(API_TEMPO).then(r=>r.json()), fetch(API_TMW).then(r=>r.json()), fetch(API_STATS).then(r=>r.json())]);
             const colorMap = { 1: "BLEU", 2: "BLANC", 3: "ROUGE" };
             
             // HP/HC
             const h = new Date().getHours();
             const label = (h >= 6 && h < 22) ? "⚡ HEURES PLEINES" : "🌙 HEURES CREUSES";
-            const curCol = j0.codeJour > 0 ? colorMap[j0.codeJour].toLowerCase() : "null";
-            document.getElementById('hphc-display').className = `hphc-timer mode-${curCol}`;
+            document.getElementById('hphc-display').className = `hphc-timer mode-${j0.codeJour > 0 ? colorMap[j0.codeJour].toLowerCase() : 'null'}`;
             document.getElementById('hphc-display').innerText = label;
 
+            // STOCK
+            const bR = s.joursBleusRestants ?? 0, wR = s.joursBlancsRestants ?? 0, rR = s.joursRougesRestants ?? 0;
+            document.getElementById('stock-container').innerHTML = [
+                {l:'BLEU', r:bR, t:300, c:'var(--blue)'}, {l:'BLANC', r:wR, t:43, c:'var(--white)'}, {l:'ROUGE', r:rR, t:22, c:'var(--red)'}
+            ].map(x => `<div style="margin-bottom:6px;"><div style="display:flex; justify-content:space-between; font-size:0.45rem; font-weight:900;"><span>${x.l}</span><span>${x.r} RESTANTS</span></div>
+                <div style="height:3px; background:#222; margin-top:2px;"><div style="height:100%; width:${(x.r/x.t)*100}%; background:${x.c}"></div></div></div>`).join('');
+            
             document.getElementById('rt-days').innerHTML = [j0, j1].map((info, i) => {
                 const d = new Date(); d.setDate(d.getDate() + i);
-                const color = info.codeJour > 0 ? colorMap[info.codeJour] : "ATTENTE";
-                return `<div class="card-rt is-${color.toLowerCase()}"><div style="font-size:0.55rem; font-weight:900;">${d.toLocaleDateString('fr-FR', {weekday: 'long', day: 'numeric'})}</div><div style="font-size:1.1rem; font-weight:900;">${color}</div></div>`;
+                const col = info.codeJour > 0 ? colorMap[info.codeJour] : "ATTENTE";
+                return `<div class="card-rt is-${col.toLowerCase()}"><div style="font-size:0.55rem; font-weight:900;">${d.toLocaleDateString('fr-FR', {weekday:'long', day:'numeric'})}</div><div style="font-size:1.1rem; font-weight:900;">${col}</div></div>`;
             }).join('');
 
+            statsGlobal = { r: rR, w: wR, b: bR }; updateSim();
         } catch (e) { console.error(e); }
     }
 
+    function updateSim() {
+        if (!statsGlobal) return;
+        [2, 3].forEach(off => {
+            const d = new Date(); d.setDate(d.getDate() + off);
+            const temp = parseFloat(document.getElementById('t-j' + off).value);
+            document.getElementById('label-j' + off).innerText = d.toLocaleDateString('fr-FR', {weekday: 'long', day: 'numeric'});
+            document.getElementById('ico-j' + off).innerText = getWeatherIcon(temp);
+            const marge = 75 - (60 + (2.4 * Math.max(0, 15 - temp)));
+            let pRo = (d.getDay() !== 0 && marge < 5) ? 85 : 0;
+            let pBl = (d.getDay() !== 0 && marge >= 5 && marge < 12) ? 75 : (pRo > 0 ? 15 : 0);
+            let pBe = 100 - pRo - pBl;
+            document.getElementById('res-j' + off).innerHTML = `<div style="display:flex; justify-content:space-between; font-size:0.55rem; font-weight:900; margin-top:4px;"><span style="color:var(--blue)">${pBe}%</span> <span>${pBl}%</span> <span style="color:var(--red)">${pRo}%</span></div>
+                <div class="prob-container"><div class="prob-item" style="width:${pBe}%; background:var(--blue)"></div><div class="prob-item" style="width:${pBl}%; background:#ddd"></div><div class="prob-item" style="width:${pRo}%; background:var(--red)"></div></div>`;
+        });
+    }
+
     document.getElementById('refresh-btn').addEventListener('click', refresh);
+    document.getElementById('t-j2').addEventListener('input', updateSim);
+    document.getElementById('t-j3').addEventListener('input', updateSim);
     refresh();
 })();
 </script>
