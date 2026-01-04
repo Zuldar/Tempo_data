@@ -9,7 +9,7 @@
             --bg: #080808;
             --blue: #2979ff; --white: #ffffff; --red: #ff1744;
             --gold: linear-gradient(135deg, #FFD700 0%, #B8860B 100%);
-            --green: #00e676; --grey-b: #1a1a1a; --grey-light: #333;
+            --green: #00e676; --grey-light: #333;
         }
         body { 
             background-color: var(--bg); color: white; font-family: sans-serif; 
@@ -17,7 +17,7 @@
         }
         .container { width: 100%; max-width: 450px; display: flex; flex-direction: column; gap: 12px; }
         
-        /* BANDEAUX D'ÉTAT AVEC ESPACEMENT */
+        /* BANDEAUX D'ÉTAT */
         #delay-alert { display: none; background: var(--red); color: white; font-size: 0.6rem; font-weight: 900; text-align: center; padding: 10px; border-radius: 10px; margin: 10px 0; }
         
         .update-banner { background: var(--green); color: #000; font-size: 0.6rem; font-weight: 900; text-align: center; padding: 8px; border-radius: 8px; text-transform: uppercase; margin-bottom: 15px; margin-top: 15px; }
@@ -119,6 +119,8 @@
     const API_TMW = "https://www.api-couleur-tempo.fr/api/jourTempo/tomorrow";
     const API_STATS = "https://www.api-couleur-tempo.fr/api/stats";
 
+    let statsGlobal = null;
+
     function getWeatherIcon(t) {
         if (t <= -2) return "❄️"; if (t <= 5) return "🧊"; if (t <= 12) return "☁️"; return "☀️";
     }
@@ -134,11 +136,11 @@
 
     async function refresh() {
         try {
-            // Date du jour pour le bandeau vert
             const now = new Date();
             document.getElementById('tempo-date').innerText = now.toLocaleDateString('fr-FR', {day:'2-digit', month:'2-digit', year:'numeric'});
 
-            const mix = await fetch(API_LOCAL + Date.now()).then(r => r.json());
+            const mixResponse = await fetch(API_LOCAL + Date.now());
+            const mix = await mixResponse.json();
             const f = mix[0];
             if (f) {
                 const dateData = new Date(f.date_heure);
@@ -147,14 +149,14 @@
                 document.getElementById('sync-time').innerText = f.heure;
 
                 const sources = [{l:'NUC', v:f.nucleaire}, {l:'EOL', v:f.eolien}, {l:'HYD', v:f.hydraulique}, {l:'GAZ', v:f.gaz}];
-                let total = 0;
+                let totalProd = 0;
                 document.getElementById('prod-list').innerHTML = sources.map(s => {
-                    total += (s.v || 0);
+                    totalProd += (s.v || 0);
                     return `<div class="data-row"><span>${s.l}</span><span class="val-bold">${Math.round(s.v/1000)}k</span></div>`;
                 }).join('');
-                document.getElementById('total-gw').innerText = (total/1000).toFixed(1) + " GW";
+                document.getElementById('total-gw').innerText = (totalProd/1000).toFixed(1) + " GW";
 
-                const neighbors = [{k:'angleterre', n:'UK 🇬🇧'}, {k:'allemagne_belgique', n:'DE 🇩🇪'}, {k:'espagne', n:'ES 🇪🇸'}, {k:'italie', n:'IT 🇮🇹'}, {k:'suisse', n:'CH 🇨🇭'}, {k:'belgique', n:'BE 🇧🇪'}];
+                const neighbors = [{k:'angleterre', n:'UK 🇬🇧'}, {k:'allemagne_belgique', n:'DE 🇩🇪'}, {k:'espagne', n:'ES 🇪🇸'}, {k:'italie', n:'IT 🇮🇹'}, {k:'suisse', n:'CH 🇨H'}, {k:'belgique', n:'BE 🇧🇪'}];
                 let solde = 0;
                 document.getElementById('flux-list').innerHTML = neighbors.map(n => {
                     const val = Math.round((f['ech_comm_' + n.k] || 0) * -1);
@@ -166,7 +168,12 @@
                 document.getElementById('total-solde').style.color = solde>=0?"var(--green)":"var(--red)";
             }
 
-            const [j0, j1, stats] = await Promise.all([fetch(API_TEMPO).then(r => r.json()), fetch(API_TMW).then(r => r.json()), fetch(API_STATS).then(r => r.json())]);
+            const [j0, j1, stats] = await Promise.all([
+                fetch(API_TEMPO).then(r => r.json()),
+                fetch(API_TMW).then(r => r.json()),
+                fetch(API_STATS).then(r => r.json())
+            ]);
+
             updateHPHC(j0.codeJour);
             
             const colorMap = { 1: "BLEU", 2: "BLANC", 3: "ROUGE" };
@@ -176,12 +183,29 @@
                 return `<div class="card-rt is-${color.toLowerCase()}"><span class="badge-rt">OFFICIEL</span><div style="font-size:0.55rem; font-weight:900;">${d.toLocaleDateString('fr-FR', {weekday: 'long', day: 'numeric'})}</div><div style="font-size:1.1rem; font-weight:900;">${color}</div></div>`;
             }).join('');
 
-            document.getElementById('stock-container').innerHTML = [{l:'BLEU', r:stats.restantBleu, t:300, c:'var(--blue)'}, {l:'BLANC', r:stats.restantBlanc, t:43, c:'var(--white)'}, {l:'ROUGE', r:stats.restantRouge, t:22, c:'var(--red)'}].map(s => `
-                <div style="margin-bottom:6px;"><div style="display:flex; justify-content:space-between; font-size:0.45rem; font-weight:900;"><span>${s.l}</span><span>${s.r} RESTANTS</span></div>
-                <div style="height:3px; background:#222; margin-top:2px; overflow:hidden;"><div style="height:100%; width:${(s.r/s.t)*100}%; background:${s.c}"></div></div></div>`).join('');
+            // CLÉS EXACTES DE L'API stats
+            const bR = stats.joursBleusRestants ?? 0;
+            const wR = stats.joursBlancsRestants ?? 0;
+            const rR = stats.joursRougesRestants ?? 0;
+
+            document.getElementById('stock-container').innerHTML = [
+                {l:'BLEU', r:bR, t:300, c:'var(--blue)'}, 
+                {l:'BLANC', r:wR, t:43, c:'var(--white)'}, 
+                {l:'ROUGE', r:rR, t:22, c:'var(--red)'}
+            ].map(s => `
+                <div style="margin-bottom:6px;">
+                    <div style="display:flex; justify-content:space-between; font-size:0.45rem; font-weight:900;">
+                        <span>${s.l}</span>
+                        <span>${s.r} RESTANTS</span>
+                    </div>
+                    <div style="height:3px; background:#222; margin-top:2px; overflow:hidden; border-radius:2px;">
+                        <div style="height:100%; width:${(s.r/s.t)*100}%; background:${s.c}; transition: width 1s ease;"></div>
+                    </div>
+                </div>`).join('');
             
-            statsGlobal = stats; updateSim();
-        } catch (e) { console.log(e); }
+            statsGlobal = { joursRougesRestants: rR, joursBlancsRestants: wR, joursBleusRestants: bR }; 
+            updateSim();
+        } catch (e) { console.error("Erreur de synchronisation:", e); }
     }
 
     function updateSim() {
@@ -191,13 +215,20 @@
             const temp = parseFloat(document.getElementById('t-j' + off).value);
             document.getElementById('label-j' + off).innerText = d.toLocaleDateString('fr-FR', {weekday: 'long', day: 'numeric'});
             document.getElementById('ico-j' + off).innerText = getWeatherIcon(temp);
+            
             const estimConso = 60 + (2.4 * Math.max(0, 15 - temp));
             const marge = 75 - estimConso;
+
             let pRo = (d.getDay() !== 0 && marge < 5) ? 80 : 0;
             let pBl = (d.getDay() !== 0 && marge >= 5 && marge < 12) ? 70 : (pRo > 0 ? 20 : 0);
             let pBe = 100 - pRo - pBl;
+
             document.getElementById('res-j' + off).innerHTML = `
-                <div style="display:flex; justify-content:space-between; font-size:0.55rem; font-weight:900; margin-top:4px;"><span style="color:var(--blue)">${pBe}%</span> <span style="color:#ddd">${pBl}%</span> <span style="color:var(--red)">${pRo}%</span></div>
+                <div style="display:flex; justify-content:space-between; font-size:0.55rem; font-weight:900; margin-top:4px;">
+                    <span style="color:var(--blue)">${pBe}%</span> 
+                    <span style="color:#ddd">${pBl}%</span> 
+                    <span style="color:var(--red)">${pRo}%</span>
+                </div>
                 <div class="prob-container"><div class="prob-item" style="width:${pBe}%; background:var(--blue)"></div><div class="prob-item" style="width:${pBl}%; background:#ddd"></div><div class="prob-item" style="width:${pRo}%; background:var(--red)"></div></div>`;
         });
     }
