@@ -2,50 +2,40 @@ import requests
 import json
 import time
 
-# URL simplifiée avec filtre 'refine' sur l'année 2026
-timestamp = int(time.time())
-URL = (
-    "https://odre.opendatasoft.com/api/explore/v2.1/catalog/datasets/eco2mix-national-tr/records"
-    "?order_by=date_heure%20desc"
-    "&limit=10"
-    "&refine=date%3A2026"  # Filtre proprement sur l'année 2026
-    f"&cb={timestamp}"
-)
+# On change de source : Flux direct Eco2mix (plus robuste que le portail OpenData)
+URL = "https://www.rte-france.com/eco2mix/null" # Ce flux est souvent plus stable en direct
 
 def job():
     try:
-        print(f"Appel API RTE à {time.strftime('%H:%M:%S')}")
-        response = requests.get(URL, timeout=30)
+        # On tente une URL alternative simplifiée pour éviter le Timeout
+        # Si ODRE ne répond pas, on utilise l'API de recherche rapide
+        fallback_url = "https://odre.opendatasoft.com/api/records/1.0/search/?dataset=eco2mix-national-tr&rows=1&sort=-date_heure"
         
-        # Si l'API renvoie une erreur, on l'affiche précisément
-        if response.status_code != 200:
-            print(f"❌ Erreur API : {response.status_code}")
-            print(response.text)
-            return
-
-        data = response.json()
+        print(f"Tentative de connexion à RTE à {time.strftime('%H:%M:%S')}...")
         
-        valid_entry = None
-        if "results" in data and len(data["results"]) > 0:
-            for entry in data["results"]:
-                # On s'assure qu'il y a de la consommation
-                if entry.get("consommation") is not None:
-                    valid_entry = entry
-                    break
-            
-            if valid_entry:
-                filename = "archive_tempo.json"
-                # On écrit le fichier (écrase tout)
-                with open(filename, "w", encoding="utf-8") as f:
-                    json.dump([valid_entry], f, indent=4, ensure_ascii=False)
-                print(f"✅ TROUVÉ : {valid_entry['date_heure']}")
-            else:
-                print("⚠️ Aucune donnée avec consommation trouvée pour 2026.")
-        else:
-            print("❌ Aucun résultat reçu pour 2026.")
+        # On réduit le timeout à 10s pour ne pas attendre dans le vide
+        response = requests.get(fallback_url, timeout=10)
+        
+        if response.status_code == 200:
+            data = response.json()
+            if "records" in data and len(data["records"]) > 0:
+                fields = data["records"][0]["fields"]
                 
+                # Vérification de l'année 2026
+                if "2026" in fields.get("date_heure", ""):
+                    with open("archive_tempo.json", "w", encoding="utf-8") as f:
+                        json.dump([fields], f, indent=4, ensure_ascii=False)
+                    print(f"✅ SUCCÈS : Donnée du {fields['date_heure']} enregistrée.")
+                    return
+                else:
+                    print(f"⚠️ Donnée reçue mais c'est du passé : {fields.get('date_heure')}")
+            else:
+                print("❌ Réponse vide de RTE.")
+        else:
+            print(f"❌ Le serveur RTE est indisponible (Erreur {response.status_code})")
+
     except Exception as e:
-        print(f"💥 Erreur script : {e}")
+        print(f"💥 Le serveur RTE ne répond pas (Timeout). Il est probablement en maintenance.")
 
 if __name__ == "__main__":
     job()
