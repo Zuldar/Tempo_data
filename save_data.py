@@ -2,8 +2,11 @@ import requests
 import json
 import sys
 
-# URL cible pour les données du jour
-URL_API = "https://odre.opendatasoft.com/api/explore/v2.1/catalog/datasets/eco2mix-national-tr/records?where=date%3D%222026-01-05%22&order_by=date_heure%20desc&limit=1"
+# Génération automatique de la date du jour (ex: 2026-01-05)
+date_aujourdhui = datetime.now().strftime("%Y-%m-%d")
+
+# URL originale avec date variable
+URL_API = f"https://odre.opendatasoft.com/api/explore/v2.1/catalog/datasets/eco2mix-national-tr/records?where=date%3D%22{date_aujourdhui}%22&order_by=date_heure%20desc&limit=1"
 
 def job():
     try:
@@ -18,6 +21,8 @@ def job():
             output = [{
                 "heure": f.get("heure"),
                 "date": f.get("date"),
+ "prevision_j1": f.get("previsions_j1", 0), # Récupération de la prévision
+                
                 "uk": f.get("ech_comm_angleterre", 0),
                 "es": f.get("ech_comm_espagne", 0),
                 "it": f.get("ech_comm_italie", 0),
