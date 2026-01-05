@@ -151,7 +151,7 @@
                 document.getElementById('total-gw').innerText = (tP/1000).toFixed(1) + " GW";
 
                 // AFFICHAGE FLUX
-                const neighbors = [{k:'angleterre', n:'UK 🇬🇧'}, {k:'allemagne_belgique', n:'DE 🇩🇪'}, {k:'espagne', n:'ES 🇪🇸'}, {k:'italie', n:'IT 🇮🇹'}, {k:'suisse', n:'CH 🇨H'}, {k:'belgique', n:'BE 🇧🇪'}];
+                const neighbors = [{k:'angleterre', n:'UK 🇬🇧'}, {k:'allemagne_belgique', n:'DE 🇩🇪'}, {k:'espagne', n:'ES 🇪🇸'}, {k:'italie', n:'IT 🇮🇹'}, {k:'suisse', n:'CH 🇨🇭'}, {k:'belgique', n:'BE 🇧🇪'}];
                 let solde = 0;
                 document.getElementById('flux-list').innerHTML = neighbors.map(n => {
                     const v = Math.round((f['ech_comm_' + n.k] || 0) * -1);
