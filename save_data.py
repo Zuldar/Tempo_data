@@ -1,10 +1,13 @@
 import requests
 import json
 import sys
+from datetime import datetime
 
-# URL cible pour les données du jour
-URL_API = "https://odre.opendatasoft.com/api/explore/v2.1/catalog/datasets/eco2mix-national-tr/records?where=date%3D%222026-01-05%22&order_by=date_heure%20desc&limit=1"
+# Génère la date du jour au format YYYY-MM-DD
+date_aujourdhui = datetime.now().strftime("%Y-%m-%d")
 
+# URL avec la date variable du jour
+URL_API = f"https://odre.opendatasoft.com/api/explore/v2.1/catalog/datasets/eco2mix-national-tr/records?where=date%3D%22{date_aujourdhui}%22&order_by=date_heure%20desc&limit=1"
 def job():
     try:
         response = requests.get(URL_API, timeout=15)
