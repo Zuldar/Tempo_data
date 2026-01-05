@@ -22,10 +22,10 @@ def job():
             # On parcourt les lignes pour trouver LA prévision
             for r in results:
                 # On teste TOUS les noms de champs connus chez RTE pour la prévision
-                # 1. previsions_j1 (le plus fréquent dans eco2mix)
+                # 1. prevision_j1 (le plus fréquent dans eco2mix)
                 # 2. consommation_prevue (parfois utilisé)
                 # 3. prev_cons (rare)
-                v = r.get("previsions_j1") or r.get("consommation_prevue") or r.get("prev_cons") or 0
+                v = r.get("prevision_j1") or r.get("consommation_prevue") or r.get("prev_cons") or 0
                 
                 if v > 0:
                     prev_val = v
