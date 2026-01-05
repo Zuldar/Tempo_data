@@ -3,119 +3,104 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tempo Master Live</title>
+    <title>Tempo Gold - Flux Solde</title>
     <style>
         :root {
-            --bg: #0a0a0a;
-            --card: #161616;
-            --blue: #2979ff;
-            --green: #00e676;
-            --red: #ff1744;
-            --white: #ffffff;
+            --bg: #050505; --card: #121212; --gold: #d4af37;
+            --blue: #2979ff; --white: #ffffff; --red: #ff1744; --green: #00e676;
         }
-        body { background: var(--bg); color: white; font-family: -apple-system, sans-serif; margin: 0; padding: 15px; }
-        .container { max-width: 400px; margin: auto; display: flex; flex-direction: column; gap: 15px; }
+        body { background: var(--bg); color: white; font-family: -apple-system, sans-serif; margin: 0; padding: 10px; }
+        .container { max-width: 420px; margin: auto; display: flex; flex-direction: column; gap: 12px; }
         
-        /* HEADER & STATUT */
-        .status-banner { text-align: center; padding: 12px; border-radius: 12px; font-weight: 900; font-size: 0.7rem; text-transform: uppercase; background: var(--blue); color: white; }
+        /* BADGE DORÉ DÉCOMPTE */
+        .gold-badge { 
+            background: linear-gradient(135deg, #d4af37 0%, #f9f295 50%, #b38728 100%);
+            color: black; padding: 15px; border-radius: 20px; text-align: center;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+        }
+        .days-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; margin-top: 10px; }
+        .day-counter { background: rgba(0,0,0,0.2); padding: 8px; border-radius: 10px; font-size: 0.6rem; font-weight: 900; }
+        .day-counter span { display: block; font-size: 1.1rem; }
+
+        .card { background: var(--card); border-radius: 20px; padding: 15px; border: 1px solid rgba(255,255,255,0.05); }
+        .title { font-size: 0.65rem; font-weight: 900; color: var(--gold); text-transform: uppercase; margin-bottom: 12px; letter-spacing: 1.5px; }
+
+        /* SOLDE TOTAL */
+        .solde-box { text-align: center; padding: 20px; border-radius: 15px; margin-bottom: 10px; background: #0a0a0a; border: 1px solid #222; }
+        #solde-val { font-size: 2.2rem; font-weight: 900; font-family: monospace; }
+        .solde-label { font-size: 0.7rem; color: #888; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* LISTE FLUX */
+        .row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #222; font-size: 0.85rem; }
+        .val { font-family: monospace; font-weight: 900; }
+        .import { color: var(--red); } .export { color: var(--green); }
         
-        .card { background: var(--card); border-radius: 18px; padding: 15px; border: 1px solid rgba(255,255,255,0.05); }
-        .title { font-size: 0.65rem; font-weight: 900; color: var(--blue); text-transform: uppercase; margin-bottom: 12px; letter-spacing: 1px; }
-
-        /* GRILLE PRODUCTION */
-        .prod-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .prod-item { display: flex; justify-content: space-between; background: rgba(255,255,255,0.03); padding: 10px; border-radius: 10px; font-size: 0.8rem; }
-        .val-prod { font-weight: 900; font-family: monospace; color: var(--white); }
-
-        /* FLUX FRONTIÈRES */
-        .flux-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #222; }
-        .flux-row:last-child { border: none; }
-        .country { display: flex; align-items: center; gap: 10px; font-size: 0.9rem; }
-        .mw { font-family: monospace; font-weight: 900; font-size: 1.1rem; }
-        
-        .import { color: var(--red); }
-        .export { color: var(--green); }
-
-        /* TEMPO */
-        .tempo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .day { padding: 15px; border-radius: 12px; text-align: center; font-weight: 900; font-size: 0.8rem; }
-        .bleu { background: linear-gradient(135deg, #0044ff, #001133); }
-        .blanc { background: linear-gradient(135deg, #ffffff, #bbbbbb); color: black; }
-        .rouge { background: linear-gradient(135deg, #ff0000, #440000); }
+        .tempo-day { padding: 15px; border-radius: 15px; text-align: center; font-weight: 900; font-size: 0.8rem; background: #0044ff; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div id="status" class="status-banner">Mise à jour : --:--</div>
-
-    <div class="card">
-        <div class="title">Mix Électrique (GW)</div>
-        <div class="prod-grid" id="prod-container">
-            </div>
-    </div>
-
-    <div class="card">
-        <div class="title">Échanges Frontières (MW)</div>
-        <div id="flux-container">
-            </div>
-    </div>
-
-    <div class="card">
-        <div class="title">Couleur Tempo</div>
-        <div class="tempo-grid">
-            <div class="day bleu">AUJOURD'HUI</div>
-            <div class="day blanc">DEMAIN</div>
+    <div class="gold-badge">
+        <div style="font-size: 0.7rem; font-weight: 900; text-transform: uppercase;">Saison Tempo 2025-2026</div>
+        <div class="days-grid">
+            <div class="day-counter" style="color:#0044ff"><span>218</span>BLEU</div>
+            <div class="day-counter" style="color:#666"><span>41</span>BLANC</div>
+            <div class="day-counter" style="color:#ff1744"><span>22</span>ROUGE</div>
         </div>
+    </div>
+
+    <div class="card">
+        <div class="title">Solde Net aux Frontières</div>
+        <div class="solde-box">
+            <div id="solde-val">--</div>
+            <div class="solde-label" id="solde-txt">Calcul en cours...</div>
+        </div>
+        <div id="flux-list"></div>
+    </div>
+
+    <div class="card">
+        <div class="title">Couleur du Jour</div>
+        <div class="tempo-day" id="tempo-color">LUNDI 05 JANVIER : BLEU</div>
     </div>
 </div>
 
 <script>
     async function update() {
         try {
-            const r = await fetch("https://raw.githubusercontent.com/Zuldar/Tempo_data/main/archive_tempo.json?nocache=" + Date.now());
+            const r = await fetch("https://raw.githubusercontent.com/Zuldar/Tempo_data/main/archive_tempo.json?t=" + Date.now());
             const [d] = await r.json();
 
-            document.getElementById('status').innerText = `RELEVÉ TEMPS RÉEL : ${d.heure}`;
+            // Calcul du solde (Somme de tous les flux)
+            const solde = (d.uk + d.es + d.it + d.ch + d.de_be);
+            const valEl = document.getElementById('solde-val');
+            const txtEl = document.getElementById('solde-txt');
+            
+            valEl.innerText = Math.abs(solde) + " MW";
+            valEl.className = solde > 0 ? 'import' : 'export';
+            txtEl.innerText = solde > 0 ? "La France Importe" : "La France Exporte";
 
-            // 1. Production
-            const pData = [
-                {n: "Nucléaire", v: d.nucleaire, c: "#2979ff"},
-                {n: "Solaire", v: d.solaire, c: "#ffd600"},
-                {n: "Éolien", v: d.eolien, c: "#00e676"},
-                {n: "Gaz", v: d.gaz, c: "#ff9100"}
+            // Détail par pays
+            const pays = [
+                {l: "🇬🇧 Royaume-Uni", v: d.uk},
+                {l: "🇩🇪 Allemagne/Belg.", v: d.de_be},
+                {l: "🇮🇹 Italie", v: d.it},
+                {l: "🇪🇸 Espagne", v: d.es},
+                {l: "🇨🇭 Suisse", v: d.ch}
             ];
-            document.getElementById('prod-container').innerHTML = pData.map(p => `
-                <div class="prod-item">
-                    <span style="color:${p.c}">${p.n}</span>
-                    <span class="val-prod">${p.v ? (p.v/1000).toFixed(1) : '0'}</span>
+
+            document.getElementById('flux-list').innerHTML = pays.map(p => `
+                <div class="row">
+                    <span>${p.l}</span>
+                    <span class="val ${p.v > 0 ? 'import':'export'}">
+                        ${p.v > 0 ? '↓' : '↑'} ${Math.abs(p.v)}
+                    </span>
                 </div>
             `).join('');
-
-            // 2. Flux
-            const fData = [
-                {id: 'uk', n: 'Royaume-Uni', f: '🇬🇧'},
-                {id: 'de_be', n: 'All. / Belg.', f: '🇩🇪'},
-                {id: 'it', n: 'Italie', f: '🇮🇹'},
-                {id: 'ch', n: 'Suisse', f: '🇨🇭'},
-                {id: 'es', n: 'Espagne', f: '🇪🇸'}
-            ];
-            document.getElementById('flux-container').innerHTML = fData.map(p => {
-                const v = d[p.id] || 0;
-                const isImp = v > 0;
-                return `
-                    <div class="flux-row">
-                        <div class="country"><span>${p.f}</span> ${p.n}</div>
-                        <div class="mw ${isImp ? 'import' : 'export'}">
-                            ${isImp ? '↓' : '↑'} ${Math.abs(v)}
-                        </div>
-                    </div>`;
-            }).join('');
 
         } catch (e) { console.error(e); }
     }
     update();
-    setInterval(update, 60000);
 </script>
 </body>
 </html>
