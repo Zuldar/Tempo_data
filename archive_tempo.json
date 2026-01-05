@@ -2,17 +2,28 @@
     {
         "date": "2026-01-05",
         "heure": "23:45",
-        "date_heure": "2026-01-05T22:45:00+00:00",
-        "consommation": null,
-        "nucleaire": null,
-        "eolien": null,
-        "solaire": null,
-        "hydraulique": null,
-        "gaz": null,
-        "ech_comm_angleterre": 501,
-        "ech_comm_espagne": 2867,
-        "ech_comm_italie": -1539,
-        "ech_comm_suisse": -1229,
-        "ech_comm_allemagne_belgique": 1381
+        "prix_france": 98.51,
+        "pays": {
+            "UK": {
+                "mw": 501,
+                "prix": 98.51
+            },
+            "ES": {
+                "mw": 2700,
+                "prix": 98.51
+            },
+            "IT": {
+                "mw": -1539,
+                "prix": 98.51
+            },
+            "CH": {
+                "mw": -1229,
+                "prix": 98.51
+            },
+            "DE_BE": {
+                "mw": 1381,
+                "prix": 98.51
+            }
+        }
     }
 ]
