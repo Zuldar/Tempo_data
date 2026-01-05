@@ -3,133 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tempo Market Live</title>
+    <title>Tempo Live - Flux</title>
     <style>
         :root {
             --bg: #0a0a0a;
-            --card: #151515;
-            --blue: #2979ff;
+            --card: #161616;
             --green: #00e676;
             --red: #ff1744;
-            --text: #ffffff;
+            --blue: #2979ff;
         }
-        body { 
-            background: var(--bg); 
-            color: var(--text); 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            margin: 0; padding: 15px; 
-        }
-        .container { max-width: 450px; margin: auto; }
+        body { background: var(--bg); color: white; font-family: sans-serif; margin: 0; padding: 15px; }
+        .container { max-width: 400px; margin: auto; }
+        .header { text-align: center; padding: 20px 0; color: var(--blue); font-weight: 900; letter-spacing: 1px; font-size: 0.8rem; }
         
-        /* HEADER PRIX FRANCE */
-        .market-header {
-            text-align: center;
-            padding: 20px;
-            background: linear-gradient(180deg, #1a1a1a 0%, var(--bg) 100%);
-            border-radius: 20px;
-            margin-bottom: 20px;
-        }
-        .fr-label { font-size: 0.7rem; color: var(--blue); font-weight: 900; letter-spacing: 1px; }
-        .fr-price { font-size: 2.2rem; font-weight: 900; margin: 5px 0; }
-        .unit { font-size: 0.9rem; color: #666; }
-
-        /* LISTE DES PAYS */
-        .country-card {
-            background: var(--card);
-            border-radius: 16px;
-            padding: 15px;
-            margin-bottom: 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border: 1px solid rgba(255,255,255,0.03);
-        }
-        .info-left { display: flex; flex-direction: column; gap: 4px; }
-        .country-name { font-weight: 700; font-size: 1rem; }
-        .local-price { font-size: 0.75rem; color: #888; }
+        .card { background: var(--card); border-radius: 15px; padding: 5px 15px; border: 1px solid #222; }
+        .row { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid #222; }
+        .row:last-child { border: none; }
         
-        .info-right { text-align: right; }
-        .flow-value { font-family: "SF Mono", monospace; font-weight: 900; font-size: 1.1rem; }
-        .price-diff { font-size: 0.65rem; margin-top: 4px; font-weight: 600; }
-
+        .country { display: flex; align-items: center; gap: 10px; font-weight: 600; }
+        .val { font-family: monospace; font-weight: 900; font-size: 1.1rem; }
+        
         .import { color: var(--red); }
         .export { color: var(--green); }
-        
-        .footer { text-align: center; font-size: 0.6rem; color: #444; margin-top: 20px; text-transform: uppercase; }
+        .time { text-align: center; font-size: 0.6rem; opacity: 0.4; margin-top: 20px; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="market-header">
-        <div class="fr-label">PRIX DE MARCHÉ FRANCE</div>
-        <div class="fr-price"><span id="prix-fr">--</span><span class="unit"> €/MWh</span></div>
-        <div id="last-update" style="font-size: 0.65rem; color: #555;">Mise à jour : --:--</div>
-    </div>
-
-    <div id="market-list">
+    <div class="header">ÉCHANGES COMMERCIAUX (MW)</div>
+    
+    <div class="card" id="flux-list">
         </div>
 
-    <div class="footer">Données RTE & Entso-e • Mise à jour horaire</div>
+    <div class="time" id="update-time">Mise à jour : --:--</div>
 </div>
 
 <script>
-    const DATA_URL = "https://raw.githubusercontent.com/Zuldar/Tempo_data/main/archive_tempo.json";
-
-    async function updateConsole() {
+    async function update() {
         try {
-            const response = await fetch(`${DATA_URL}?nocache=${Date.now()}`);
-            const [data] = await response.json();
+            const r = await fetch("https://raw.githubusercontent.com/Zuldar/Tempo_data/main/archive_tempo.json?t=" + Date.now());
+            const [d] = await r.json();
 
-            // Mise à jour du prix France
-            document.getElementById('prix-fr').innerText = Math.round(data.prix_france);
-            document.getElementById('last-update').innerText = `DERNIERS FLUX : ${data.heure}`;
-
-            const mapping = [
-                { id: 'UK', name: 'Royaume-Uni', flag: '🇬🇧' },
-                { id: 'DE_BE', name: 'All. / Belgique', flag: '🇩🇪' },
-                { id: 'CH', name: 'Suisse', flag: '🇨🇭' },
-                { id: 'IT', name: 'Italie', flag: '🇮🇹' },
-                { id: 'ES', name: 'Espagne', flag: '🇪🇸' }
+            const pays = [
+                { id: 'uk', n: 'Royaume-Uni', f: '🇬🇧' },
+                { id: 'de_be', n: 'All. / Belg.', f: '🇩🇪' },
+                { id: 'ch', n: 'Suisse', f: '🇨🇭' },
+                { id: 'it', n: 'Italie', f: '🇮🇹' },
+                { id: 'es', n: 'Espagne', f: '🇪🇸' }
             ];
 
             let html = "";
-            mapping.forEach(p => {
-                const countryData = data.pays[p.id];
-                const isImport = countryData.mw > 0;
-                const diff = (countryData.prix - data.prix_france).toFixed(2);
-                const statusClass = isImport ? 'import' : 'export';
-
+            pays.forEach(p => {
+                const v = d[p.id];
+                const isImp = v > 0;
                 html += `
-                    <div class="country-card">
-                        <div class="info-left">
-                            <span class="country-name">${p.flag} ${p.name}</span>
-                            <span class="local-price">Prix Spot : ${countryData.prix} €</span>
+                    <div class="row">
+                        <div class="country"><span>${p.f}</span> ${p.n}</div>
+                        <div class="val ${isImp ? 'import' : 'export'}">
+                            ${isImp ? '↓' : '↑'} ${Math.abs(v)}
                         </div>
-                        <div class="info-right">
-                            <div class="flow-value ${statusClass}">
-                                ${isImport ? '↓' : '↑'} ${Math.abs(countryData.mw)} <span style="font-size:0.7rem">MW</span>
-                            </div>
-                            <div class="price-diff" style="color: ${diff > 0 ? 'var(--red)' : 'var(--green)'}">
-                                ÉCART : ${diff > 0 ? '+' : ''}${diff} €
-                            </div>
-                        </div>
-                    </div>
-                `;
+                    </div>`;
             });
 
-            document.getElementById('market-list').innerHTML = html;
-
-        } catch (error) {
-            console.error("Erreur de récupération :", error);
-            document.getElementById('market-list').innerHTML = "<div style='text-align:center; color:red'>Erreur de liaison robot</div>";
-        }
+            document.getElementById('flux-list').innerHTML = html;
+            document.getElementById('update-time').innerText = "DERNIER RELEVÉ : " + d.heure;
+        } catch (e) { console.error(e); }
     }
-
-    // Actualiser immédiatement et toutes les 15 minutes
-    updateConsole();
-    setInterval(updateConsole, 900000);
+    update();
+    setInterval(update, 60000);
 </script>
-
 </body>
 </html>
