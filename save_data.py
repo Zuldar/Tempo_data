@@ -9,9 +9,8 @@ date_aujourdhui = datetime.now().strftime("%Y-%m-%d")
 # Date du jour automatique
 date_aujourdhui = datetime.now().strftime("%Y-%m-%d")
 
-# On demande les 2 derniers enregistrements pour être sûr d'avoir le temps réel consolidé
-URL_API = f"https://odre.opendatasoft.com/api/explore/v2.1/catalog/datasets/eco2mix-national-tr/records?where=date%3D%22{date_aujourdhui}%22&order_by=date_heure%20desc&limit=2"
-
+# Cela garantit d'avoir l'heure la plus proche de l'instant T
+URL_API = f"https://odre.opendatasoft.com/api/explore/v2.1/catalog/datasets/eco2mix-national-tr/records?where=date%3D%22{date_aujourdhui}%22%20and%20nature%3D%22Donn%C3%A9es%20temps%20r%C3%A9el%22&order_by=date_heure%20desc&limit=1"
 
 def job():
     try:
