@@ -43,14 +43,12 @@
         .anti-main { display: flex; justify-content: space-between; align-items: baseline; }
         .anti-valeur { font-size: 1.6rem; font-weight: 900; color: #fff; }
         .anti-tendance { font-size: 0.75rem; font-weight: 900; padding: 4px 10px; border-radius: 20px; text-transform: uppercase; }
-        
         .bg-ok { background: rgba(0, 230, 118, 0.15); color: var(--green); }
         .bg-vigilance { background: rgba(255, 152, 0, 0.15); color: var(--orange); }
         .bg-alerte { background: rgba(255, 23, 68, 0.15); color: var(--red); }
-        
         .anti-footer { font-size: 0.65rem; opacity: 0.5; font-style: italic; border-top: 1px solid #222; padding-top: 8px; }
 
-        /* STATS RESTANTS */
+        /* STATS */
         .bar-wrap { margin-bottom: 12px; }
         .bar-info { display: flex; justify-content: space-between; font-size: 0.7rem; font-weight: 900; margin-bottom: 5px; }
         .bar-base { background: #1a1a1a; height: 10px; border-radius: 5px; overflow: hidden; }
@@ -117,54 +115,47 @@
             const dataDate = new Date(d.date + "T" + d.heure);
             const diffHours = (now - dataDate) / (1000 * 60 * 60);
             
-            // 1. Barre de Statut
             const statusEl = document.getElementById('data-status');
             const dateStr = dataDate.toLocaleString('fr-FR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
             if (diffHours < 2) { statusEl.className = "status-bar status-live"; statusEl.innerText = "Données Flux Direct • " + dateStr; }
             else if (diffHours < 24) { statusEl.className = "status-bar status-delayed"; statusEl.innerText = "Données Flux Différées • " + dateStr; }
             else { statusEl.className = "status-bar status-offline"; statusEl.innerText = "Données Flux Obsolètes • " + dateStr; }
 
-            // 2. Flux de pays
-            const pays = [{id:'uk',n:'UK',f:'🇬🇧'},{id:'de_be',n:'ALL',f:'🇩🇪'},{id:'it',n:'ITA',f:'🇮🇹'},{id:'es',n:'ESP',f:'🇪🇸'},{id:'ch',n:'SUI',f:'🇨🇭'}];
+            const pays = [
+                {id:'uk',n:'UK',f:'🇬🇧'},
+                {id:'de_be',n:'ALL / BEL',f:'🇩🇪 🇧🇪'},
+                {id:'it',n:'ITA',f:'🇮🇹'},
+                {id:'es',n:'ESP',f:'🇪🇸'},
+                {id:'ch',n:'SUI',f:'🇨🇭'}
+            ];
             let solde = 0; let html = "";
             pays.forEach(p => {
                 const v = d[p.id] || 0; solde += v;
-                html += `<div class="flux-item"><div class="country-name"><span>${p.f}</span> ${p.n}</div><span class="${v>0?'import':'export'}">${v>0?'↓':'↑'} ${Math.abs(v)}</span></div>`;
+                html += `<div class="flux-item"><div class="country-name"><span>${p.f}</span> ${p.n}</div><span style="color:${v>0?'var(--red)':'var(--green)'}">${v>0?'↓':'↑'} ${Math.abs(v)}</span></div>`;
             });
             document.getElementById('flux-grid').innerHTML = html;
             const sEl = document.getElementById('solde-net');
             sEl.innerText = (solde > 0 ? "IMPORT " : "EXPORT ") + Math.abs(solde) + " MW";
             sEl.className = "solde-total " + (solde > 0 ? "import" : "export");
 
-            // 3. LOGIQUE ANTICIPATION (3 ÉTATS)
+            // LOGIQUE ANTICIPATION
             const gw = (d.prevision_j1 / 1000).toFixed(1);
-            const valEl = document.getElementById('anti-val');
+            document.getElementById('anti-val').innerText = gw + " GW";
             const tendEl = document.getElementById('anti-tend');
             const cardEl = document.getElementById('anti-card');
             
-            valEl.innerText = gw + " GW";
-            
-            const seuilVigilance = 65.0;
-            const seuilAlerte = 78.0;
-
-            if (gw <= seuilVigilance) {
-                tendEl.className = "anti-tendance bg-ok";
-                tendEl.innerText = "● NORMAL";
+            if (gw <= 65) {
+                tendEl.className = "anti-tendance bg-ok"; tendEl.innerText = "● NORMAL";
                 cardEl.style.borderColor = "var(--green)";
-            } 
-            else if (gw > seuilVigilance && gw <= seuilAlerte) {
-                const hausse = (((gw - seuilVigilance) / seuilVigilance) * 100).toFixed(0);
-                tendEl.className = "anti-tendance bg-vigilance";
-                tendEl.innerText = "▲ +" + hausse + "% VIGILANCE";
+            } else if (gw <= 78) {
+                const h = (((gw - 65) / 65) * 100).toFixed(0);
+                tendEl.className = "anti-tendance bg-vigilance"; tendEl.innerText = "▲ +" + h + "% VIGILANCE";
                 cardEl.style.borderColor = "var(--orange)";
-            } 
-            else {
-                const hausse = (((gw - seuilVigilance) / seuilVigilance) * 100).toFixed(0);
-                tendEl.className = "anti-tendance bg-alerte";
-                tendEl.innerText = "▲ +" + hausse + "% ALERTE";
+            } else {
+                const h = (((gw - 65) / 65) * 100).toFixed(0);
+                tendEl.className = "anti-tendance bg-alerte"; tendEl.innerText = "▲ +" + h + "% ALERTE";
                 cardEl.style.borderColor = "var(--red)";
             }
-
         } catch (e) { console.error(e); }
     }
 
@@ -192,10 +183,11 @@
             setBadge('card-today', 'text-today', t.codeJour);
             setBadge('card-tomorrow', 'text-tomorrow', tom.codeJour);
 
+            // FIX STATS INDÉFINIES
             const dataStats = [
-                { n: 'BLEU', r: s.restant_bleu, t: 300, g: 'var(--grad-blue)' },
-                { n: 'BLANC', r: s.restant_blanc, t: 43, g: 'var(--grad-white)' },
-                { n: 'ROUGE', r: s.restant_rouge, t: 22, g: 'var(--grad-rouge)' }
+                { n: 'BLEU', r: s.restant_bleu ?? 300, t: 300, g: 'var(--grad-blue)' },
+                { n: 'BLANC', r: s.restant_blanc ?? 43, t: 43, g: 'var(--grad-white)' },
+                { n: 'ROUGE', r: s.restant_rouge ?? 22, t: 22, g: 'var(--grad-rouge)' }
             ];
             document.getElementById('stats-container').innerHTML = dataStats.map(b => `
                 <div class="bar-wrap">
