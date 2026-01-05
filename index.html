@@ -2,225 +2,134 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Tempo Expert - Console Master 2026</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tempo Market Live</title>
     <style>
         :root {
-            --bg: #080808;
-            --blue: #2979ff; --white: #ffffff; --red: #ff1744;
-            --gold: linear-gradient(135deg, #FFD700 0%, #B8860B 100%);
-            --green: #00e676; --grey-light: #333;
+            --bg: #0a0a0a;
+            --card: #151515;
+            --blue: #2979ff;
+            --green: #00e676;
+            --red: #ff1744;
+            --text: #ffffff;
         }
-        body { background-color: var(--bg); color: white; font-family: sans-serif; margin: 0; padding: 10px; display: flex; flex-direction: column; align-items: center; }
-        .container { width: 100%; max-width: 450px; display: flex; flex-direction: column; gap: 12px; }
+        body { 
+            background: var(--bg); 
+            color: var(--text); 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            margin: 0; padding: 15px; 
+        }
+        .container { max-width: 450px; margin: auto; }
         
-        /* BANDEAU DYNAMIQUE SUPÉRIEUR */
-        #status-banner { font-size: 0.65rem; font-weight: 900; text-align: center; padding: 12px; border-radius: 12px; text-transform: uppercase; margin-bottom: 5px; transition: all 0.5s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
-        .status-ok { background: var(--green); color: #000; }
-        .status-delayed { background: var(--blue); color: #fff; }
-        .status-archive { background: var(--red); color: #fff; }
+        /* HEADER PRIX FRANCE */
+        .market-header {
+            text-align: center;
+            padding: 20px;
+            background: linear-gradient(180deg, #1a1a1a 0%, var(--bg) 100%);
+            border-radius: 20px;
+            margin-bottom: 20px;
+        }
+        .fr-label { font-size: 0.7rem; color: var(--blue); font-weight: 900; letter-spacing: 1px; }
+        .fr-price { font-size: 2.2rem; font-weight: 900; margin: 5px 0; }
+        .unit { font-size: 0.9rem; color: #666; }
 
-        .hphc-timer { text-align: center; font-size: 0.7rem; font-weight: 900; padding: 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); margin-top: 5px; }
-        .mode-bleu { background: rgba(41, 121, 255, 0.2); color: var(--blue); border-color: var(--blue); }
-        .mode-blanc { background: rgba(255, 255, 255, 0.2); color: var(--white); border-color: var(--white); }
-        .mode-rouge { background: rgba(255, 23, 68, 0.2); color: var(--red); border-color: var(--red); }
+        /* LISTE DES PAYS */
+        .country-card {
+            background: var(--card);
+            border-radius: 16px;
+            padding: 15px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid rgba(255,255,255,0.03);
+        }
+        .info-left { display: flex; flex-direction: column; gap: 4px; }
+        .country-name { font-weight: 700; font-size: 1rem; }
+        .local-price { font-size: 0.75rem; color: #888; }
+        
+        .info-right { text-align: right; }
+        .flow-value { font-family: "SF Mono", monospace; font-weight: 900; font-size: 1.1rem; }
+        .price-diff { font-size: 0.65rem; margin-top: 4px; font-weight: 600; }
 
-        .box { background: rgba(255,255,255,0.05); border-radius: 20px; padding: 15px; border: 1px solid rgba(255,255,255,0.1); }
-        .split-grid { display: grid; grid-template-columns: 1fr 1.15fr; gap: 12px; }
-        .side-title { font-size: 0.55rem; font-weight: 900; color: var(--blue); margin-bottom: 8px; text-transform: uppercase; }
-        .data-row { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.02); padding: 5px 8px; border-radius: 8px; margin-bottom: 4px; font-size: 0.55rem; }
-        .val-bold { font-weight: 900; }
+        .import { color: var(--red); }
+        .export { color: var(--green); }
         
-        /* ANALYTICS & SIMU */
-        .analytics-box { background: #111; border-radius: 20px; padding: 15px; border: 1px solid #222; }
-        .sim-card { background: #000; padding: 10px; border-radius: 15px; border: 1px solid #222; margin-top: 8px; }
-        .prob-container { display: flex; height: 5px; border-radius: 3px; overflow: hidden; margin: 8px 0; background: #222; }
-        .prob-item { height: 100%; transition: width 0.5s ease; }
-        
-        .update-banner { background: var(--green); color: #000; font-size: 0.6rem; font-weight: 900; text-align: center; padding: 8px; border-radius: 8px; text-transform: uppercase; margin: 15px 0; }
-        .forecast-header-banner { background: var(--grey-light); color: #aaa; font-size: 0.55rem; font-weight: 900; text-align: center; padding: 8px; border-radius: 8px; text-transform: uppercase; margin: 15px 0; }
-        
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .card-rt { border-radius: 20px; padding: 15px; border: 1px solid rgba(255,255,255,0.1); }
-        .is-bleu { background: linear-gradient(135deg, #0044ff 0%, #001133 100%); color: white;}
-        .is-blanc { background: linear-gradient(135deg, #ffffff 0%, #777777 100%); color: #000; }
-        .is-rouge { background: linear-gradient(135deg, #ff0000 0%, #440000 100%); color: white;}
-        
-        button { width: 100%; padding: 15px; border-radius: 12px; border: none; background: #222; color: #fff; font-weight: 900; cursor: pointer; border: 1px solid #333; margin-top: 10px; }
-        input { background:transparent; border:none; color:var(--blue); font-weight:900; font-size:0.7rem; width:30px; outline:none; text-align:center; }
+        .footer { text-align: center; font-size: 0.6rem; color: #444; margin-top: 20px; text-transform: uppercase; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div id="status-banner">SYNCHRONISATION...</div>
-    
-    <div id="hphc-display" class="hphc-timer">ANALYSE TEMPO...</div>
-
-    <div class="box">
-        <div class="split-grid">
-            <div class="prod-col">
-                <div class="side-title">Production FR</div>
-                <div id="prod-list"></div>
-                <div style="margin-top:10px; border-top:1px dashed #333; padding-top:5px;">
-                    <div id="total-gw" style="font-size:1rem; font-weight:900; color:var(--green);">-- GW</div>
-                </div>
-            </div>
-            <div class="flux-col" style="border-left: 1px solid #222; padding-left:10px;">
-                <div class="side-title">Flux Voisins (MW)</div>
-                <div id="flux-list"></div>
-                <div id="total-solde" style="font-size:1rem; font-weight:900; margin-top:10px;">-- MW</div>
-            </div>
-        </div>
+    <div class="market-header">
+        <div class="fr-label">PRIX DE MARCHÉ FRANCE</div>
+        <div class="fr-price"><span id="prix-fr">--</span><span class="unit"> €/MWh</span></div>
+        <div id="last-update" style="font-size: 0.65rem; color: #555;">Mise à jour : --:--</div>
     </div>
 
-    <div class="update-banner">Calendrier Officiel Tempo <span id="tempo-date-header"></span></div>
-    <div class="grid-2" id="rt-days"></div>
-
-    <div class="forecast-header-banner">Prévisions Risques & Météo Expert</div>
-    <div class="analytics-box">
-        <div class="sim-card">
-            <span id="label-j2" style="font-size:0.65rem; font-weight:900;">J+2</span> <span id="ico-j2"></span>
-            <input type="number" id="t-j2" value="2">°C
-            <div id="res-j2"></div>
+    <div id="market-list">
         </div>
-        <div class="sim-card">
-            <span id="label-j3" style="font-size:0.65rem; font-weight:900;">J+3</span> <span id="ico-j3"></span>
-            <input type="number" id="t-j3" value="-1">°C
-            <div id="res-j3"></div>
-        </div>
-    </div>
 
-    <div class="box">
-        <div class="side-title" style="margin-bottom:10px;">Stock Jours Restants</div>
-        <div id="stock-container"></div>
-    </div>
-
-    <button id="refresh-btn">🔄 ACTUALISER LA CONSOLE</button>
+    <div class="footer">Données RTE & Entso-e • Mise à jour horaire</div>
 </div>
 
 <script>
-(function() {
-    const pseudo = "Zuldar", depot = "Tempo_data";
-    const API_LOCAL = `https://raw.githubusercontent.com/${pseudo}/${depot}/main/archive_tempo.json?cb=`;
-    const API_TEMPO = "https://www.api-couleur-tempo.fr/api/jourTempo/today";
-    const API_TMW = "https://www.api-couleur-tempo.fr/api/jourTempo/tomorrow";
-    const API_STATS = "https://www.api-couleur-tempo.fr/api/stats";
+    const DATA_URL = "https://raw.githubusercontent.com/Zuldar/Tempo_data/main/archive_tempo.json";
 
-    let statsGlobal = null;
-
-    function getWeatherIcon(t) { return t <= -2 ? "❄️" : t <= 5 ? "🧊" : t <= 12 ? "☁️" : "☀️"; }
-
-    async function refresh() {
+    async function updateConsole() {
         try {
-            // 1. CHARGEMENT DONNÉES LOCALES (GITHUB)
-            const resp = await fetch(API_LOCAL + Date.now());
-            const mix = await resp.json();
-            const f = mix[0];
-            
-            if (f) {
-                const now = new Date();
-                const dataDate = new Date(f.date_heure);
-                const diffHours = (now - dataDate) / (1000 * 60 * 60);
-                const banner = document.getElementById('status-banner');
-                const isSameDay = now.toDateString() === dataDate.toDateString();
-                const dateStr = dataDate.toLocaleDateString('fr-FR', {day:'2-digit', month:'2-digit'});
+            const response = await fetch(`${DATA_URL}?nocache=${Date.now()}`);
+            const [data] = await response.json();
 
-                // LOGIQUE BANDEAU DYNAMIQUE
-                if (!isSameDay) {
-                    banner.className = "status-archive";
-                    banner.innerHTML = `⚠️ ARCHIVE : DONNÉES DU ${dateStr} À ${f.heure}`;
-                } else if (diffHours > 2) {
-                    banner.className = "status-delayed";
-                    banner.innerHTML = `⏳ RETARDÉ (+2H) : MESURE DU ${dateStr} À ${f.heure}`;
-                } else {
-                    banner.className = "status-ok";
-                    banner.innerHTML = `✅ DIRECT : ${dateStr} À ${f.heure}`;
-                }
+            // Mise à jour du prix France
+            document.getElementById('prix-fr').innerText = Math.round(data.prix_france);
+            document.getElementById('last-update').innerText = `DERNIERS FLUX : ${data.heure}`;
 
-                // MISE À JOUR DATE CALENDRIER
-                document.getElementById('tempo-date-header').innerText = "- " + now.toLocaleDateString('fr-FR');
+            const mapping = [
+                { id: 'UK', name: 'Royaume-Uni', flag: '🇬🇧' },
+                { id: 'DE_BE', name: 'All. / Belgique', flag: '🇩🇪' },
+                { id: 'CH', name: 'Suisse', flag: '🇨🇭' },
+                { id: 'IT', name: 'Italie', flag: '🇮🇹' },
+                { id: 'ES', name: 'Espagne', flag: '🇪🇸' }
+            ];
 
-                // AFFICHAGE PROD
-                const sources = [{l:'NUC', v:f.nucleaire}, {l:'EOL', v:f.eolien}, {l:'HYD', v:f.hydraulique}, {l:'GAZ', v:f.gaz}];
-                let tP = 0;
-                document.getElementById('prod-list').innerHTML = sources.map(s => {
-                    tP += (s.v || 0);
-                    return `<div class="data-row"><span>${s.l}</span><span class="val-bold">${Math.round(s.v/1000)}k</span></div>`;
-                }).join('');
-                document.getElementById('total-gw').innerText = (tP/1000).toFixed(1) + " GW";
+            let html = "";
+            mapping.forEach(p => {
+                const countryData = data.pays[p.id];
+                const isImport = countryData.mw > 0;
+                const diff = (countryData.prix - data.prix_france).toFixed(2);
+                const statusClass = isImport ? 'import' : 'export';
 
-                // AFFICHAGE FLUX
-                const neighbors = [{k:'angleterre', n:'UK 🇬🇧'}, {k:'allemagne_belgique', n:'DE 🇩🇪'}, {k:'espagne', n:'ES 🇪🇸'}, {k:'italie', n:'IT 🇮🇹'}, {k:'suisse', n:'CH 🇨🇭'}, {k:'belgique', n:'BE 🇧🇪'}];
-                let solde = 0;
-                document.getElementById('flux-list').innerHTML = neighbors.map(n => {
-                    const v = Math.round((f['ech_comm_' + n.k] || 0) * -1);
-                    solde += v;
-                    return `<div class="data-row"><span>${n.n}</span><span class="val-bold" style="color:${v>=0?'var(--green)':'var(--red)'}">${v>=0?'↑':'↓'}${Math.abs(v)}</span></div>`;
-                }).join('');
-                document.getElementById('total-solde').innerText = (solde>=0?"+":"")+solde+" MW";
-                document.getElementById('total-solde').style.color = solde>=0?"var(--green)":"var(--red)";
-            }
+                html += `
+                    <div class="country-card">
+                        <div class="info-left">
+                            <span class="country-name">${p.flag} ${p.name}</span>
+                            <span class="local-price">Prix Spot : ${countryData.prix} €</span>
+                        </div>
+                        <div class="info-right">
+                            <div class="flow-value ${statusClass}">
+                                ${isImport ? '↓' : '↑'} ${Math.abs(countryData.mw)} <span style="font-size:0.7rem">MW</span>
+                            </div>
+                            <div class="price-diff" style="color: ${diff > 0 ? 'var(--red)' : 'var(--green)'}">
+                                ÉCART : ${diff > 0 ? '+' : ''}${diff} €
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
 
-            // 2. CHARGEMENT API TEMPO & STATS
-            const [j0, j1, s] = await Promise.all([
-                fetch(API_TEMPO).then(r=>r.json()), 
-                fetch(API_TMW).then(r=>r.json()), 
-                fetch(API_STATS).then(r=>r.json())
-            ]);
-            
-            const colorMap = { 1: "BLEU", 2: "BLANC", 3: "ROUGE" };
-            
-            // HP/HC UI
-            const h = new Date().getHours();
-            const label = (h >= 6 && h < 22) ? "⚡ HEURES PLEINES" : "🌙 HEURES CREUSES";
-            const curCol = j0.codeJour > 0 ? colorMap[j0.codeJour].toLowerCase() : "null";
-            document.getElementById('hphc-display').className = `hphc-timer mode-${curCol}`;
-            document.getElementById('hphc-display').innerText = label;
+            document.getElementById('market-list').innerHTML = html;
 
-            // STOCK UI
-            const bR = s.joursBleusRestants ?? 0, wR = s.joursBlancsRestants ?? 0, rR = s.joursRougesRestants ?? 0;
-            document.getElementById('stock-container').innerHTML = [
-                {l:'BLEU', r:bR, t:300, c:'var(--blue)'}, {l:'BLANC', r:wR, t:43, c:'var(--white)'}, {l:'ROUGE', r:rR, t:22, c:'var(--red)'}
-            ].map(x => `<div style="margin-bottom:8px;"><div style="display:flex; justify-content:space-between; font-size:0.5rem; font-weight:900;"><span>${x.l}</span><span>${x.r} RESTANTS</span></div>
-                <div style="height:4px; background:#222; margin-top:3px; border-radius:2px; overflow:hidden;"><div style="height:100%; width:${(x.r/x.t)*100}%; background:${x.c}"></div></div></div>`).join('');
-            
-            // CARDS UI
-            document.getElementById('rt-days').innerHTML = [j0, j1].map((info, i) => {
-                const d = new Date(); d.setDate(d.getDate() + i);
-                const col = info.codeJour > 0 ? colorMap[info.codeJour] : "ATTENTE";
-                return `<div class="card-rt is-${col.toLowerCase()}"><div style="font-size:0.55rem; font-weight:900; opacity:0.8;">${d.toLocaleDateString('fr-FR', {weekday:'long', day:'numeric'})}</div><div style="font-size:1.2rem; font-weight:900;">${col}</div></div>`;
-            }).join('');
-
-            statsGlobal = { r: rR, w: wR, b: bR };
-            updateSim();
-
-        } catch (e) { console.error("Erreur Refresh:", e); }
+        } catch (error) {
+            console.error("Erreur de récupération :", error);
+            document.getElementById('market-list').innerHTML = "<div style='text-align:center; color:red'>Erreur de liaison robot</div>";
+        }
     }
 
-    function updateSim() {
-        if (!statsGlobal) return;
-        [2, 3].forEach(off => {
-            const d = new Date(); d.setDate(d.getDate() + off);
-            const temp = parseFloat(document.getElementById('t-j' + off).value);
-            document.getElementById('label-j' + off).innerText = d.toLocaleDateString('fr-FR', {weekday: 'long', day: 'numeric'});
-            document.getElementById('ico-j' + off).innerText = getWeatherIcon(temp);
-            
-            const marge = 75 - (60 + (2.4 * Math.max(0, 15 - temp)));
-            let pRo = (d.getDay() !== 0 && marge < 5) ? 85 : 0;
-            let pBl = (d.getDay() !== 0 && marge >= 5 && marge < 12) ? 75 : (pRo > 0 ? 15 : 0);
-            let pBe = 100 - pRo - pBl;
-            
-            document.getElementById('res-j' + off).innerHTML = `<div style="display:flex; justify-content:space-between; font-size:0.55rem; font-weight:900; margin-top:6px;"><span style="color:var(--blue)">${pBe}%</span> <span>${pBl}%</span> <span style="color:var(--red)">${pRo}%</span></div>
-                <div class="prob-container"><div class="prob-item" style="width:${pBe}%; background:var(--blue)"></div><div class="prob-item" style="width:${pBl}%; background:#ddd"></div><div class="prob-item" style="width:${pRo}%; background:var(--red)"></div></div>`;
-        });
-    }
-
-    document.getElementById('refresh-btn').addEventListener('click', refresh);
-    document.getElementById('t-j2').addEventListener('input', updateSim);
-    document.getElementById('t-j3').addEventListener('input', updateSim);
-    refresh();
-})();
+    // Actualiser immédiatement et toutes les 15 minutes
+    updateConsole();
+    setInterval(updateConsole, 900000);
 </script>
+
 </body>
 </html>
