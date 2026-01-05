@@ -2,11 +2,12 @@ import requests
 import json
 import sys
 
+# URL directe pour le 5 janvier 2026
 URL_API = "https://odre.opendatasoft.com/api/explore/v2.1/catalog/datasets/eco2mix-national-tr/records?where=date%3D%222026-01-05%22&order_by=date_heure%20desc&limit=1"
 
 def job():
     try:
-        # Timeout court (10s) pour ne pas bloquer si RTE ne répond pas
+        # On limite l'attente à 10 secondes
         response = requests.get(URL_API, timeout=10)
         response.raise_for_status()
         data = response.json()
@@ -32,13 +33,13 @@ def job():
             
             with open("archive_tempo.json", "w", encoding="utf-8") as file:
                 json.dump(output, file, indent=4, ensure_ascii=False)
-            print("✅ Données sauvegardées.")
+            print("✅ Sauvegarde terminée avec succès.")
         else:
-            print("⚠️ Pas de données.")
+            print("⚠️ Aucune donnée trouvée.")
             
     except Exception as e:
-        print(f"❌ Erreur: {e}")
-        sys.exit(1) # Informe GitHub que l'étape a échoué
+        print(f"❌ Erreur : {e}")
+        sys.exit(1)
 
 if __name__ == "__main__":
     job()
