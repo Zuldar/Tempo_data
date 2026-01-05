@@ -1,19 +1,18 @@
 [
     {
-        "date_heure": "2026-01-06T22:45:00+00:00",
+        "date": "2026-01-05",
         "heure": "23:45",
+        "date_heure": "2026-01-05T22:45:00+00:00",
         "consommation": null,
         "nucleaire": null,
         "eolien": null,
         "solaire": null,
         "hydraulique": null,
         "gaz": null,
-        "bioenergies": null,
-        "ech_comm_angleterre": null,
-        "ech_comm_espagne": null,
-        "ech_comm_italie": null,
-        "ech_comm_suisse": null,
-        "ech_comm_allemagne_belgique": null,
-        "ech_comm_belgique": 0
+        "ech_comm_angleterre": 501,
+        "ech_comm_espagne": 2867,
+        "ech_comm_italie": -1539,
+        "ech_comm_suisse": -1229,
+        "ech_comm_allemagne_belgique": 1381
     }
 ]
