@@ -15,27 +15,18 @@
         body { background: var(--bg); color: white; font-family: -apple-system, sans-serif; margin: 0; padding: 10px; }
         .container { max-width: 420px; margin: auto; display: flex; flex-direction: column; gap: 12px; }
         
-        /* BANDEAUX DE STATUT */
         .status-bar { text-align: center; font-size: 0.65rem; font-weight: 900; padding: 8px; border-radius: 10px; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; transition: 0.5s; }
         .status-live { background: var(--green); color: black; }
         .status-delayed { background: var(--blue); color: white; }
         .status-offline { background: var(--red); color: white; }
         .status-tempo { background: #008148; color: white; margin-bottom: 8px; }
 
-        /* CARTES & FLUX */
         .card-main { background: var(--card); border-radius: 20px; padding: 15px; border: 1px solid #222; }
         .flux-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
         .flux-item { background: #1a1a1a; padding: 8px 12px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; font-weight: 600; }
         .country-name { display: flex; align-items: center; gap: 6px; }
         .solde-total { text-align: center; padding-top: 10px; font-weight: 900; font-size: 1.3rem; border-top: 1px dashed #333; }
 
-        /* BLOC ANTICIPATION */
-        .anticipation-card { background: #1a1a1a; border-radius: 15px; padding: 12px; border-left: 4px solid #444; margin-bottom: 5px; display: flex; justify-content: space-between; align-items: center; }
-        .anti-label { font-size: 0.6rem; font-weight: 900; opacity: 0.6; text-transform: uppercase; }
-        .anti-valeur { font-size: 1.1rem; font-weight: 900; }
-        .anti-tendance { font-size: 0.75rem; font-weight: 800; }
-
-        /* BADGES J / J+1 */
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .card-rt { border-radius: 20px; padding: 15px; position: relative; border: 1px solid rgba(255,255,255,0.1); min-height: 85px; display: flex; flex-direction: column; justify-content: center; }
         .is-bleu { background: var(--grad-blue); }
@@ -43,7 +34,16 @@
         .is-rouge { background: var(--grad-rouge); }
         .badge-rt { position: absolute; top: 12px; right: 12px; font-size: 0.45rem; padding: 3px 8px; border-radius: 8px; font-weight: 900; background: var(--gold); color: #000; }
 
-        /* STATS */
+        /* BLOC ANTICIPATION (SOUS LES BADGES) */
+        .anticipation-card { background: #151515; border-radius: 18px; padding: 15px; border: 1px solid #222; margin-top: 8px; display: flex; flex-direction: column; gap: 8px; }
+        .anti-header { font-size: 0.6rem; font-weight: 900; opacity: 0.5; letter-spacing: 1px; }
+        .anti-main { display: flex; justify-content: space-between; align-items: baseline; }
+        .anti-valeur { font-size: 1.6rem; font-weight: 900; color: #fff; }
+        .anti-tendance { font-size: 0.8rem; font-weight: 900; padding: 4px 10px; border-radius: 20px; }
+        .bg-up { background: rgba(255, 23, 68, 0.2); color: #ff1744; }
+        .bg-ok { background: rgba(0, 230, 118, 0.2); color: #00e676; }
+        .anti-footer { font-size: 0.65rem; opacity: 0.6; font-style: italic; border-top: 1px solid #222; padding-top: 8px; }
+
         .bar-wrap { margin-bottom: 12px; }
         .bar-info { display: flex; justify-content: space-between; font-size: 0.7rem; font-weight: 900; margin-bottom: 5px; }
         .bar-base { background: #1a1a1a; height: 10px; border-radius: 5px; overflow: hidden; }
@@ -61,14 +61,6 @@
         <div class="solde-total" id="solde-net">-- MW</div>
     </div>
 
-    <div id="anti-box" class="anticipation-card">
-        <div>
-            <div class="anti-label">Prévision Pic National Demain</div>
-            <div id="anti-val" class="anti-valeur">-- GW</div>
-        </div>
-        <div id="anti-tend" class="anti-tendance"> ANALYSE... </div>
-    </div>
-
     <div style="margin-top: 5px;">
         <div id="tempo-status" class="status-bar status-tempo">Mise à jour Tempo : --</div>
         <div class="grid-2">
@@ -83,6 +75,15 @@
                 <div id="text-tomorrow" style="font-size: 1.1rem; font-weight: 900;">...</div>
             </div>
         </div>
+    </div>
+
+    <div class="anticipation-card">
+        <div class="anti-header">ANTICIPATION CHARGE NATIONALE (DEMAIN)</div>
+        <div class="anti-main">
+            <div id="anti-val" class="anti-valeur">-- GW</div>
+            <div id="anti-tend" class="anti-tendance">ANALYSE...</div>
+        </div>
+        <div id="anti-footer" class="anti-footer">Basé sur une moyenne habituelle de 65 GW</div>
     </div>
 
     <div class="card-main">
@@ -109,14 +110,12 @@
             const dataDate = new Date(d.date + "T" + d.heure);
             const diffHours = (now - dataDate) / (1000 * 60 * 60);
             
-            // Mise à jour de la barre de statut
             const statusEl = document.getElementById('data-status');
             const dateStr = dataDate.toLocaleString('fr-FR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
             if (diffHours < 2) { statusEl.className = "status-bar status-live"; statusEl.innerText = "Données Flux Direct • " + dateStr; }
             else if (diffHours < 24) { statusEl.className = "status-bar status-delayed"; statusEl.innerText = "Données Flux Différées • " + dateStr; }
             else { statusEl.className = "status-bar status-offline"; statusEl.innerText = "Données Flux Obsolètes • " + dateStr; }
 
-            // Mise à jour des pays
             const pays = [{id:'uk',n:'UK',f:'🇬🇧'},{id:'de_be',n:'ALL',f:'🇩🇪'},{id:'it',n:'ITA',f:'🇮🇹'},{id:'es',n:'ESP',f:'🇪🇸'},{id:'ch',n:'SUI',f:'🇨🇭'}];
             let solde = 0; let html = "";
             pays.forEach(p => {
@@ -128,21 +127,20 @@
             sEl.innerText = (solde > 0 ? "IMPORT " : "EXPORT ") + Math.abs(solde) + " MW";
             sEl.className = "solde-total " + (solde > 0 ? "import" : "export");
 
-            // NOUVELLE LOGIQUE : ANTICIPATION
+            // LOGIQUE ANTICIPATION
             const gw = (d.prevision_j1 / 1000).toFixed(1);
-            const antiBox = document.getElementById('anti-box');
             document.getElementById('anti-val').innerText = gw + " GW";
             
-            const seuilRef = 65; // Seuil hivernal
-            if (gw > seuilRef) {
-                const diff = (((gw - seuilRef) / seuilRef) * 100).toFixed(0);
-                document.getElementById('anti-tend').innerHTML = `<span style="color:var(--red)">▲ +${diff}% HAUTE</span>`;
-                antiBox.style.borderColor = "var(--red)";
+            const moyenne = 60.0;
+            const tendEl = document.getElementById('anti-tend');
+            if (gw > moyenne) {
+                const hausse = (((gw - moyenne) / moyenne) * 100).toFixed(0);
+                tendEl.className = "anti-tendance bg-up";
+                tendEl.innerText = "▲ +" + hausse + "% HAUSSE";
             } else {
-                document.getElementById('anti-tend').innerHTML = `<span style="color:var(--green)">● NORMALE</span>`;
-                antiBox.style.borderColor = "var(--green)";
+                tendEl.className = "anti-tendance bg-ok";
+                tendEl.innerText = "● NORMAL";
             }
-
         } catch (e) { console.error(e); }
     }
 
