@@ -1,6 +1,7 @@
 import requests
 import json
 import sys
+from datetime import datetime
 
 # Génération automatique de la date du jour (ex: 2026-01-05)
 date_aujourdhui = datetime.now().strftime("%Y-%m-%d")
