@@ -3,104 +3,167 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tempo Gold - Flux Solde</title>
+    <title>Tempo Master Expert - Precision</title>
     <style>
         :root {
-            --bg: #050505; --card: #121212; --gold: #d4af37;
-            --blue: #2979ff; --white: #ffffff; --red: #ff1744; --green: #00e676;
+            --bg: #050505; --card: #111; --gold: #d4af37;
+            --blue: #2979ff; --red: #ff1744; --green: #00e676;
+            --grad-blue: linear-gradient(135deg, #0044ff 0%, #001133 100%);
+            --grad-white: linear-gradient(135deg, #ffffff 0%, #777777 100%);
+            --grad-rouge: linear-gradient(135deg, #ff0000 0%, #440000 100%);
         }
         body { background: var(--bg); color: white; font-family: -apple-system, sans-serif; margin: 0; padding: 10px; }
         .container { max-width: 420px; margin: auto; display: flex; flex-direction: column; gap: 12px; }
         
-        /* BADGE DORÉ DÉCOMPTE */
-        .gold-badge { 
-            background: linear-gradient(135deg, #d4af37 0%, #f9f295 50%, #b38728 100%);
-            color: black; padding: 15px; border-radius: 20px; text-align: center;
-            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
-        }
-        .days-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; margin-top: 10px; }
-        .day-counter { background: rgba(0,0,0,0.2); padding: 8px; border-radius: 10px; font-size: 0.6rem; font-weight: 900; }
-        .day-counter span { display: block; font-size: 1.1rem; }
+        /* BANDEAUX DE STATUT */
+        .status-bar { text-align: center; font-size: 0.65rem; font-weight: 900; padding: 8px; border-radius: 10px; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; transition: 0.5s; }
+        .status-live { background: var(--green); color: black; }
+        .status-delayed { background: var(--blue); color: white; }
+        .status-offline { background: var(--red); color: white; }
+        .status-tempo { background: #008148; color: white; margin-bottom: 8px; } /* Vert spécifique Tempo */
 
-        .card { background: var(--card); border-radius: 20px; padding: 15px; border: 1px solid rgba(255,255,255,0.05); }
-        .title { font-size: 0.65rem; font-weight: 900; color: var(--gold); text-transform: uppercase; margin-bottom: 12px; letter-spacing: 1.5px; }
+        /* CARTES & FLUX */
+        .card-main { background: var(--card); border-radius: 20px; padding: 15px; border: 1px solid #222; }
+        .flux-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+        .flux-item { background: #1a1a1a; padding: 8px 12px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; font-weight: 600; }
+        .country-name { display: flex; align-items: center; gap: 6px; }
+        .solde-total { text-align: center; padding-top: 10px; font-weight: 900; font-size: 1.3rem; border-top: 1px dashed #333; }
 
-        /* SOLDE TOTAL */
-        .solde-box { text-align: center; padding: 20px; border-radius: 15px; margin-bottom: 10px; background: #0a0a0a; border: 1px solid #222; }
-        #solde-val { font-size: 2.2rem; font-weight: 900; font-family: monospace; }
-        .solde-label { font-size: 0.7rem; color: #888; text-transform: uppercase; letter-spacing: 1px; }
+        /* BADGES J / J+1 */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .card-rt { border-radius: 20px; padding: 15px; position: relative; border: 1px solid rgba(255,255,255,0.1); min-height: 85px; display: flex; flex-direction: column; justify-content: center; }
+        .is-bleu { background: var(--grad-blue); }
+        .is-blanc { background: var(--grad-white); color: #000 !important; }
+        .is-rouge { background: var(--grad-rouge); }
+        .badge-rt { position: absolute; top: 12px; right: 12px; font-size: 0.45rem; padding: 3px 8px; border-radius: 8px; font-weight: 900; background: var(--gold); color: #000; animation: shine 3s infinite; }
+        @keyframes shine { 0%, 100% { opacity: 0.8; } 50% { opacity: 1; } }
 
-        /* LISTE FLUX */
-        .row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #222; font-size: 0.85rem; }
-        .val { font-family: monospace; font-weight: 900; }
+        /* STATS */
+        .bar-wrap { margin-bottom: 12px; }
+        .bar-info { display: flex; justify-content: space-between; font-size: 0.7rem; font-weight: 900; margin-bottom: 5px; }
+        .bar-base { background: #1a1a1a; height: 10px; border-radius: 5px; overflow: hidden; }
+        .bar-fill { height: 100%; border-radius: 5px; transition: width 1s ease-in-out; }
         .import { color: var(--red); } .export { color: var(--green); }
-        
-        .tempo-day { padding: 15px; border-radius: 15px; text-align: center; font-weight: 900; font-size: 0.8rem; background: #0044ff; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="gold-badge">
-        <div style="font-size: 0.7rem; font-weight: 900; text-transform: uppercase;">Saison Tempo 2025-2026</div>
-        <div class="days-grid">
-            <div class="day-counter" style="color:#0044ff"><span>218</span>BLEU</div>
-            <div class="day-counter" style="color:#666"><span>41</span>BLANC</div>
-            <div class="day-counter" style="color:#ff1744"><span>22</span>ROUGE</div>
+    <div id="data-status" class="status-bar">Vérification Flux...</div>
+
+    <div class="card-main">
+        <div class="flux-grid" id="flux-grid"></div>
+        <div class="solde-total" id="solde-net">-- MW</div>
+    </div>
+
+    <div style="margin-top: 5px;">
+        <div id="tempo-status" class="status-bar status-tempo">Mise à jour Tempo : --</div>
+        <div class="grid-2">
+            <div id="card-today" class="card-rt">
+                <span class="badge-rt">OFFICIEL</span>
+                <div id="date-today" style="font-size: 0.6rem; font-weight: 800; opacity: 0.8; text-transform: uppercase;">DATE J</div>
+                <div id="text-today" style="font-size: 1.1rem; font-weight: 900;">...</div>
+            </div>
+            <div id="card-tomorrow" class="card-rt">
+                <span class="badge-rt">OFFICIEL</span>
+                <div id="date-tomorrow" style="font-size: 0.6rem; font-weight: 800; opacity: 0.8; text-transform: uppercase;">DATE J+1</div>
+                <div id="text-tomorrow" style="font-size: 1.1rem; font-weight: 900;">...</div>
+            </div>
         </div>
     </div>
 
-    <div class="card">
-        <div class="title">Solde Net aux Frontières</div>
-        <div class="solde-box">
-            <div id="solde-val">--</div>
-            <div class="solde-label" id="solde-txt">Calcul en cours...</div>
-        </div>
-        <div id="flux-list"></div>
-    </div>
-
-    <div class="card">
-        <div class="title">Couleur du Jour</div>
-        <div class="tempo-day" id="tempo-color">LUNDI 05 JANVIER : BLEU</div>
+    <div class="card-main">
+        <div style="font-size: 0.6rem; font-weight: 900; color: #444; margin-bottom: 15px; letter-spacing: 1px;">SAISON 2025-26 (RESTANTS)</div>
+        <div id="stats-container"></div>
     </div>
 </div>
 
 <script>
-    async function update() {
+    const labels = { 1: "BLEU", 2: "BLANC", 3: "ROUGE" };
+
+    function formatDate(date) {
+        const options = { weekday: 'long', day: '2-digit', month: 'short' };
+        let s = date.toLocaleDateString('fr-FR', options);
+        return s.charAt(0).toUpperCase() + s.slice(1);
+    }
+
+    async function updateFlux() {
         try {
             const r = await fetch("https://raw.githubusercontent.com/Zuldar/Tempo_data/main/archive_tempo.json?t=" + Date.now());
             const [d] = await r.json();
-
-            // Calcul du solde (Somme de tous les flux)
-            const solde = (d.uk + d.es + d.it + d.ch + d.de_be);
-            const valEl = document.getElementById('solde-val');
-            const txtEl = document.getElementById('solde-txt');
             
-            valEl.innerText = Math.abs(solde) + " MW";
-            valEl.className = solde > 0 ? 'import' : 'export';
-            txtEl.innerText = solde > 0 ? "La France Importe" : "La France Exporte";
+            const now = new Date();
+            const dataDate = new Date(d.date + "T" + d.heure);
+            const diffHours = (now - dataDate) / (1000 * 60 * 60);
+            
+            const statusEl = document.getElementById('data-status');
+            const dateStr = dataDate.toLocaleString('fr-FR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
 
-            // Détail par pays
-            const pays = [
-                {l: "🇬🇧 Royaume-Uni", v: d.uk},
-                {l: "🇩🇪 Allemagne/Belg.", v: d.de_be},
-                {l: "🇮🇹 Italie", v: d.it},
-                {l: "🇪🇸 Espagne", v: d.es},
-                {l: "🇨🇭 Suisse", v: d.ch}
-            ];
+            if (diffHours < 2) {
+                statusEl.className = "status-bar status-live";
+                statusEl.innerText = "Données Flux Direct • " + dateStr;
+            } else if (diffHours < 24) {
+                statusEl.className = "status-bar status-delayed";
+                statusEl.innerText = "Données Flux Différées • " + dateStr;
+            } else {
+                statusEl.className = "status-bar status-offline";
+                statusEl.innerText = "Données Flux Obsolètes • " + dateStr;
+            }
 
-            document.getElementById('flux-list').innerHTML = pays.map(p => `
-                <div class="row">
-                    <span>${p.l}</span>
-                    <span class="val ${p.v > 0 ? 'import':'export'}">
-                        ${p.v > 0 ? '↓' : '↑'} ${Math.abs(p.v)}
-                    </span>
-                </div>
-            `).join('');
-
+            const pays = [{id:'uk',n:'UK',f:'🇬🇧'},{id:'de_be',n:'ALL',f:'🇩🇪'},{id:'it',n:'ITA',f:'🇮🇹'},{id:'es',n:'ESP',f:'🇪🇸'},{id:'ch',n:'SUI',f:'🇨🇭'}];
+            let solde = 0; let html = "";
+            pays.forEach(p => {
+                const v = d[p.id] || 0; solde += v;
+                html += `<div class="flux-item"><div class="country-name"><span>${p.f}</span> ${p.n}</div><span class="${v>0?'import':'export'}">${v>0?'↓':'↑'} ${Math.abs(v)}</span></div>`;
+            });
+            document.getElementById('flux-grid').innerHTML = html;
+            const sEl = document.getElementById('solde-net');
+            sEl.innerText = (solde > 0 ? "IMPORT " : "EXPORT ") + Math.abs(solde) + " MW";
+            sEl.className = "solde-total " + (solde > 0 ? "import" : "export");
         } catch (e) { console.error(e); }
     }
-    update();
+
+    async function updateTempo() {
+        try {
+            const [t, tom, s] = await Promise.all([
+                fetch("https://www.api-couleur-tempo.fr/api/jourTempo/today").then(r => r.json()),
+                fetch("https://www.api-couleur-tempo.fr/api/jourTempo/tomorrow").then(r => r.json()),
+                fetch("https://www.api-couleur-tempo.fr/api/stats").then(r => r.json())
+            ]);
+
+            // Dates pour les badges
+            const today = new Date();
+            const tomorrow = new Date();
+            tomorrow.setDate(today.getDate() + 1);
+
+            document.getElementById('date-today').innerText = formatDate(today);
+            document.getElementById('date-tomorrow').innerText = formatDate(tomorrow);
+            document.getElementById('tempo-status').innerText = "Mise à jour Tempo : " + today.toLocaleDateString('fr-FR');
+
+            const setBadge = (id, textId, code) => {
+                const label = labels[code] || "NON DÉFINI";
+                document.getElementById(id).className = `card-rt is-${label.toLowerCase()}`;
+                document.getElementById(textId).innerText = label;
+            };
+            setBadge('card-today', 'text-today', t.codeJour);
+            setBadge('card-tomorrow', 'text-tomorrow', tom.codeJour);
+
+            const dataStats = [
+                { n: 'BLEU', r: s.restant_bleu || 218, t: 300, g: 'var(--grad-blue)' },
+                { n: 'BLANC', r: s.restant_blanc || 41, t: 43, g: 'var(--grad-white)' },
+                { n: 'ROUGE', r: s.restant_rouge || 20, t: 22, g: 'var(--grad-rouge)' }
+            ];
+            document.getElementById('stats-container').innerHTML = dataStats.map(b => `
+                <div class="bar-wrap">
+                    <div class="bar-info"><span>${b.n}</span> <span>${b.r} / ${b.t} RESTANTS</span></div>
+                    <div class="bar-base"><div class="bar-fill" style="width: ${(b.r/b.t)*100}%; background: ${b.g};"></div></div>
+                </div>
+            `).join('');
+        } catch (e) { console.error(e); }
+    }
+
+    updateTempo(); updateFlux();
+    setInterval(updateFlux, 300000);
 </script>
 </body>
 </html>
