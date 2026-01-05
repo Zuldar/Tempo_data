@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tempo Master Expert - Precision</title>
+    <title>Tempo Master Expert - Flux Précision</title>
     <style>
         :root {
-            --bg: #050505; --card: #111; --gold: #d4af37;
+            --bg: #050505; --card: #111; 
+            --gold-linear: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c);
             --blue: #2979ff; --red: #ff1744; --green: #00e676; --orange: #ff9800;
             --grad-blue: linear-gradient(135deg, #0044ff 0%, #001133 100%);
             --grad-white: linear-gradient(135deg, #ffffff 0%, #777777 100%);
@@ -15,190 +16,207 @@
         body { background: var(--bg); color: white; font-family: -apple-system, sans-serif; margin: 0; padding: 10px; }
         .container { max-width: 420px; margin: auto; display: flex; flex-direction: column; gap: 12px; }
         
-        /* BANDEAUX DE STATUT */
-        .status-bar { text-align: center; font-size: 0.65rem; font-weight: 900; padding: 8px; border-radius: 10px; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; transition: 0.5s; }
+        .status-bar { text-align: center; font-size: 0.65rem; font-weight: 900; padding: 8px; border-radius: 10px; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; }
         .status-live { background: var(--green); color: black; }
-        .status-delayed { background: var(--blue); color: white; }
-        .status-offline { background: var(--red); color: white; }
-        .status-tempo { background: #008148; color: white; margin-bottom: 8px; }
-
-        /* CARTES & FLUX */
+        
         .card-main { background: var(--card); border-radius: 20px; padding: 15px; border: 1px solid #222; }
         .flux-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
         .flux-item { background: #1a1a1a; padding: 8px 12px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; font-weight: 600; }
-        .country-name { display: flex; align-items: center; gap: 6px; }
-        .solde-total { text-align: center; padding-top: 10px; font-weight: 900; font-size: 1.3rem; border-top: 1px dashed #333; }
+        
+        /* SOLDE VISUEL EPURE : DRAPEAU -> FLECHE -> MW */
+        .solde-container { text-align: center; padding-top: 15px; border-top: 1px dashed #333; display: flex; justify-content: center; align-items: center; }
+        .flux-visual { display: flex; align-items: center; gap: 12px; height: 40px; }
+        .arrow { font-size: 1.8rem; transition: transform 0.5s; font-weight: bold; line-height: 1; }
+        .solde-val { font-weight: 900; font-size: 1.5rem; letter-spacing: -0.5px; }
+        
+        .import-style { color: var(--red); }
+        .export-style { color: var(--green); }
 
-        /* BADGES J / J+1 */
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .card-rt { border-radius: 20px; padding: 15px; position: relative; border: 1px solid rgba(255,255,255,0.1); min-height: 85px; display: flex; flex-direction: column; justify-content: center; }
         .is-bleu { background: var(--grad-blue); }
         .is-blanc { background: var(--grad-white); color: #000 !important; }
         .is-rouge { background: var(--grad-rouge); }
-        .badge-rt { position: absolute; top: 12px; right: 12px; font-size: 0.45rem; padding: 3px 8px; border-radius: 8px; font-weight: 900; background: var(--gold); color: #000; }
 
-        /* BLOC ANTICIPATION (3 ÉTATS) */
-        .anticipation-card { background: #151515; border-radius: 18px; padding: 15px; border: 1px solid #222; border-left-width: 5px; margin-top: 5px; display: flex; flex-direction: column; gap: 8px; transition: 0.5s; }
-        .anti-header { font-size: 0.6rem; font-weight: 900; opacity: 0.5; letter-spacing: 1px; }
-        .anti-main { display: flex; justify-content: space-between; align-items: baseline; }
-        .anti-valeur { font-size: 1.6rem; font-weight: 900; color: #fff; }
-        .anti-tendance { font-size: 0.75rem; font-weight: 900; padding: 4px 10px; border-radius: 20px; text-transform: uppercase; }
-        .bg-ok { background: rgba(0, 230, 118, 0.15); color: var(--green); }
-        .bg-vigilance { background: rgba(255, 152, 0, 0.15); color: var(--orange); }
-        .bg-alerte { background: rgba(255, 23, 68, 0.15); color: var(--red); }
-        .anti-footer { font-size: 0.65rem; opacity: 0.5; font-style: italic; border-top: 1px solid #222; padding-top: 8px; }
+        .badge-officiel { 
+            position: absolute; top: 10px; right: 10px; 
+            font-size: 0.5rem; padding: 4px 10px; border-radius: 5px; 
+            font-weight: 900; color: #111;
+            background: var(--gold-linear);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            letter-spacing: 0.5px; text-transform: uppercase;
+        }
 
-        /* STATS */
+        .prob-container { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .prob-card { background: #151515; border-radius: 18px; padding: 12px; border: 2px solid #222; transition: border-color 0.5s; }
+        .prob-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px solid #333; padding-bottom: 5px; }
+        .prob-line { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; font-size: 0.7rem; font-weight: 800; }
+        .dot { width: 10px; height: 10px; border-radius: 50%; }
+        .prob-bar-bg { flex-grow: 1; height: 6px; background: #222; border-radius: 3px; overflow: hidden; }
+        .prob-bar-fill { height: 100%; transition: width 1s ease; }
+        
         .bar-wrap { margin-bottom: 12px; }
         .bar-info { display: flex; justify-content: space-between; font-size: 0.7rem; font-weight: 900; margin-bottom: 5px; }
         .bar-base { background: #1a1a1a; height: 10px; border-radius: 5px; overflow: hidden; }
         .bar-fill { height: 100%; border-radius: 5px; transition: width 1s ease-in-out; }
-        .import { color: var(--red); } .export { color: var(--green); }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div id="data-status" class="status-bar">Vérification Flux...</div>
+    <div id="data-status" class="status-bar">Sync Flux...</div>
 
     <div class="card-main">
         <div class="flux-grid" id="flux-grid"></div>
-        <div class="solde-total" id="solde-net">-- MW</div>
+        
+        <div class="solde-container">
+            <div class="flux-visual" id="flux-display">
+                </div>
+        </div>
     </div>
 
     <div style="margin-top: 5px;">
-        <div id="tempo-status" class="status-bar status-tempo">Mise à jour Tempo : --</div>
+        <div id="tempo-status" class="status-bar" style="background:#008148;color:white;margin-bottom:8px;">Réseau Tempo</div>
         <div class="grid-2">
-            <div id="card-today" class="card-rt">
-                <span class="badge-rt">OFFICIEL</span>
-                <div id="date-today" style="font-size: 0.6rem; font-weight: 800; opacity: 0.8; text-transform: uppercase;">DATE J</div>
-                <div id="text-today" style="font-size: 1.1rem; font-weight: 900;">...</div>
-            </div>
-            <div id="card-tomorrow" class="card-rt">
-                <span class="badge-rt">OFFICIEL</span>
-                <div id="date-tomorrow" style="font-size: 0.6rem; font-weight: 800; opacity: 0.8; text-transform: uppercase;">DATE J+1</div>
-                <div id="text-tomorrow" style="font-size: 1.1rem; font-weight: 900;">...</div>
-            </div>
+            <div id="card-today" class="card-rt"><span class="badge-officiel">OFFICIEL</span><div id="date-today" style="font-size: 0.6rem; font-weight: 800; opacity: 0.8; text-transform: uppercase;">...</div><div id="text-today" style="font-size: 1.1rem; font-weight: 900;">...</div></div>
+            <div id="card-tomorrow" class="card-rt"><span class="badge-officiel">OFFICIEL</span><div id="date-tomorrow" style="font-size: 0.6rem; font-weight: 800; opacity: 0.8; text-transform: uppercase;">...</div><div id="text-tomorrow" style="font-size: 1.1rem; font-weight: 900;">...</div></div>
         </div>
     </div>
 
-    <div id="anti-card" class="anticipation-card">
-        <div class="anti-header">ANTICIPATION CHARGE NATIONALE (DEMAIN)</div>
-        <div class="anti-main">
-            <div id="anti-val" class="anti-valeur">-- GW</div>
-            <div id="anti-tend" class="anti-tendance">ANALYSE...</div>
+    <div class="prob-container">
+        <div id="card-j2" class="prob-card">
+            <div class="prob-header">
+                <span id="label-j2" style="font-size: 0.6rem; font-weight: 900; opacity: 0.6;">...</span>
+                <span id="temp-j2" style="font-size: 0.8rem; font-weight: 900;">--°C</span>
+            </div>
+            <div id="prob-rows-j2"></div>
         </div>
-        <div id="anti-footer" class="anti-footer">Comparé au seuil de vigilance hivernal (65 GW)</div>
+        <div id="card-j3" class="prob-card">
+            <div class="prob-header">
+                <span id="label-j3" style="font-size: 0.6rem; font-weight: 900; opacity: 0.6;">...</span>
+                <span id="temp-j3" style="font-size: 0.8rem; font-weight: 900;">--°C</span>
+            </div>
+            <div id="prob-rows-j3"></div>
+        </div>
     </div>
 
     <div class="card-main">
-        <div style="font-size: 0.6rem; font-weight: 900; color: #444; margin-bottom: 15px; letter-spacing: 1px;">SAISON 2025-26 (RESTANTS)</div>
+        <div style="font-size: 0.6rem; font-weight: 900; color: #444; margin-bottom: 15px;">SAISON 2025-26 (RESTANTS)</div>
         <div id="stats-container"></div>
     </div>
 </div>
 
 <script>
     const labels = { 1: "BLEU", 2: "BLANC", 3: "ROUGE" };
-
-    function formatDate(date) {
-        const options = { weekday: 'long', day: '2-digit', month: 'short' };
-        let s = date.toLocaleDateString('fr-FR', options);
-        return s.charAt(0).toUpperCase() + s.slice(1);
-    }
+    let currentGW = 65;
 
     async function updateFlux() {
         try {
             const r = await fetch("https://raw.githubusercontent.com/Zuldar/Tempo_data/main/archive_tempo.json?t=" + Date.now());
             const [d] = await r.json();
-            
-            const now = new Date();
-            const dataDate = new Date(d.date + "T" + d.heure);
-            const diffHours = (now - dataDate) / (1000 * 60 * 60);
-            
-            const statusEl = document.getElementById('data-status');
-            const dateStr = dataDate.toLocaleString('fr-FR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
-            if (diffHours < 2) { statusEl.className = "status-bar status-live"; statusEl.innerText = "Données Flux Direct • " + dateStr; }
-            else if (diffHours < 24) { statusEl.className = "status-bar status-delayed"; statusEl.innerText = "Données Flux Différées • " + dateStr; }
-            else { statusEl.className = "status-bar status-offline"; statusEl.innerText = "Données Flux Obsolètes • " + dateStr; }
-
-            const pays = [
-                {id:'uk',n:'UK',f:'🇬🇧'},
-                {id:'de_be',n:'ALL / BEL',f:'🇩🇪 🇧🇪'},
-                {id:'it',n:'ITA',f:'🇮🇹'},
-                {id:'es',n:'ESP',f:'🇪🇸'},
-                {id:'ch',n:'SUI',f:'🇨🇭'}
-            ];
-            let solde = 0; let html = "";
-            pays.forEach(p => {
-                const v = d[p.id] || 0; solde += v;
-                html += `<div class="flux-item"><div class="country-name"><span>${p.f}</span> ${p.n}</div><span style="color:${v>0?'var(--red)':'var(--green)'}">${v>0?'↓':'↑'} ${Math.abs(v)}</span></div>`;
+            currentGW = d.prevision_j1 / 1000;
+            const pays = [{id:'uk',n:'UK',f:'🇬🇧'},{id:'de_be',n:'ALL/BEL',f:'🇩🇪🇧🇪'},{id:'it',n:'ITA',f:'🇮🇹'},{id:'es',n:'ESP',f:'🇪🇸'},{id:'ch',n:'SUI',f:'🇨🇭'}];
+            let solde = 0, html = "";
+            pays.forEach(p => { 
+                const v = d[p.id] || 0; 
+                solde += v; 
+                html += `<div class="flux-item"><span>${p.f} ${p.n}</span><span style="color:${v>0?'var(--red)':'var(--green)'}">${v>0?'↓':'↑'} ${Math.abs(v)}</span></div>`; 
             });
             document.getElementById('flux-grid').innerHTML = html;
-            const sEl = document.getElementById('solde-net');
-            sEl.innerText = (solde > 0 ? "IMPORT " : "EXPORT ") + Math.abs(solde) + " MW";
-            sEl.className = "solde-total " + (solde > 0 ? "import" : "export");
-
-            // LOGIQUE ANTICIPATION
-            const gw = (d.prevision_j1 / 1000).toFixed(1);
-            document.getElementById('anti-val').innerText = gw + " GW";
-            const tendEl = document.getElementById('anti-tend');
-            const cardEl = document.getElementById('anti-card');
             
-            if (gw <= 65) {
-                tendEl.className = "anti-tendance bg-ok"; tendEl.innerText = "● NORMAL";
-                cardEl.style.borderColor = "var(--green)";
-            } else if (gw <= 78) {
-                const h = (((gw - 65) / 65) * 100).toFixed(0);
-                tendEl.className = "anti-tendance bg-vigilance"; tendEl.innerText = "▲ +" + h + "% VIGILANCE";
-                cardEl.style.borderColor = "var(--orange)";
-            } else {
-                const h = (((gw - 65) / 65) * 100).toFixed(0);
-                tendEl.className = "anti-tendance bg-alerte"; tendEl.innerText = "▲ +" + h + "% ALERTE";
-                cardEl.style.borderColor = "var(--red)";
+            // MAJ VISUELLE : [DRAPEAU] [FLECHE] [MW]
+            const display = document.getElementById('flux-display');
+            const absSolde = Math.abs(solde);
+            
+            if (solde > 0) { // IMPORT (Vers la France)
+                display.innerHTML = `
+                    <span style="font-size: 1.8rem; order: 2;">🇫🇷</span>
+                    <span class="arrow import-style" style="order: 1;">➡</span>
+                    <span class="solde-val import-style" style="order: 0;">${absSolde} MW</span>
+                `;
+            } else { // EXPORT (De la France)
+                display.innerHTML = `
+                    <span style="font-size: 1.8rem; order: 0;">🇫🇷</span>
+                    <span class="arrow export-style" style="order: 1;">➡</span>
+                    <span class="solde-val export-style" style="order: 2;">${absSolde} MW</span>
+                `;
             }
-        } catch (e) { console.error(e); }
+
+            document.getElementById('data-status').innerText = "RÉSEAU LIVE • " + new Date().toLocaleTimeString();
+            document.getElementById('data-status').className = "status-bar status-live";
+        } catch (e) {}
+    }
+
+    function calculateProb(temp, gw) {
+        let r = 0, w = 0, b = 0;
+        if (temp <= 2) { r = 85; w = 15; b = 0; }
+        else if (temp <= 6) { r = 25; w = 70; b = 5; }
+        else if (temp <= 9) { r = 5; w = 65; b = 30; }
+        else if (temp <= 12) { r = 0; w = 20; b = 80; }
+        else { r = 0; w = 0; b = 100; }
+        if (gw > 75) { r += 15; w += 10; }
+        let total = Math.max(1, r + w + b);
+        let normR = Math.round((Math.max(0, r) / total) * 100);
+        let normW = Math.round((Math.max(0, w) / total) * 100);
+        let normB = 100 - (normR + normW); 
+        return { ROUGE: normR, BLANC: normW, BLEU: Math.max(0, normB) };
+    }
+
+    function renderProbs(cardId, rowsId, probs) {
+        const config = [{id:'ROUGE',c:'var(--red)',v:probs.ROUGE},{id:'BLANC',c:'#fff',v:probs.BLANC},{id:'BLEU',c:'var(--blue)',v:probs.BLEU}];
+        const dominant = config.reduce((p, c) => (p.v > c.v) ? p : c);
+        document.getElementById(cardId).style.borderColor = dominant.v > 45 ? dominant.c : "#222";
+        document.getElementById(rowsId).innerHTML = config.map(item => `
+            <div class="prob-line">
+                <span class="dot" style="background:${item.c}; box-shadow: 0 0 8px ${item.c}66;"></span>
+                <div class="prob-bar-bg"><div class="prob-bar-fill" style="width:${item.v}%; background:${item.c}"></div></div>
+                <span style="width:28px; text-align:right; font-size:0.6rem">${item.v}%</span>
+            </div>
+        `).join('');
+    }
+
+    async function updateWeather() {
+        try {
+            const res = await fetch("https://api.open-meteo.com/v1/forecast?latitude=48.8566&longitude=2.3522&daily=temperature_2m_min&timezone=Europe%2FBerlin");
+            const data = await res.json();
+            [2, 3].forEach((off, i) => {
+                const id = i === 0 ? "2" : "3";
+                const d = new Date(); d.setDate(d.getDate() + off);
+                const temp = data.daily.temperature_2m_min[off];
+                document.getElementById(`label-j${id}`).innerText = d.toLocaleDateString('fr-FR', {weekday:'short', day:'2-digit'}).toUpperCase();
+                document.getElementById(`temp-j${id}`).innerText = Math.round(temp) + "°C";
+                renderProbs(`card-j${id}`, `prob-rows-j${id}`, calculateProb(temp, currentGW));
+            });
+        } catch (e) {}
     }
 
     async function updateTempo() {
         try {
-            const [t, tom, s] = await Promise.all([
-                fetch("https://www.api-couleur-tempo.fr/api/jourTempo/today").then(r => r.json()),
-                fetch("https://www.api-couleur-tempo.fr/api/jourTempo/tomorrow").then(r => r.json()),
-                fetch("https://www.api-couleur-tempo.fr/api/stats").then(r => r.json())
+            const [tRes, tomRes, sRes] = await Promise.all([
+                fetch("https://www.api-couleur-tempo.fr/api/jourTempo/today"),
+                fetch("https://www.api-couleur-tempo.fr/api/jourTempo/tomorrow"),
+                fetch("https://www.api-couleur-tempo.fr/api/stats")
             ]);
-
-            const today = new Date();
-            const tomorrow = new Date();
-            tomorrow.setDate(today.getDate() + 1);
-
-            document.getElementById('date-today').innerText = formatDate(today);
-            document.getElementById('date-tomorrow').innerText = formatDate(tomorrow);
-            document.getElementById('tempo-status').innerText = "Mise à jour Tempo : " + today.toLocaleDateString('fr-FR');
-
-            const setBadge = (id, textId, code) => {
-                const label = labels[code] || "NON DÉFINI";
-                document.getElementById(id).className = `card-rt is-${label.toLowerCase()}`;
-                document.getElementById(textId).innerText = label;
-            };
-            setBadge('card-today', 'text-today', t.codeJour);
-            setBadge('card-tomorrow', 'text-tomorrow', tom.codeJour);
-
-            // FIX STATS INDÉFINIES
-            const dataStats = [
-                { n: 'BLEU', r: s.restant_bleu ?? 300, t: 300, g: 'var(--grad-blue)' },
-                { n: 'BLANC', r: s.restant_blanc ?? 43, t: 43, g: 'var(--grad-white)' },
-                { n: 'ROUGE', r: s.restant_rouge ?? 22, t: 22, g: 'var(--grad-rouge)' }
-            ];
-            document.getElementById('stats-container').innerHTML = dataStats.map(b => `
+            const t = await tRes.json(), tom = await tomRes.json(), s = await sRes.json();
+            const findV = (obj, col) => { for (let [k, v] of Object.entries(obj)) { if (k.toLowerCase().includes(col)) return v; } return 0; };
+            const rest = { bleu: 300 - findV(s, 'bleu'), blanc: 43 - findV(s, 'blanc'), rouge: 22 - findV(s, 'rouge') };
+            document.getElementById('card-today').className = `card-rt is-${(labels[t.codeJour]||'attente').toLowerCase()}`;
+            document.getElementById('text-today').innerText = labels[t.codeJour] || '...';
+            document.getElementById('card-tomorrow').className = `card-rt is-${(labels[tom.codeJour]||'attente').toLowerCase()}`;
+            document.getElementById('text-tomorrow').innerText = labels[tom.codeJour] || '...';
+            document.getElementById('date-today').innerText = new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: '2-digit', month: 'short' });
+            const dTom = new Date(); dTom.setDate(dTom.getDate() + 1);
+            document.getElementById('date-tomorrow').innerText = dTom.toLocaleDateString('fr-FR', { weekday: 'long', day: '2-digit', month: 'short' });
+            const config = [{ n: 'BLEU', v: rest.bleu, t: 300, g: 'var(--grad-blue)' }, { n: 'BLANC', v: rest.blanc, t: 43, g: 'var(--grad-white)' }, { n: 'ROUGE', v: rest.rouge, t: 22, g: 'var(--grad-rouge)' }];
+            document.getElementById('stats-container').innerHTML = config.map(c => `
                 <div class="bar-wrap">
-                    <div class="bar-info"><span>${b.n}</span> <span>${b.r} / ${b.t} RESTANTS</span></div>
-                    <div class="bar-base"><div class="bar-fill" style="width: ${(b.r/b.t)*100}%; background: ${b.g};"></div></div>
-                </div>
-            `).join('');
-        } catch (e) { console.error(e); }
+                    <div class="bar-info"><span>${c.n}</span> <span>${c.v} / ${c.t} RESTANTS</span></div>
+                    <div class="bar-base"><div class="bar-fill" style="width:${(c.v/c.t)*100}%; background:${c.g}"></div></div>
+                </div>`).join('');
+        } catch (e) {}
     }
 
-    updateTempo(); updateFlux();
+    updateTempo(); updateFlux(); setTimeout(updateWeather, 1000);
     setInterval(updateFlux, 300000);
 </script>
 </body>
