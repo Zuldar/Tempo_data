@@ -20,7 +20,7 @@
         .status-live { background: var(--green); color: black; }
         .status-delayed { background: var(--blue); color: white; }
         .status-offline { background: var(--red); color: white; }
-        .status-tempo { background: #008148; color: white; margin-bottom: 8px; } /* Vert spécifique Tempo */
+        .status-tempo { background: #008148; color: white; margin-bottom: 8px; }
 
         /* CARTES & FLUX */
         .card-main { background: var(--card); border-radius: 20px; padding: 15px; border: 1px solid #222; }
@@ -29,14 +29,19 @@
         .country-name { display: flex; align-items: center; gap: 6px; }
         .solde-total { text-align: center; padding-top: 10px; font-weight: 900; font-size: 1.3rem; border-top: 1px dashed #333; }
 
+        /* BLOC ANTICIPATION */
+        .anticipation-card { background: #1a1a1a; border-radius: 15px; padding: 12px; border-left: 4px solid #444; margin-bottom: 5px; display: flex; justify-content: space-between; align-items: center; }
+        .anti-label { font-size: 0.6rem; font-weight: 900; opacity: 0.6; text-transform: uppercase; }
+        .anti-valeur { font-size: 1.1rem; font-weight: 900; }
+        .anti-tendance { font-size: 0.75rem; font-weight: 800; }
+
         /* BADGES J / J+1 */
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .card-rt { border-radius: 20px; padding: 15px; position: relative; border: 1px solid rgba(255,255,255,0.1); min-height: 85px; display: flex; flex-direction: column; justify-content: center; }
         .is-bleu { background: var(--grad-blue); }
         .is-blanc { background: var(--grad-white); color: #000 !important; }
         .is-rouge { background: var(--grad-rouge); }
-        .badge-rt { position: absolute; top: 12px; right: 12px; font-size: 0.45rem; padding: 3px 8px; border-radius: 8px; font-weight: 900; background: var(--gold); color: #000; animation: shine 3s infinite; }
-        @keyframes shine { 0%, 100% { opacity: 0.8; } 50% { opacity: 1; } }
+        .badge-rt { position: absolute; top: 12px; right: 12px; font-size: 0.45rem; padding: 3px 8px; border-radius: 8px; font-weight: 900; background: var(--gold); color: #000; }
 
         /* STATS */
         .bar-wrap { margin-bottom: 12px; }
@@ -54,6 +59,14 @@
     <div class="card-main">
         <div class="flux-grid" id="flux-grid"></div>
         <div class="solde-total" id="solde-net">-- MW</div>
+    </div>
+
+    <div id="anti-box" class="anticipation-card">
+        <div>
+            <div class="anti-label">Prévision Pic National Demain</div>
+            <div id="anti-val" class="anti-valeur">-- GW</div>
+        </div>
+        <div id="anti-tend" class="anti-tendance"> ANALYSE... </div>
     </div>
 
     <div style="margin-top: 5px;">
@@ -96,20 +109,14 @@
             const dataDate = new Date(d.date + "T" + d.heure);
             const diffHours = (now - dataDate) / (1000 * 60 * 60);
             
+            // Mise à jour de la barre de statut
             const statusEl = document.getElementById('data-status');
             const dateStr = dataDate.toLocaleString('fr-FR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+            if (diffHours < 2) { statusEl.className = "status-bar status-live"; statusEl.innerText = "Données Flux Direct • " + dateStr; }
+            else if (diffHours < 24) { statusEl.className = "status-bar status-delayed"; statusEl.innerText = "Données Flux Différées • " + dateStr; }
+            else { statusEl.className = "status-bar status-offline"; statusEl.innerText = "Données Flux Obsolètes • " + dateStr; }
 
-            if (diffHours < 2) {
-                statusEl.className = "status-bar status-live";
-                statusEl.innerText = "Données Flux Direct • " + dateStr;
-            } else if (diffHours < 24) {
-                statusEl.className = "status-bar status-delayed";
-                statusEl.innerText = "Données Flux Différées • " + dateStr;
-            } else {
-                statusEl.className = "status-bar status-offline";
-                statusEl.innerText = "Données Flux Obsolètes • " + dateStr;
-            }
-
+            // Mise à jour des pays
             const pays = [{id:'uk',n:'UK',f:'🇬🇧'},{id:'de_be',n:'ALL',f:'🇩🇪'},{id:'it',n:'ITA',f:'🇮🇹'},{id:'es',n:'ESP',f:'🇪🇸'},{id:'ch',n:'SUI',f:'🇨🇭'}];
             let solde = 0; let html = "";
             pays.forEach(p => {
@@ -120,6 +127,22 @@
             const sEl = document.getElementById('solde-net');
             sEl.innerText = (solde > 0 ? "IMPORT " : "EXPORT ") + Math.abs(solde) + " MW";
             sEl.className = "solde-total " + (solde > 0 ? "import" : "export");
+
+            // NOUVELLE LOGIQUE : ANTICIPATION
+            const gw = (d.prevision_j1 / 1000).toFixed(1);
+            const antiBox = document.getElementById('anti-box');
+            document.getElementById('anti-val').innerText = gw + " GW";
+            
+            const seuilRef = 65; // Seuil hivernal
+            if (gw > seuilRef) {
+                const diff = (((gw - seuilRef) / seuilRef) * 100).toFixed(0);
+                document.getElementById('anti-tend').innerHTML = `<span style="color:var(--red)">▲ +${diff}% HAUTE</span>`;
+                antiBox.style.borderColor = "var(--red)";
+            } else {
+                document.getElementById('anti-tend').innerHTML = `<span style="color:var(--green)">● NORMALE</span>`;
+                antiBox.style.borderColor = "var(--green)";
+            }
+
         } catch (e) { console.error(e); }
     }
 
@@ -131,7 +154,6 @@
                 fetch("https://www.api-couleur-tempo.fr/api/stats").then(r => r.json())
             ]);
 
-            // Dates pour les badges
             const today = new Date();
             const tomorrow = new Date();
             tomorrow.setDate(today.getDate() + 1);
@@ -149,9 +171,9 @@
             setBadge('card-tomorrow', 'text-tomorrow', tom.codeJour);
 
             const dataStats = [
-                { n: 'BLEU', r: s.restant_bleu || 218, t: 300, g: 'var(--grad-blue)' },
-                { n: 'BLANC', r: s.restant_blanc || 41, t: 43, g: 'var(--grad-white)' },
-                { n: 'ROUGE', r: s.restant_rouge || 20, t: 22, g: 'var(--grad-rouge)' }
+                { n: 'BLEU', r: s.restant_bleu, t: 300, g: 'var(--grad-blue)' },
+                { n: 'BLANC', r: s.restant_blanc, t: 43, g: 'var(--grad-white)' },
+                { n: 'ROUGE', r: s.restant_rouge, t: 22, g: 'var(--grad-rouge)' }
             ];
             document.getElementById('stats-container').innerHTML = dataStats.map(b => `
                 <div class="bar-wrap">
