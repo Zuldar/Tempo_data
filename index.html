@@ -19,7 +19,6 @@
         .status-bar { text-align: center; font-size: 0.65rem; font-weight: 900; padding: 8px; border-radius: 10px; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; }
         .status-live { background: var(--green); color: black; }
         
-        /* STYLE DES BADGES AVEC REFLETS ANIMÉS */
         .badge-base { 
             position: absolute; top: 10px; right: 10px; 
             font-size: 0.5rem; padding: 4px 10px; border-radius: 5px; 
@@ -29,19 +28,9 @@
             animation: shine 3s linear infinite;
         }
         @keyframes shine { to { background-position: 200% center; } }
-
-        .badge-estimation { 
-            background-image: linear-gradient(135deg, #6a11cb 0%, #ab66ff 25%, #6a11cb 50%, #ab66ff 75%, #6a11cb 100%);
-            color: white;
-        }
-        .badge-rte { 
-            background-image: linear-gradient(135deg, #00b09b 0%, #96ffea 25%, #00b09b 50%, #96ffea 75%, #00b09b 100%);
-            color: #000;
-        }
-        .badge-officiel { 
-            background-image: var(--gold-linear);
-            color: #111;
-        }
+        .badge-estimation { background-image: linear-gradient(135deg, #6a11cb 0%, #ab66ff 25%, #6a11cb 50%, #ab66ff 75%, #6a11cb 100%); color: white; }
+        .badge-rte { background-image: linear-gradient(135deg, #00b09b 0%, #96ffea 25%, #00b09b 50%, #96ffea 75%, #00b09b 100%); color: #000; }
+        .badge-officiel { background-image: var(--gold-linear); color: #111; }
 
         .card-main { background: var(--card); border-radius: 20px; padding: 15px; border: 1px solid #222; }
         .flux-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
@@ -91,16 +80,8 @@
     <div style="margin-top: 5px;">
         <div id="tempo-status" class="status-bar" style="background:#008148;color:white;margin-bottom:8px;">Réseau Tempo</div>
         <div class="grid-2">
-            <div id="card-today" class="card-rt">
-                <span class="badge-base badge-officiel">OFFICIEL</span>
-                <div id="date-today" style="font-size: 0.6rem; font-weight: 800; opacity: 0.8; text-transform: uppercase;">...</div>
-                <div id="text-today" style="font-size: 1.1rem; font-weight: 900;">...</div>
-            </div>
-            <div id="card-tomorrow" class="card-rt">
-                <span id="badge-tomorrow" class="badge-base">...</span>
-                <div id="date-tomorrow" style="font-size: 0.6rem; font-weight: 800; opacity: 0.8; text-transform: uppercase;">...</div>
-                <div id="text-tomorrow" style="font-size: 1.1rem; font-weight: 900;">...</div>
-            </div>
+            <div id="card-today" class="card-rt"><span class="badge-base badge-officiel">OFFICIEL</span><div id="date-today" style="font-size: 0.6rem; font-weight: 800; opacity: 0.8; text-transform: uppercase;">...</div><div id="text-today" style="font-size: 1.1rem; font-weight: 900;">...</div></div>
+            <div id="card-tomorrow" class="card-rt"><span id="badge-tomorrow" class="badge-base">...</span><div id="date-tomorrow" style="font-size: 0.6rem; font-weight: 800; opacity: 0.8; text-transform: uppercase;">...</div><div id="text-tomorrow" style="font-size: 1.1rem; font-weight: 900;">...</div></div>
         </div>
     </div>
 
@@ -124,6 +105,7 @@
 <script>
     const labels = { 1: "BLEU", 2: "BLANC", 3: "ROUGE" };
     let currentGW = 65;
+    let daysLeft = { rouge: 22, blanc: 43 };
 
     async function updateFlux() {
         try {
@@ -144,12 +126,47 @@
         } catch (e) {}
     }
 
-    function calculateProb(temp, gw) {
+    /**
+     * CALCUL EXPERT DES PROBABILITÉS AVEC RÈGLES EDF
+     */
+    function calculateProb(temp, gw, targetDate) {
         let r = 0, w = 0, b = 0;
-        if (temp <= 2) { r = 85; w = 15; } else if (temp <= 6) { r = 25; w = 70; b = 5; } else if (temp <= 9) { r = 5; w = 65; b = 30; } else if (temp <= 12) { w = 20; b = 80; } else { b = 100; }
+        const dayOfWeek = targetDate.getDay(); // 0 = Dimanche, 6 = Samedi
+        const month = targetDate.getMonth() + 1; // 1 = Janv, 11 = Nov
+
+        // 1. Logique de base (Température + Flux)
+        if (temp <= 2) { r = 85; w = 15; } 
+        else if (temp <= 6) { r = 25; w = 70; b = 5; } 
+        else if (temp <= 9) { r = 5; w = 65; b = 30; } 
+        else if (temp <= 12) { w = 20; b = 80; } 
+        else { b = 100; }
+        
         if (gw > 75) { r += 15; w += 10; }
-        let total = Math.max(1, r + w + b);
-        return { ROUGE: Math.round((r/total)*100), BLANC: Math.round((w/total)*100), BLEU: 100 - (Math.round((r/total)*100) + Math.round((w/total)*100)) };
+
+        // 2. Application des Verrous Réglementaires
+        // RÈGLE : Pas de ROUGE le Week-end (Samedi 6, Dimanche 0)
+        if (dayOfWeek === 0 || dayOfWeek === 6) r = 0;
+
+        // RÈGLE : Pas de BLANC le Dimanche
+        if (dayOfWeek === 0) w = 0;
+
+        // RÈGLE : ROUGE uniquement du 1er Nov (11) au 31 Mars (3)
+        if (month > 3 && month < 11) r = 0;
+
+        // RÈGLE : Sécurité Quotas restants
+        if (daysLeft.rouge <= 0) r = 0;
+        if (daysLeft.blanc <= 0) w = 0;
+
+        // 3. Normalisation
+        let total = r + w + b;
+        if (total === 0) b = 100; // Sécurité au cas où tout est à 0
+        total = Math.max(1, r + w + b);
+
+        return { 
+            ROUGE: Math.round((r/total)*100), 
+            BLANC: Math.round((w/total)*100), 
+            BLEU: 100 - (Math.round((r/total)*100) + Math.round((w/total)*100)) 
+        };
     }
 
     function renderProbs(cardId, rowsId, probs) {
@@ -160,31 +177,45 @@
     async function updateWeather() {
         try {
             const res = await fetch("https://api.open-meteo.com/v1/forecast?latitude=48.8566&longitude=2.3522&daily=temperature_2m_min&timezone=Europe%2FBerlin");
-            const data = await res.json(); const now = new Date(); const hour = now.getHours() + (now.getMinutes()/60);
+            const data = await res.json(); 
+            const now = new Date(); 
+            const hour = now.getHours() + (now.getMinutes()/60);
 
-            // Estimation pour le badge Demain (J+1) entre 00h et 06h30
+            // Estimation J+1 avec règles EDF
             if (hour < 6.5) {
-                const p = calculateProb(data.daily.temperature_2m_min[1], currentGW);
+                const tomorrowDate = new Date(); tomorrowDate.setDate(tomorrowDate.getDate() + 1);
+                const p = calculateProb(data.daily.temperature_2m_min[1], currentGW, tomorrowDate);
                 const dominant = Object.keys(p).reduce((a, b) => p[a] > p[b] ? a : b);
                 document.getElementById('text-tomorrow').innerText = dominant;
                 document.getElementById('card-tomorrow').className = `card-rt is-${dominant.toLowerCase()}`;
             }
 
-            // Cartes J+2 et J+3
+            // Cartes J+2 et J+3 avec règles EDF
             [2, 3].forEach((off, i) => {
-                const id = i === 0 ? "2" : "3"; const d = new Date(); d.setDate(d.getDate() + off);
+                const id = i === 0 ? "2" : "3"; 
+                const targetDate = new Date(); targetDate.setDate(targetDate.getDate() + off);
                 const temp = data.daily.temperature_2m_min[off];
-                document.getElementById(`label-j${id}`).innerText = d.toLocaleDateString('fr-FR', {weekday:'short', day:'2-digit'}).toUpperCase();
+                document.getElementById(`label-j${id}`).innerText = targetDate.toLocaleDateString('fr-FR', {weekday:'short', day:'2-digit'}).toUpperCase();
                 document.getElementById(`temp-j${id}`).innerText = Math.round(temp) + "°C";
-                renderProbs(`card-j${id}`, `prob-rows-j${id}`, calculateProb(temp, currentGW));
+                renderProbs(`card-j${id}`, `prob-rows-j${id}`, calculateProb(temp, currentGW, targetDate));
             });
         } catch (e) {}
     }
 
     async function updateTempo() {
         try {
-            const [tRes, tomRes, sRes] = await Promise.all([fetch("https://www.api-couleur-tempo.fr/api/jourTempo/today"), fetch("https://www.api-couleur-tempo.fr/api/jourTempo/tomorrow"), fetch("https://www.api-couleur-tempo.fr/api/stats")]);
+            const [tRes, tomRes, sRes] = await Promise.all([
+                fetch("https://www.api-couleur-tempo.fr/api/jourTempo/today"), 
+                fetch("https://www.api-couleur-tempo.fr/api/jourTempo/tomorrow"), 
+                fetch("https://www.api-couleur-tempo.fr/api/stats")
+            ]);
             const t = await tRes.json(), tom = await tomRes.json(), s = await sRes.json();
+            
+            // Mise à jour des quotas restants pour les règles de calcul
+            const findV = (obj, col) => { for (let [k, v] of Object.entries(obj)) { if (k.toLowerCase().includes(col)) return v; } return 0; };
+            daysLeft.rouge = 22 - findV(s, 'rouge');
+            daysLeft.blanc = 43 - findV(s, 'blanc');
+
             const now = new Date(); const hour = now.getHours() + (now.getMinutes()/60);
             const badgeTom = document.getElementById('badge-tomorrow');
 
@@ -200,27 +231,29 @@
             document.getElementById('card-today').className = `card-rt is-${(labels[t.codeJour]||'attente').toLowerCase()}`;
             document.getElementById('text-today').innerText = labels[t.codeJour] || '...';
             document.getElementById('date-today').innerText = now.toLocaleDateString('fr-FR', { weekday: 'long', day: '2-digit' });
+            
             const dTom = new Date(); dTom.setDate(dTom.getDate() + 1);
             document.getElementById('date-tomorrow').innerText = dTom.toLocaleDateString('fr-FR', { weekday: 'long', day: '2-digit' });
 
-            const findV = (obj, col) => { for (let [k, v] of Object.entries(obj)) { if (k.toLowerCase().includes(col)) return v; } return 0; };
-            const rest = { bleu: 300 - findV(s, 'bleu'), blanc: 43 - findV(s, 'blanc'), rouge: 22 - findV(s, 'rouge') };
-            const config = [{ n: 'BLEU', v: rest.bleu, t: 300, g: 'var(--grad-blue)' }, { n: 'BLANC', v: rest.blanc, t: 43, g: 'var(--grad-white)' }, { n: 'ROUGE', v: rest.rouge, t: 22, g: 'var(--grad-rouge)' }];
+            const config = [
+                { n: 'BLEU', v: 300 - findV(s, 'bleu'), t: 300, g: 'var(--grad-blue)' }, 
+                { n: 'BLANC', v: daysLeft.blanc, t: 43, g: 'var(--grad-white)' }, 
+                { n: 'ROUGE', v: daysLeft.rouge, t: 22, g: 'var(--grad-rouge)' }
+            ];
             document.getElementById('stats-container').innerHTML = config.map(c => `<div class="bar-wrap"><div class="bar-info"><span>${c.n}</span> <span>${c.v} / ${c.t}</span></div><div class="bar-base"><div class="bar-fill" style="width:${(c.v/c.t)*100}%; background:${c.g}"></div></div></div>`).join('');
         } catch (e) {}
     }
 
-    // Lancement de l'application
     async function init() {
         await updateFlux();
-        await updateTempo();
+        await updateTempo(); // Important d'appeler Tempo avant Weather pour avoir les quotas à jour
         await updateWeather();
     }
     
     init();
-    setInterval(updateFlux, 300000); // 5 min
-    setInterval(updateTempo, 600000); // 10 min
-    setInterval(updateWeather, 3600000); // 1 h
+    setInterval(updateFlux, 300000);
+    setInterval(updateTempo, 600000);
+    setInterval(updateWeather, 3600000);
 </script>
 </body>
 </html>
