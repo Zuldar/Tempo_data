@@ -19,11 +19,34 @@
         .status-bar { text-align: center; font-size: 0.65rem; font-weight: 900; padding: 8px; border-radius: 10px; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; }
         .status-live { background: var(--green); color: black; }
         
+        /* STYLE DES BADGES AVEC REFLETS ANIMÉS */
+        .badge-base { 
+            position: absolute; top: 10px; right: 10px; 
+            font-size: 0.5rem; padding: 4px 10px; border-radius: 5px; 
+            font-weight: 900; box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            letter-spacing: 0.5px; text-transform: uppercase;
+            background-size: 200% auto;
+            animation: shine 3s linear infinite;
+        }
+        @keyframes shine { to { background-position: 200% center; } }
+
+        .badge-estimation { 
+            background-image: linear-gradient(135deg, #6a11cb 0%, #ab66ff 25%, #6a11cb 50%, #ab66ff 75%, #6a11cb 100%);
+            color: white;
+        }
+        .badge-rte { 
+            background-image: linear-gradient(135deg, #00b09b 0%, #96ffea 25%, #00b09b 50%, #96ffea 75%, #00b09b 100%);
+            color: #000;
+        }
+        .badge-officiel { 
+            background-image: var(--gold-linear);
+            color: #111;
+        }
+
         .card-main { background: var(--card); border-radius: 20px; padding: 15px; border: 1px solid #222; }
         .flux-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
         .flux-item { background: #1a1a1a; padding: 8px 12px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; font-weight: 600; }
         
-        /* SOLDE VISUEL EPURE : DRAPEAU -> FLECHE -> MW */
         .solde-container { text-align: center; padding-top: 15px; border-top: 1px dashed #333; display: flex; justify-content: center; align-items: center; }
         .flux-visual { display: flex; align-items: center; gap: 12px; height: 40px; }
         .arrow { font-size: 1.8rem; transition: transform 0.5s; font-weight: bold; line-height: 1; }
@@ -33,19 +56,11 @@
         .export-style { color: var(--green); }
 
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .card-rt { border-radius: 20px; padding: 15px; position: relative; border: 1px solid rgba(255,255,255,0.1); min-height: 85px; display: flex; flex-direction: column; justify-content: center; }
-        .is-bleu { background: var(--grad-blue); }
+        .card-rt { border-radius: 20px; padding: 15px; position: relative; border: 1px solid rgba(255,255,255,0.1); min-height: 85px; display: flex; flex-direction: column; justify-content: center; transition: all 0.5s ease; }
+        .is-bleu { background: var(--grad-blue); color: white; }
         .is-blanc { background: var(--grad-white); color: #000 !important; }
-        .is-rouge { background: var(--grad-rouge); }
-
-        .badge-officiel { 
-            position: absolute; top: 10px; right: 10px; 
-            font-size: 0.5rem; padding: 4px 10px; border-radius: 5px; 
-            font-weight: 900; color: #111;
-            background: var(--gold-linear);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.5);
-            letter-spacing: 0.5px; text-transform: uppercase;
-        }
+        .is-rouge { background: var(--grad-rouge); color: white; }
+        .is-attente { background: #222; color: #555; }
 
         .prob-container { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .prob-card { background: #151515; border-radius: 18px; padding: 12px; border: 2px solid #222; transition: border-color 0.5s; }
@@ -68,34 +83,34 @@
 
     <div class="card-main">
         <div class="flux-grid" id="flux-grid"></div>
-        
         <div class="solde-container">
-            <div class="flux-visual" id="flux-display">
-                </div>
+            <div class="flux-visual" id="flux-display"></div>
         </div>
     </div>
 
     <div style="margin-top: 5px;">
         <div id="tempo-status" class="status-bar" style="background:#008148;color:white;margin-bottom:8px;">Réseau Tempo</div>
         <div class="grid-2">
-            <div id="card-today" class="card-rt"><span class="badge-officiel">OFFICIEL</span><div id="date-today" style="font-size: 0.6rem; font-weight: 800; opacity: 0.8; text-transform: uppercase;">...</div><div id="text-today" style="font-size: 1.1rem; font-weight: 900;">...</div></div>
-            <div id="card-tomorrow" class="card-rt"><span class="badge-officiel">OFFICIEL</span><div id="date-tomorrow" style="font-size: 0.6rem; font-weight: 800; opacity: 0.8; text-transform: uppercase;">...</div><div id="text-tomorrow" style="font-size: 1.1rem; font-weight: 900;">...</div></div>
+            <div id="card-today" class="card-rt">
+                <span class="badge-base badge-officiel">OFFICIEL</span>
+                <div id="date-today" style="font-size: 0.6rem; font-weight: 800; opacity: 0.8; text-transform: uppercase;">...</div>
+                <div id="text-today" style="font-size: 1.1rem; font-weight: 900;">...</div>
+            </div>
+            <div id="card-tomorrow" class="card-rt">
+                <span id="badge-tomorrow" class="badge-base">...</span>
+                <div id="date-tomorrow" style="font-size: 0.6rem; font-weight: 800; opacity: 0.8; text-transform: uppercase;">...</div>
+                <div id="text-tomorrow" style="font-size: 1.1rem; font-weight: 900;">...</div>
+            </div>
         </div>
     </div>
 
     <div class="prob-container">
         <div id="card-j2" class="prob-card">
-            <div class="prob-header">
-                <span id="label-j2" style="font-size: 0.6rem; font-weight: 900; opacity: 0.6;">...</span>
-                <span id="temp-j2" style="font-size: 0.8rem; font-weight: 900;">--°C</span>
-            </div>
+            <div class="prob-header"><span id="label-j2" style="font-size: 0.6rem; font-weight: 900; opacity: 0.6;">...</span><span id="temp-j2" style="font-size: 0.8rem; font-weight: 900;">--°C</span></div>
             <div id="prob-rows-j2"></div>
         </div>
         <div id="card-j3" class="prob-card">
-            <div class="prob-header">
-                <span id="label-j3" style="font-size: 0.6rem; font-weight: 900; opacity: 0.6;">...</span>
-                <span id="temp-j3" style="font-size: 0.8rem; font-weight: 900;">--°C</span>
-            </div>
+            <div class="prob-header"><span id="label-j3" style="font-size: 0.6rem; font-weight: 900; opacity: 0.6;">...</span><span id="temp-j3" style="font-size: 0.8rem; font-weight: 900;">--°C</span></div>
             <div id="prob-rows-j3"></div>
         </div>
     </div>
@@ -118,30 +133,12 @@
             const pays = [{id:'uk',n:'UK',f:'🇬🇧'},{id:'de_be',n:'ALL/BEL',f:'🇩🇪🇧🇪'},{id:'it',n:'ITA',f:'🇮🇹'},{id:'es',n:'ESP',f:'🇪🇸'},{id:'ch',n:'SUI',f:'🇨🇭'}];
             let solde = 0, html = "";
             pays.forEach(p => { 
-                const v = d[p.id] || 0; 
-                solde += v; 
+                const v = d[p.id] || 0; solde += v; 
                 html += `<div class="flux-item"><span>${p.f} ${p.n}</span><span style="color:${v>0?'var(--red)':'var(--green)'}">${v>0?'↓':'↑'} ${Math.abs(v)}</span></div>`; 
             });
             document.getElementById('flux-grid').innerHTML = html;
-            
-            // MAJ VISUELLE : [DRAPEAU] [FLECHE] [MW]
-            const display = document.getElementById('flux-display');
-            const absSolde = Math.abs(solde);
-            
-            if (solde > 0) { // IMPORT (Vers la France)
-                display.innerHTML = `
-                    <span style="font-size: 1.8rem; order: 2;">🇫🇷</span>
-                    <span class="arrow import-style" style="order: 1;">➡</span>
-                    <span class="solde-val import-style" style="order: 0;">${absSolde} MW</span>
-                `;
-            } else { // EXPORT (De la France)
-                display.innerHTML = `
-                    <span style="font-size: 1.8rem; order: 0;">🇫🇷</span>
-                    <span class="arrow export-style" style="order: 1;">➡</span>
-                    <span class="solde-val export-style" style="order: 2;">${absSolde} MW</span>
-                `;
-            }
-
+            const display = document.getElementById('flux-display'); const absSolde = Math.abs(solde);
+            display.innerHTML = solde > 0 ? `<span style="font-size: 1.8rem; order: 2;">🇫🇷</span><span class="arrow import-style" style="order: 1;">➡</span><span class="solde-val import-style" style="order: 0;">${absSolde} MW</span>` : `<span style="font-size: 1.8rem; order: 0;">🇫🇷</span><span class="arrow export-style" style="order: 1;">➡</span><span class="solde-val export-style" style="order: 2;">${absSolde} MW</span>`;
             document.getElementById('data-status').innerText = "RÉSEAU LIVE • " + new Date().toLocaleTimeString();
             document.getElementById('data-status').className = "status-bar status-live";
         } catch (e) {}
@@ -149,39 +146,33 @@
 
     function calculateProb(temp, gw) {
         let r = 0, w = 0, b = 0;
-        if (temp <= 2) { r = 85; w = 15; b = 0; }
-        else if (temp <= 6) { r = 25; w = 70; b = 5; }
-        else if (temp <= 9) { r = 5; w = 65; b = 30; }
-        else if (temp <= 12) { r = 0; w = 20; b = 80; }
-        else { r = 0; w = 0; b = 100; }
+        if (temp <= 2) { r = 85; w = 15; } else if (temp <= 6) { r = 25; w = 70; b = 5; } else if (temp <= 9) { r = 5; w = 65; b = 30; } else if (temp <= 12) { w = 20; b = 80; } else { b = 100; }
         if (gw > 75) { r += 15; w += 10; }
         let total = Math.max(1, r + w + b);
-        let normR = Math.round((Math.max(0, r) / total) * 100);
-        let normW = Math.round((Math.max(0, w) / total) * 100);
-        let normB = 100 - (normR + normW); 
-        return { ROUGE: normR, BLANC: normW, BLEU: Math.max(0, normB) };
+        return { ROUGE: Math.round((r/total)*100), BLANC: Math.round((w/total)*100), BLEU: 100 - (Math.round((r/total)*100) + Math.round((w/total)*100)) };
     }
 
     function renderProbs(cardId, rowsId, probs) {
         const config = [{id:'ROUGE',c:'var(--red)',v:probs.ROUGE},{id:'BLANC',c:'#fff',v:probs.BLANC},{id:'BLEU',c:'var(--blue)',v:probs.BLEU}];
-        const dominant = config.reduce((p, c) => (p.v > c.v) ? p : c);
-        document.getElementById(cardId).style.borderColor = dominant.v > 45 ? dominant.c : "#222";
-        document.getElementById(rowsId).innerHTML = config.map(item => `
-            <div class="prob-line">
-                <span class="dot" style="background:${item.c}; box-shadow: 0 0 8px ${item.c}66;"></span>
-                <div class="prob-bar-bg"><div class="prob-bar-fill" style="width:${item.v}%; background:${item.c}"></div></div>
-                <span style="width:28px; text-align:right; font-size:0.6rem">${item.v}%</span>
-            </div>
-        `).join('');
+        document.getElementById(rowsId).innerHTML = config.map(item => `<div class="prob-line"><span class="dot" style="background:${item.c};"></span><div class="prob-bar-bg"><div class="prob-bar-fill" style="width:${item.v}%; background:${item.c}"></div></div><span style="width:28px; text-align:right; font-size:0.6rem">${item.v}%</span></div>`).join('');
     }
 
     async function updateWeather() {
         try {
             const res = await fetch("https://api.open-meteo.com/v1/forecast?latitude=48.8566&longitude=2.3522&daily=temperature_2m_min&timezone=Europe%2FBerlin");
-            const data = await res.json();
+            const data = await res.json(); const now = new Date(); const hour = now.getHours() + (now.getMinutes()/60);
+
+            // Estimation pour le badge Demain (J+1) entre 00h et 06h30
+            if (hour < 6.5) {
+                const p = calculateProb(data.daily.temperature_2m_min[1], currentGW);
+                const dominant = Object.keys(p).reduce((a, b) => p[a] > p[b] ? a : b);
+                document.getElementById('text-tomorrow').innerText = dominant;
+                document.getElementById('card-tomorrow').className = `card-rt is-${dominant.toLowerCase()}`;
+            }
+
+            // Cartes J+2 et J+3
             [2, 3].forEach((off, i) => {
-                const id = i === 0 ? "2" : "3";
-                const d = new Date(); d.setDate(d.getDate() + off);
+                const id = i === 0 ? "2" : "3"; const d = new Date(); d.setDate(d.getDate() + off);
                 const temp = data.daily.temperature_2m_min[off];
                 document.getElementById(`label-j${id}`).innerText = d.toLocaleDateString('fr-FR', {weekday:'short', day:'2-digit'}).toUpperCase();
                 document.getElementById(`temp-j${id}`).innerText = Math.round(temp) + "°C";
@@ -192,32 +183,44 @@
 
     async function updateTempo() {
         try {
-            const [tRes, tomRes, sRes] = await Promise.all([
-                fetch("https://www.api-couleur-tempo.fr/api/jourTempo/today"),
-                fetch("https://www.api-couleur-tempo.fr/api/jourTempo/tomorrow"),
-                fetch("https://www.api-couleur-tempo.fr/api/stats")
-            ]);
+            const [tRes, tomRes, sRes] = await Promise.all([fetch("https://www.api-couleur-tempo.fr/api/jourTempo/today"), fetch("https://www.api-couleur-tempo.fr/api/jourTempo/tomorrow"), fetch("https://www.api-couleur-tempo.fr/api/stats")]);
             const t = await tRes.json(), tom = await tomRes.json(), s = await sRes.json();
-            const findV = (obj, col) => { for (let [k, v] of Object.entries(obj)) { if (k.toLowerCase().includes(col)) return v; } return 0; };
-            const rest = { bleu: 300 - findV(s, 'bleu'), blanc: 43 - findV(s, 'blanc'), rouge: 22 - findV(s, 'rouge') };
+            const now = new Date(); const hour = now.getHours() + (now.getMinutes()/60);
+            const badgeTom = document.getElementById('badge-tomorrow');
+
+            if (hour < 6.5) {
+                badgeTom.innerText = "ESTIMATION"; badgeTom.className = "badge-base badge-estimation";
+            } else {
+                badgeTom.innerText = hour < 11 ? "RTE" : "OFFICIEL";
+                badgeTom.className = hour < 11 ? "badge-base badge-rte" : "badge-base badge-officiel";
+                document.getElementById('text-tomorrow').innerText = labels[tom.codeJour] || 'ATTENTE';
+                document.getElementById('card-tomorrow').className = `card-rt is-${(labels[tom.codeJour]||'attente').toLowerCase()}`;
+            }
+
             document.getElementById('card-today').className = `card-rt is-${(labels[t.codeJour]||'attente').toLowerCase()}`;
             document.getElementById('text-today').innerText = labels[t.codeJour] || '...';
-            document.getElementById('card-tomorrow').className = `card-rt is-${(labels[tom.codeJour]||'attente').toLowerCase()}`;
-            document.getElementById('text-tomorrow').innerText = labels[tom.codeJour] || '...';
-            document.getElementById('date-today').innerText = new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: '2-digit', month: 'short' });
+            document.getElementById('date-today').innerText = now.toLocaleDateString('fr-FR', { weekday: 'long', day: '2-digit' });
             const dTom = new Date(); dTom.setDate(dTom.getDate() + 1);
-            document.getElementById('date-tomorrow').innerText = dTom.toLocaleDateString('fr-FR', { weekday: 'long', day: '2-digit', month: 'short' });
+            document.getElementById('date-tomorrow').innerText = dTom.toLocaleDateString('fr-FR', { weekday: 'long', day: '2-digit' });
+
+            const findV = (obj, col) => { for (let [k, v] of Object.entries(obj)) { if (k.toLowerCase().includes(col)) return v; } return 0; };
+            const rest = { bleu: 300 - findV(s, 'bleu'), blanc: 43 - findV(s, 'blanc'), rouge: 22 - findV(s, 'rouge') };
             const config = [{ n: 'BLEU', v: rest.bleu, t: 300, g: 'var(--grad-blue)' }, { n: 'BLANC', v: rest.blanc, t: 43, g: 'var(--grad-white)' }, { n: 'ROUGE', v: rest.rouge, t: 22, g: 'var(--grad-rouge)' }];
-            document.getElementById('stats-container').innerHTML = config.map(c => `
-                <div class="bar-wrap">
-                    <div class="bar-info"><span>${c.n}</span> <span>${c.v} / ${c.t} RESTANTS</span></div>
-                    <div class="bar-base"><div class="bar-fill" style="width:${(c.v/c.t)*100}%; background:${c.g}"></div></div>
-                </div>`).join('');
+            document.getElementById('stats-container').innerHTML = config.map(c => `<div class="bar-wrap"><div class="bar-info"><span>${c.n}</span> <span>${c.v} / ${c.t}</span></div><div class="bar-base"><div class="bar-fill" style="width:${(c.v/c.t)*100}%; background:${c.g}"></div></div></div>`).join('');
         } catch (e) {}
     }
 
-    updateTempo(); updateFlux(); setTimeout(updateWeather, 1000);
-    setInterval(updateFlux, 300000);
+    // Lancement de l'application
+    async function init() {
+        await updateFlux();
+        await updateTempo();
+        await updateWeather();
+    }
+    
+    init();
+    setInterval(updateFlux, 300000); // 5 min
+    setInterval(updateTempo, 600000); // 10 min
+    setInterval(updateWeather, 3600000); // 1 h
 </script>
 </body>
 </html>
