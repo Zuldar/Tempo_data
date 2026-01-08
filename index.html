@@ -111,7 +111,7 @@
         try {
             const r = await fetch("https://raw.githubusercontent.com/Zuldar/Tempo_data/main/archive_tempo.json?t=" + Date.now());
             const [d] = await r.json();
-            currentGW = d.prevision_j1 / 1000;
+            currentGW = d.prevision_j1 / 1000; // Charge réseau en GW
             const pays = [{id:'uk',n:'UK',f:'🇬🇧'},{id:'de_be',n:'ALL/BEL',f:'🇩🇪🇧🇪'},{id:'it',n:'ITA',f:'🇮🇹'},{id:'es',n:'ESP',f:'🇪🇸'},{id:'ch',n:'SUI',f:'🇨🇭'}];
             let solde = 0, html = "";
             pays.forEach(p => { 
@@ -127,46 +127,54 @@
     }
 
     /**
-     * CALCUL EXPERT DES PROBABILITÉS AVEC RÈGLES EDF
+     * CALCUL HYBRIDE : TEMPÉRATURE + CHARGE RÉSEAU (GW)
      */
     function calculateProb(temp, gw, targetDate) {
         let r = 0, w = 0, b = 0;
-        const dayOfWeek = targetDate.getDay(); // 0 = Dimanche, 6 = Samedi
-        const month = targetDate.getMonth() + 1; // 1 = Janv, 11 = Nov
+        const dayOfWeek = targetDate.getDay(); 
+        const month = targetDate.getMonth() + 1;
 
-        // 1. Logique de base (Température + Flux)
-        if (temp <= 2) { r = 85; w = 15; } 
-        else if (temp <= 6) { r = 25; w = 70; b = 5; } 
-        else if (temp <= 9) { r = 5; w = 65; b = 30; } 
-        else if (temp <= 12) { w = 20; b = 80; } 
-        else { b = 100; }
-        
-        if (gw > 75) { r += 15; w += 10; }
+        // ÉTAPE 1 : Calcul d'un "Score de Tension" (0 à 100)
+        // La température compte pour 70%, la charge réseau pour 30%
+        let tempScore = 0;
+        if (temp <= 0) tempScore = 100;
+        else if (temp <= 4) tempScore = 80;
+        else if (temp <= 8) tempScore = 50;
+        else if (temp <= 12) tempScore = 20;
+        else tempScore = 0;
 
-        // 2. Application des Verrous Réglementaires
-        // RÈGLE : Pas de ROUGE le Week-end (Samedi 6, Dimanche 0)
-        if (dayOfWeek === 0 || dayOfWeek === 6) r = 0;
+        let gwScore = 0;
+        if (gw >= 80) gwScore = 100;
+        else if (gw >= 70) gwScore = 60;
+        else if (gw >= 60) gwScore = 20;
+        else gwScore = 0;
 
-        // RÈGLE : Pas de BLANC le Dimanche
-        if (dayOfWeek === 0) w = 0;
+        let globalScore = (tempScore * 0.7) + (gwScore * 0.3);
 
-        // RÈGLE : ROUGE uniquement du 1er Nov (11) au 31 Mars (3)
-        if (month > 3 && month < 11) r = 0;
+        // ÉTAPE 2 : Attribution des probabilités selon le score global
+        if (globalScore > 75) { r = 70; w = 30; b = 0; }
+        else if (globalScore > 50) { r = 10; w = 70; b = 20; }
+        else if (globalScore > 25) { r = 0; w = 25; b = 75; }
+        else { r = 0; w = 0; b = 100; }
 
-        // RÈGLE : Sécurité Quotas restants
-        if (daysLeft.rouge <= 0) r = 0;
-        if (daysLeft.blanc <= 0) w = 0;
+        // ÉTAPE 3 : Verrous Réglementaires EDF
+        if (dayOfWeek === 0 || dayOfWeek === 6) { 
+            w += r; r = 0; // Pas de rouge le WE, on bascule sur blanc
+        }
+        if (dayOfWeek === 0) { 
+            b = 100; w = 0; r = 0; // Dimanche = Bleu obligatoire
+        }
+        if (month > 3 && month < 11) r = 0; // Période rouge
+        if (daysLeft.rouge <= 0) { w += r; r = 0; }
+        if (daysLeft.blanc <= 0) { b += w; w = 0; }
 
-        // 3. Normalisation
-        let total = r + w + b;
-        if (total === 0) b = 100; // Sécurité au cas où tout est à 0
-        total = Math.max(1, r + w + b);
+        // ÉTAPE 4 : Normalisation
+        let total = Math.max(1, r + w + b);
+        let finalR = Math.round((r/total)*100);
+        let finalW = Math.round((w/total)*100);
+        let finalB = 100 - (finalR + finalW);
 
-        return { 
-            ROUGE: Math.round((r/total)*100), 
-            BLANC: Math.round((w/total)*100), 
-            BLEU: 100 - (Math.round((r/total)*100) + Math.round((w/total)*100)) 
-        };
+        return { ROUGE: finalR, BLANC: finalW, BLEU: Math.max(0, finalB) };
     }
 
     function renderProbs(cardId, rowsId, probs) {
@@ -177,11 +185,8 @@
     async function updateWeather() {
         try {
             const res = await fetch("https://api.open-meteo.com/v1/forecast?latitude=48.8566&longitude=2.3522&daily=temperature_2m_min&timezone=Europe%2FBerlin");
-            const data = await res.json(); 
-            const now = new Date(); 
-            const hour = now.getHours() + (now.getMinutes()/60);
+            const data = await res.json(); const now = new Date(); const hour = now.getHours() + (now.getMinutes()/60);
 
-            // Estimation J+1 avec règles EDF
             if (hour < 6.5) {
                 const tomorrowDate = new Date(); tomorrowDate.setDate(tomorrowDate.getDate() + 1);
                 const p = calculateProb(data.daily.temperature_2m_min[1], currentGW, tomorrowDate);
@@ -190,7 +195,6 @@
                 document.getElementById('card-tomorrow').className = `card-rt is-${dominant.toLowerCase()}`;
             }
 
-            // Cartes J+2 et J+3 avec règles EDF
             [2, 3].forEach((off, i) => {
                 const id = i === 0 ? "2" : "3"; 
                 const targetDate = new Date(); targetDate.setDate(targetDate.getDate() + off);
@@ -204,18 +208,10 @@
 
     async function updateTempo() {
         try {
-            const [tRes, tomRes, sRes] = await Promise.all([
-                fetch("https://www.api-couleur-tempo.fr/api/jourTempo/today"), 
-                fetch("https://www.api-couleur-tempo.fr/api/jourTempo/tomorrow"), 
-                fetch("https://www.api-couleur-tempo.fr/api/stats")
-            ]);
+            const [tRes, tomRes, sRes] = await Promise.all([fetch("https://www.api-couleur-tempo.fr/api/jourTempo/today"), fetch("https://www.api-couleur-tempo.fr/api/jourTempo/tomorrow"), fetch("https://www.api-couleur-tempo.fr/api/stats")]);
             const t = await tRes.json(), tom = await tomRes.json(), s = await sRes.json();
-            
-            // Mise à jour des quotas restants pour les règles de calcul
             const findV = (obj, col) => { for (let [k, v] of Object.entries(obj)) { if (k.toLowerCase().includes(col)) return v; } return 0; };
-            daysLeft.rouge = 22 - findV(s, 'rouge');
-            daysLeft.blanc = 43 - findV(s, 'blanc');
-
+            daysLeft.rouge = 22 - findV(s, 'rouge'); daysLeft.blanc = 43 - findV(s, 'blanc');
             const now = new Date(); const hour = now.getHours() + (now.getMinutes()/60);
             const badgeTom = document.getElementById('badge-tomorrow');
 
@@ -231,25 +227,15 @@
             document.getElementById('card-today').className = `card-rt is-${(labels[t.codeJour]||'attente').toLowerCase()}`;
             document.getElementById('text-today').innerText = labels[t.codeJour] || '...';
             document.getElementById('date-today').innerText = now.toLocaleDateString('fr-FR', { weekday: 'long', day: '2-digit' });
-            
             const dTom = new Date(); dTom.setDate(dTom.getDate() + 1);
             document.getElementById('date-tomorrow').innerText = dTom.toLocaleDateString('fr-FR', { weekday: 'long', day: '2-digit' });
 
-            const config = [
-                { n: 'BLEU', v: 300 - findV(s, 'bleu'), t: 300, g: 'var(--grad-blue)' }, 
-                { n: 'BLANC', v: daysLeft.blanc, t: 43, g: 'var(--grad-white)' }, 
-                { n: 'ROUGE', v: daysLeft.rouge, t: 22, g: 'var(--grad-rouge)' }
-            ];
+            const config = [{ n: 'BLEU', v: 300 - findV(s, 'bleu'), t: 300, g: 'var(--grad-blue)' }, { n: 'BLANC', v: daysLeft.blanc, t: 43, g: 'var(--grad-white)' }, { n: 'ROUGE', v: daysLeft.rouge, t: 22, g: 'var(--grad-rouge)' }];
             document.getElementById('stats-container').innerHTML = config.map(c => `<div class="bar-wrap"><div class="bar-info"><span>${c.n}</span> <span>${c.v} / ${c.t}</span></div><div class="bar-base"><div class="bar-fill" style="width:${(c.v/c.t)*100}%; background:${c.g}"></div></div></div>`).join('');
         } catch (e) {}
     }
 
-    async function init() {
-        await updateFlux();
-        await updateTempo(); // Important d'appeler Tempo avant Weather pour avoir les quotas à jour
-        await updateWeather();
-    }
-    
+    async function init() { await updateFlux(); await updateTempo(); await updateWeather(); }
     init();
     setInterval(updateFlux, 300000);
     setInterval(updateTempo, 600000);
