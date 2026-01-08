@@ -1,12 +1,12 @@
 [
     {
         "heure": "23:45",
-        "date": "2026-01-07",
-        "prevision_j1": 76193,
-        "uk": -134,
-        "es": -1836,
-        "it": -3151,
-        "ch": -2457,
-        "de_be": 5507
+        "date": "2026-01-08",
+        "prevision_j1": 70933,
+        "uk": null,
+        "es": null,
+        "it": null,
+        "ch": null,
+        "de_be": null
     }
 ]
