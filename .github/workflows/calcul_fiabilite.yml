@@ -1,8 +1,8 @@
 name: Tempo Expert Engine
 on:
   schedule:
-    - cron: '15 10 * * *' # 11h15 France
-  workflow_dispatch: # Permet de lancer manuellement
+    - cron: '15 10 * * *'
+  workflow_dispatch:
 
 jobs:
   build:
@@ -22,75 +22,57 @@ jobs:
           import json
           from datetime import datetime, timedelta
 
-          # 1. Charger les stats actuelles
-          try:
-              with open('stats_fiabilite.json', 'r') as f:
-                  data = json.load(f)
-          except Exception:
-              data = {"success": 0, "total": 0, "predictions": {}}
-
-          # 2. VERIFICATION DU JOUR (Performance)
-          # On compare la prédiction qui était prévue pour aujourd'hui
-          today_str = datetime.now().strftime('%Y-%m-%d')
-          try:
-              res_tempo = requests.get("https://www.api-couleur-tempo.fr/api/jourTempo/today").json()
-              mapping = {1: "BLEU", 2: "BLANC", 3: "ROUGE"}
-              couleur_reelle = mapping.get(res_tempo.get('codeJour'), "INCONNU")
-
-              if today_str in data['predictions']:
-                  pred_faite = data['predictions'][today_str]
-                  if couleur_reelle != "INCONNU":
-                      data['total'] += 1
-                      if pred_faite == couleur_reelle:
-                          data['success'] += 1
-                      # Une fois vérifiée, on retire la prédiction du dictionnaire
-                      del data['predictions'][today_str]
-          except Exception as e:
-              print(f"Erreur vérification: {e}")
-
-          # 3. CALCUL PREDICTION POUR J+3 (Anticipation)
-          target_date = datetime.now() + timedelta(days=3)
-          target_str = target_date.strftime('%Y-%m-%d')
-          
-          try:
-              # Météo J+3
-              meteo = requests.get("https://api.open-meteo.com/v1/forecast?latitude=48.8566&longitude=2.3522&daily=temperature_2m_min&timezone=Europe%2FBerlin").json()
-              temp_j3 = meteo['daily']['temperature_2m_min'][3]
-              
-              # Flux/GW (Récupération de ta data prevision_j1)
-              flux_data = requests.get("https://raw.githubusercontent.com/Zuldar/Tempo_data/main/archive_tempo.json").json()
-              gw = flux_data[0]['prevision_j1'] / 1000
-
-              # Logique de calcul du score (Identique à ton JS)
-              t_score = 100 if temp_j3 <= 0 else 80 if temp_j3 <= 4 else 50 if temp_j3 <= 8 else 20 if temp_j3 <= 12 else 0
+          def get_tempo_color(temp, gw, target_date):
+              t_score = 100 if temp <= 0 else 80 if temp <= 4 else 50 if temp <= 8 else 20 if temp <= 12 else 0
               g_score = 100 if gw >= 80 else 60 if gw >= 70 else 20 if gw >= 60 else 0
               global_score = (t_score * 0.7) + (g_score * 0.3)
-              
-              res_pred = "BLEU"
-              if global_score > 75: res_pred = "ROUGE"
-              elif global_score > 50: res_pred = "BLANC"
-              
-              # Verrous réglementaires
-              day_wk = target_date.weekday() # 5=Samedi, 6=Dimanche
-              month = target_date.month
-              if day_wk >= 5 and res_pred == "ROUGE": res_pred = "BLANC"
-              if day_wk == 6: res_pred = "BLEU"
-              if not (11 <= month <= 12 or 1 <= month <= 3) and res_pred == "ROUGE":
-                  res_pred = "BLANC"
+              res = "BLEU"
+              if global_score > 75: res = "ROUGE"
+              elif global_score > 50: res = "BLANC"
+              day_wk = target_date.weekday()
+              if day_wk >= 5 and res == "ROUGE": res = "BLANC"
+              if day_wk == 6: res = "BLEU"
+              if not (11 <= target_date.month <= 12 or 1 <= target_date.month <= 3) and res == "ROUGE": res = "BLANC"
+              return res
 
-              # On enregistre la prédiction pour J+3
-              data['predictions'][target_str] = res_pred
-          except Exception as e:
-              print(f"Erreur prédiction: {e}")
+          # 1. Charger/Initialiser
+          try:
+              with open('stats_fiabilite.json', 'r') as f: data = json.load(f)
+          except:
+              data = {"j2": {"success":0, "total":0}, "j3": {"success":0, "total":0}, "predictions_j2":{}, "predictions_j3":{}}
 
-          # 4. Sauvegarde
-          with open('stats_fiabilite.json', 'w') as f:
-              json.dump(data, f, indent=2)
+          today_str = datetime.now().strftime('%Y-%m-%d')
+          res_tempo = requests.get("https://www.api-couleur-tempo.fr/api/jourTempo/today").json()
+          mapping = {1: "BLEU", 2: "BLANC", 3: "ROUGE"}
+          couleur_reelle = mapping.get(res_tempo.get('codeJour'), "INCONNU")
+
+          # 2. VERIFICATION (J+2 et J+3)
+          if couleur_reelle != "INCONNU":
+              for key in ['j2', 'j3']:
+                  pred_dict = data[f'predictions_{key}']
+                  if today_str in pred_dict:
+                      data[key]['total'] += 1
+                      if pred_dict[today_str] == couleur_reelle:
+                          data[key]['success'] += 1
+                      del pred_dict[today_str]
+
+          # 3. NOUVELLES PREDICTIONS
+          meteo = requests.get("https://api.open-meteo.com/v1/forecast?latitude=48.8566&longitude=2.3522&daily=temperature_2m_min&timezone=Europe%2FBerlin").json()
+          flux_data = requests.get("https://raw.githubusercontent.com/Zuldar/Tempo_data/main/archive_tempo.json").json()
+          gw = flux_data[0]['prevision_j1'] / 1000
+
+          for offset in [2, 3]:
+              target_date = datetime.now() + timedelta(days=offset)
+              t_str = target_date.strftime('%Y-%m-%d')
+              temp = meteo['daily']['temperature_2m_min'][offset]
+              data[f'predictions_j{offset}'][t_str] = get_tempo_color(temp, gw, target_date)
+
+          with open('stats_fiabilite.json', 'w') as f: json.dump(data, f, indent=2)
           EOF
       - name: Commit & Push
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "TempoEngine"
           git add stats_fiabilite.json
-          git commit -m "MAJ Fiabilité & Prediction J+3" || exit 0
+          git commit -m "MAJ Fiabilité & Predictions J+2/J+3" || exit 0
           git push
