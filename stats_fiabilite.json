@@ -1,6 +1,16 @@
 {
-  "j2": { "success": 0, "total": 0 },
-  "j3": { "success": 0, "total": 0 },
-  "predictions_j2": {},
-  "predictions_j3": {}
+  "j2": {
+    "success": 0,
+    "total": 0
+  },
+  "j3": {
+    "success": 0,
+    "total": 0
+  },
+  "predictions_j2": {
+    "2026-01-13": "BLEU"
+  },
+  "predictions_j3": {
+    "2026-01-14": "BLEU"
+  }
 }
