@@ -32,6 +32,14 @@
         .badge-rte { background-image: linear-gradient(135deg, #00b09b 0%, #96ffea 25%, #00b09b 50%, #96ffea 75%, #00b09b 100%); color: #000; }
         .badge-officiel { background-image: var(--gold-linear); color: #111; }
 
+        .badge-fiabilite {
+            position: absolute; bottom: 8px; right: 10px;
+            font-size: 0.55rem; font-weight: 900;
+            padding: 2px 6px; border-radius: 4px;
+            background: rgba(255,255,255,0.05); color: #00e676;
+            border: 1px solid rgba(0,230,118,0.2);
+        }
+
         .card-main { background: var(--card); border-radius: 20px; padding: 15px; border: 1px solid #222; }
         .flux-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
         .flux-item { background: #1a1a1a; padding: 8px 12px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; font-weight: 600; }
@@ -52,7 +60,7 @@
         .is-attente { background: #222; color: #555; }
 
         .prob-container { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .prob-card { background: #151515; border-radius: 18px; padding: 12px; border: 2px solid #222; transition: border-color 0.5s; }
+        .prob-card { position: relative; background: #151515; border-radius: 18px; padding: 12px; border: 2px solid #222; transition: border-color 0.5s; }
         .prob-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px solid #333; padding-bottom: 5px; }
         .prob-line { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; font-size: 0.7rem; font-weight: 800; }
         .dot { width: 10px; height: 10px; border-radius: 50%; }
@@ -80,18 +88,34 @@
     <div style="margin-top: 5px;">
         <div id="tempo-status" class="status-bar" style="background:#008148;color:white;margin-bottom:8px;">Réseau Tempo</div>
         <div class="grid-2">
-            <div id="card-today" class="card-rt"><span class="badge-base badge-officiel">OFFICIEL</span><div id="date-today" style="font-size: 0.6rem; font-weight: 800; opacity: 0.8; text-transform: uppercase;">...</div><div id="text-today" style="font-size: 1.1rem; font-weight: 900;">...</div></div>
-            <div id="card-tomorrow" class="card-rt"><span id="badge-tomorrow" class="badge-base">...</span><div id="date-tomorrow" style="font-size: 0.6rem; font-weight: 800; opacity: 0.8; text-transform: uppercase;">...</div><div id="text-tomorrow" style="font-size: 1.1rem; font-weight: 900;">...</div></div>
+            <div id="card-today" class="card-rt">
+                <span class="badge-base badge-officiel">OFFICIEL</span>
+                <div id="date-today" style="font-size: 0.6rem; font-weight: 800; opacity: 0.8; text-transform: uppercase;">...</div>
+                <div id="text-today" style="font-size: 1.1rem; font-weight: 900;">...</div>
+            </div>
+            <div id="card-tomorrow" class="card-rt">
+                <span id="badge-tomorrow" class="badge-base">...</span>
+                <div id="date-tomorrow" style="font-size: 0.6rem; font-weight: 800; opacity: 0.8; text-transform: uppercase;">...</div>
+                <div id="text-tomorrow" style="font-size: 1.1rem; font-weight: 900;">...</div>
+            </div>
         </div>
     </div>
 
     <div class="prob-container">
         <div id="card-j2" class="prob-card">
-            <div class="prob-header"><span id="label-j2" style="font-size: 0.6rem; font-weight: 900; opacity: 0.6;">...</span><span id="temp-j2" style="font-size: 0.8rem; font-weight: 900;">--°C</span></div>
+            <div id="score-j2" class="badge-fiabilite">SCORE: --%</div>
+            <div class="prob-header">
+                <span id="label-j2" style="font-size: 0.6rem; font-weight: 900; opacity: 0.6;">...</span>
+                <span id="temp-j2" style="font-size: 0.8rem; font-weight: 900;">--°C</span>
+            </div>
             <div id="prob-rows-j2"></div>
         </div>
         <div id="card-j3" class="prob-card">
-            <div class="prob-header"><span id="label-j3" style="font-size: 0.6rem; font-weight: 900; opacity: 0.6;">...</span><span id="temp-j3" style="font-size: 0.8rem; font-weight: 900;">--°C</span></div>
+            <div id="score-j3" class="badge-fiabilite">SCORE: --%</div>
+            <div class="prob-header">
+                <span id="label-j3" style="font-size: 0.6rem; font-weight: 900; opacity: 0.6;">...</span>
+                <span id="temp-j3" style="font-size: 0.8rem; font-weight: 900;">--°C</span>
+            </div>
             <div id="prob-rows-j3"></div>
         </div>
     </div>
@@ -111,7 +135,7 @@
         try {
             const r = await fetch("https://raw.githubusercontent.com/Zuldar/Tempo_data/main/archive_tempo.json?t=" + Date.now());
             const [d] = await r.json();
-            currentGW = d.prevision_j1 / 1000; // Charge réseau en GW
+            currentGW = d.prevision_j1 / 1000;
             const pays = [{id:'uk',n:'UK',f:'🇬🇧'},{id:'de_be',n:'ALL/BEL',f:'🇩🇪🇧🇪'},{id:'it',n:'ITA',f:'🇮🇹'},{id:'es',n:'ESP',f:'🇪🇸'},{id:'ch',n:'SUI',f:'🇨🇭'}];
             let solde = 0, html = "";
             pays.forEach(p => { 
@@ -126,49 +150,26 @@
         } catch (e) {}
     }
 
-    /**
-     * CALCUL HYBRIDE : TEMPÉRATURE + CHARGE RÉSEAU (GW)
-     */
     function calculateProb(temp, gw, targetDate) {
         let r = 0, w = 0, b = 0;
         const dayOfWeek = targetDate.getDay(); 
         const month = targetDate.getMonth() + 1;
 
-        // ÉTAPE 1 : Calcul d'un "Score de Tension" (0 à 100)
-        // La température compte pour 70%, la charge réseau pour 30%
-        let tempScore = 0;
-        if (temp <= 0) tempScore = 100;
-        else if (temp <= 4) tempScore = 80;
-        else if (temp <= 8) tempScore = 50;
-        else if (temp <= 12) tempScore = 20;
-        else tempScore = 0;
-
-        let gwScore = 0;
-        if (gw >= 80) gwScore = 100;
-        else if (gw >= 70) gwScore = 60;
-        else if (gw >= 60) gwScore = 20;
-        else gwScore = 0;
-
+        let tempScore = (temp <= 0) ? 100 : (temp <= 4) ? 80 : (temp <= 8) ? 50 : (temp <= 12) ? 20 : 0;
+        let gwScore = (gw >= 80) ? 100 : (gw >= 70) ? 60 : (gw >= 60) ? 20 : 0;
         let globalScore = (tempScore * 0.7) + (gwScore * 0.3);
 
-        // ÉTAPE 2 : Attribution des probabilités selon le score global
         if (globalScore > 75) { r = 70; w = 30; b = 0; }
         else if (globalScore > 50) { r = 10; w = 70; b = 20; }
         else if (globalScore > 25) { r = 0; w = 25; b = 75; }
         else { r = 0; w = 0; b = 100; }
 
-        // ÉTAPE 3 : Verrous Réglementaires EDF
-        if (dayOfWeek === 0 || dayOfWeek === 6) { 
-            w += r; r = 0; // Pas de rouge le WE, on bascule sur blanc
-        }
-        if (dayOfWeek === 0) { 
-            b = 100; w = 0; r = 0; // Dimanche = Bleu obligatoire
-        }
-        if (month > 3 && month < 11) r = 0; // Période rouge
+        if (dayOfWeek === 0 || dayOfWeek === 6) { w += r; r = 0; }
+        if (dayOfWeek === 0) { b = 100; w = 0; r = 0; }
+        if (month > 3 && month < 11) r = 0;
         if (daysLeft.rouge <= 0) { w += r; r = 0; }
         if (daysLeft.blanc <= 0) { b += w; w = 0; }
 
-        // ÉTAPE 4 : Normalisation
         let total = Math.max(1, r + w + b);
         let finalR = Math.round((r/total)*100);
         let finalW = Math.round((w/total)*100);
@@ -177,9 +178,14 @@
         return { ROUGE: finalR, BLANC: finalW, BLEU: Math.max(0, finalB) };
     }
 
-    function renderProbs(cardId, rowsId, probs) {
+    function renderProbs(rowsId, probs) {
         const config = [{id:'ROUGE',c:'var(--red)',v:probs.ROUGE},{id:'BLANC',c:'#fff',v:probs.BLANC},{id:'BLEU',c:'var(--blue)',v:probs.BLEU}];
-        document.getElementById(rowsId).innerHTML = config.map(item => `<div class="prob-line"><span class="dot" style="background:${item.c};"></span><div class="prob-bar-bg"><div class="prob-bar-fill" style="width:${item.v}%; background:${item.c}"></div></div><span style="width:28px; text-align:right; font-size:0.6rem">${item.v}%</span></div>`).join('');
+        document.getElementById(rowsId).innerHTML = config.map(item => `
+            <div class="prob-line">
+                <span class="dot" style="background:${item.c};"></span>
+                <div class="prob-bar-bg"><div class="prob-bar-fill" style="width:${item.v}%; background:${item.c}"></div></div>
+                <span style="width:28px; text-align:right; font-size:0.6rem">${item.v}%</span>
+            </div>`).join('');
     }
 
     async function updateWeather() {
@@ -188,8 +194,8 @@
             const data = await res.json(); const now = new Date(); const hour = now.getHours() + (now.getMinutes()/60);
 
             if (hour < 6.5) {
-                const tomorrowDate = new Date(); tomorrowDate.setDate(tomorrowDate.getDate() + 1);
-                const p = calculateProb(data.daily.temperature_2m_min[1], currentGW, tomorrowDate);
+                const tomDate = new Date(); tomDate.setDate(tomDate.getDate() + 1);
+                const p = calculateProb(data.daily.temperature_2m_min[1], currentGW, tomDate);
                 const dominant = Object.keys(p).reduce((a, b) => p[a] > p[b] ? a : b);
                 document.getElementById('text-tomorrow').innerText = dominant;
                 document.getElementById('card-tomorrow').className = `card-rt is-${dominant.toLowerCase()}`;
@@ -201,17 +207,32 @@
                 const temp = data.daily.temperature_2m_min[off];
                 document.getElementById(`label-j${id}`).innerText = targetDate.toLocaleDateString('fr-FR', {weekday:'short', day:'2-digit'}).toUpperCase();
                 document.getElementById(`temp-j${id}`).innerText = Math.round(temp) + "°C";
-                renderProbs(`card-j${id}`, `prob-rows-j${id}`, calculateProb(temp, currentGW, targetDate));
+                renderProbs(`prob-rows-j${id}`, calculateProb(temp, currentGW, targetDate));
             });
         } catch (e) {}
     }
 
     async function updateTempo() {
         try {
-            const [tRes, tomRes, sRes] = await Promise.all([fetch("https://www.api-couleur-tempo.fr/api/jourTempo/today"), fetch("https://www.api-couleur-tempo.fr/api/jourTempo/tomorrow"), fetch("https://www.api-couleur-tempo.fr/api/stats")]);
-            const t = await tRes.json(), tom = await tomRes.json(), s = await sRes.json();
+            const [tRes, tomRes, sRes, statsRes] = await Promise.all([
+                fetch("https://www.api-couleur-tempo.fr/api/jourTempo/today"),
+                fetch("https://www.api-couleur-tempo.fr/api/jourTempo/tomorrow"),
+                fetch("https://www.api-couleur-tempo.fr/api/stats"),
+                fetch("https://raw.githubusercontent.com/Zuldar/Tempo_data/main/stats_fiabilite.json?t=" + Date.now())
+            ]);
+            
+            const t = await tRes.json(), tom = await tomRes.json(), s = await sRes.json(), stats = await statsRes.json();
+            
+            // Mise à jour des scores J+2 et J+3 depuis GitHub
+            const scoreJ2 = stats.j2.total > 0 ? Math.round((stats.j2.success / stats.j2.total) * 100) : 100;
+            const scoreJ3 = stats.j3.total > 0 ? Math.round((stats.j3.success / stats.j3.total) * 100) : 100;
+            
+            document.getElementById('score-j2').innerText = `SCORE: ${scoreJ2}%`;
+            document.getElementById('score-j3').innerText = `SCORE: ${scoreJ3}%`;
+
             const findV = (obj, col) => { for (let [k, v] of Object.entries(obj)) { if (k.toLowerCase().includes(col)) return v; } return 0; };
             daysLeft.rouge = 22 - findV(s, 'rouge'); daysLeft.blanc = 43 - findV(s, 'blanc');
+            
             const now = new Date(); const hour = now.getHours() + (now.getMinutes()/60);
             const badgeTom = document.getElementById('badge-tomorrow');
 
