@@ -32,13 +32,17 @@
         .badge-rte { background-image: linear-gradient(135deg, #00b09b 0%, #96ffea 25%, #00b09b 50%, #96ffea 75%, #00b09b 100%); color: #000; }
         .badge-officiel { background-image: var(--gold-linear); color: #111; }
 
-        .badge-fiabilite {
-            position: absolute; bottom: 8px; right: 10px;
-            font-size: 0.55rem; font-weight: 900;
-            padding: 2px 6px; border-radius: 4px;
-            background: rgba(255,255,255,0.05); color: #00e676;
-            border: 1px solid rgba(0,230,118,0.2);
+        /* NOUVEAU STYLE DU SCORE : DISCRET ET BIEN PLACÉ */
+        .score-container {
+            margin-top: 8px;
+            text-align: right;
+            font-size: 0.52rem;
+            font-weight: 800;
+            color: #555;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
         }
+        .score-val { color: var(--green); opacity: 0.8; }
 
         .card-main { background: var(--card); border-radius: 20px; padding: 15px; border: 1px solid #222; }
         .flux-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
@@ -103,20 +107,20 @@
 
     <div class="prob-container">
         <div id="card-j2" class="prob-card">
-            <div id="score-j2" class="badge-fiabilite">SCORE: --%</div>
             <div class="prob-header">
                 <span id="label-j2" style="font-size: 0.6rem; font-weight: 900; opacity: 0.6;">...</span>
                 <span id="temp-j2" style="font-size: 0.8rem; font-weight: 900;">--°C</span>
             </div>
             <div id="prob-rows-j2"></div>
+            <div class="score-container">Précision J+2: <span id="val-j2" class="score-val">--%</span></div>
         </div>
         <div id="card-j3" class="prob-card">
-            <div id="score-j3" class="badge-fiabilite">SCORE: --%</div>
             <div class="prob-header">
                 <span id="label-j3" style="font-size: 0.6rem; font-weight: 900; opacity: 0.6;">...</span>
                 <span id="temp-j3" style="font-size: 0.8rem; font-weight: 900;">--°C</span>
             </div>
             <div id="prob-rows-j3"></div>
+            <div class="score-container">Précision J+3: <span id="val-j3" class="score-val">--%</span></div>
         </div>
     </div>
 
@@ -227,8 +231,8 @@
             const scoreJ2 = stats.j2.total > 0 ? Math.round((stats.j2.success / stats.j2.total) * 100) : 100;
             const scoreJ3 = stats.j3.total > 0 ? Math.round((stats.j3.success / stats.j3.total) * 100) : 100;
             
-            document.getElementById('score-j2').innerText = `SCORE: ${scoreJ2}%`;
-            document.getElementById('score-j3').innerText = `SCORE: ${scoreJ3}%`;
+            document.getElementById('val-j2').innerText = `${scoreJ2}%`;
+            document.getElementById('val-j3').innerText = `${scoreJ3}%`;
 
             const findV = (obj, col) => { for (let [k, v] of Object.entries(obj)) { if (k.toLowerCase().includes(col)) return v; } return 0; };
             daysLeft.rouge = 22 - findV(s, 'rouge'); daysLeft.blanc = 43 - findV(s, 'blanc');
