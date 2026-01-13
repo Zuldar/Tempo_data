@@ -32,16 +32,7 @@
         .badge-rte { background-image: linear-gradient(135deg, #00b09b 0%, #96ffea 25%, #00b09b 50%, #96ffea 75%, #00b09b 100%); color: #000; }
         .badge-officiel { background-image: var(--gold-linear); color: #111; }
 
-        /* NOUVEAU STYLE DU SCORE : DISCRET ET BIEN PLACÉ */
-        .score-container {
-            margin-top: 8px;
-            text-align: right;
-            font-size: 0.52rem;
-            font-weight: 800;
-            color: #555;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-        }
+        .score-container { margin-top: 8px; text-align: right; font-size: 0.52rem; font-weight: 800; color: #555; text-transform: uppercase; }
         .score-val { color: var(--green); opacity: 0.8; }
 
         .card-main { background: var(--card); border-radius: 20px; padding: 15px; border: 1px solid #222; }
@@ -101,6 +92,9 @@
                 <span id="badge-tomorrow" class="badge-base">...</span>
                 <div id="date-tomorrow" style="font-size: 0.6rem; font-weight: 800; opacity: 0.8; text-transform: uppercase;">...</div>
                 <div id="text-tomorrow" style="font-size: 1.1rem; font-weight: 900;">...</div>
+                <div style="position: absolute; bottom: 5px; right: 10px; font-size: 0.5rem; opacity: 0.4; font-weight: 800;">
+                    FIABILITÉ J+1: <span id="val-j1" style="color:var(--green)">--%</span>
+                </div>
             </div>
         </div>
     </div>
@@ -159,13 +153,13 @@
         const dayOfWeek = targetDate.getDay(); 
         const month = targetDate.getMonth() + 1;
 
-        let tempScore = (temp <= 0) ? 100 : (temp <= 4) ? 80 : (temp <= 8) ? 50 : (temp <= 12) ? 20 : 0;
-        let gwScore = (gw >= 80) ? 100 : (gw >= 70) ? 60 : (gw >= 60) ? 20 : 0;
-        let globalScore = (tempScore * 0.7) + (gwScore * 0.3);
+        let tempScore = (temp <= 0) ? 100 : (temp <= 4) ? 85 : (temp <= 8) ? 60 : (temp <= 12) ? 30 : 0;
+        let gwScore = (gw >= 80) ? 100 : (gw >= 72) ? 75 : (gw >= 64) ? 40 : (gw >= 55) ? 10 : 0;
+        let globalScore = (tempScore * 0.65) + (gwScore * 0.35);
 
-        if (globalScore > 75) { r = 70; w = 30; b = 0; }
-        else if (globalScore > 50) { r = 10; w = 70; b = 20; }
-        else if (globalScore > 25) { r = 0; w = 25; b = 75; }
+        if (globalScore >= 72) { r = 70; w = 30; b = 0; }
+        else if (globalScore >= 38) { r = 10; w = 70; b = 20; }
+        else if (globalScore > 15) { r = 0; w = 25; b = 75; }
         else { r = 0; w = 0; b = 100; }
 
         if (dayOfWeek === 0 || dayOfWeek === 6) { w += r; r = 0; }
@@ -227,12 +221,11 @@
             
             const t = await tRes.json(), tom = await tomRes.json(), s = await sRes.json(), stats = await statsRes.json();
             
-            // Mise à jour des scores J+2 et J+3 depuis GitHub
-            const scoreJ2 = stats.j2.total > 0 ? Math.round((stats.j2.success / stats.j2.total) * 100) : 100;
-            const scoreJ3 = stats.j3.total > 0 ? Math.round((stats.j3.success / stats.j3.total) * 100) : 100;
-            
-            document.getElementById('val-j2').innerText = `${scoreJ2}%`;
-            document.getElementById('val-j3').innerText = `${scoreJ3}%`;
+            // Mise à jour des scores J+1, J+2 et J+3 depuis GitHub
+            const rate = (obj) => (obj.total > 0 ? Math.round((obj.success / obj.total) * 100) : 100);
+            document.getElementById('val-j1').innerText = `${rate(stats.j1)}%`;
+            document.getElementById('val-j2').innerText = `${rate(stats.j2)}%`;
+            document.getElementById('val-j3').innerText = `${rate(stats.j3)}%`;
 
             const findV = (obj, col) => { for (let [k, v] of Object.entries(obj)) { if (k.toLowerCase().includes(col)) return v; } return 0; };
             daysLeft.rouge = 22 - findV(s, 'rouge'); daysLeft.blanc = 43 - findV(s, 'blanc');
