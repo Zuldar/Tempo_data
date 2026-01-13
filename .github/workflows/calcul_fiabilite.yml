@@ -1,7 +1,7 @@
-name: Tempo Expert Engine
+name: Tempo Fiabilité 
 on:
   schedule:
-    - cron: '15 10 * * *'
+    - cron: '15 10 * * *' # Exécution à 11h15 France
   workflow_dispatch:
 
 jobs:
@@ -22,49 +22,33 @@ jobs:
           import json
           from datetime import datetime, timedelta
 
-          # --- CONFIGURATION DES FACTEURS POIDS (Modifiables ici) ---
-          WEIGHT_METEO = 0.65  # 65% Importance Température
-          WEIGHT_GRID  = 0.35  # 35% Importance Tension Réseau (augmenté)
-          
-          # SEUILS DE DÉCISION (Plus c'est bas, plus l'appli est "prudente")
+          # --- CONFIGURATION DES POIDS ---
+          W_METEO = 0.65  
+          W_GRID  = 0.35  
           THRESHOLD_ROUGE = 72
-          THRESHOLD_BLANC = 38  # Abaissé pour capter les jours Blancs plus tôt
-          # ---------------------------------------------------------
-
+          THRESHOLD_BLANC = 38  # Prudence accrue pour le Blanc
+          
           def get_tempo_color(temp, gw, target_date):
-              # Calcul du score Météo (t_score)
-              if temp <= 0: t_score = 100
-              elif temp <= 4: t_score = 85
-              elif temp <= 8: t_score = 60
-              elif temp <= 12: t_score = 30
-              else: t_score = 0
-              
-              # Calcul du score Réseau (g_score) basé sur les GW (Flux)
-              # On considère que 80GW est le maximum de tension
+              t_score = 100 if temp <= 0 else 85 if temp <= 4 else 60 if temp <= 8 else 30 if temp <= 12 else 0
               g_score = 100 if gw >= 80 else 75 if gw >= 72 else 40 if gw >= 64 else 10 if gw >= 55 else 0
+              global_score = (t_score * W_METEO) + (g_score * W_GRID)
               
-              # Calcul pondéré
-              global_score = (t_score * WEIGHT_METEO) + (g_score * WEIGHT_GRID)
-              
-              # Choix de la couleur
               res = "BLEU"
               if global_score >= THRESHOLD_ROUGE: res = "ROUGE"
               elif global_score >= THRESHOLD_BLANC: res = "BLANC"
               
-              # Verrous réglementaires
               day_wk = target_date.weekday()
-              month = target_date.month
               if day_wk >= 5 and res == "ROUGE": res = "BLANC"
               if day_wk == 6: res = "BLEU"
-              if not (11 <= month <= 12 or 1 <= month <= 3) and res == "ROUGE": res = "BLANC"
-              
+              if not (11 <= target_date.month <= 12 or 1 <= target_date.month <= 3) and res == "ROUGE": res = "BLANC"
               return res
 
-          # 1. Charger/Initialiser les stats
+          # 1. Charger Stats
           try:
               with open('stats_fiabilite.json', 'r') as f: data = json.load(f)
           except:
-              data = {"j2": {"success":0, "total":0}, "j3": {"success":0, "total":0}, "predictions_j2":{}, "predictions_j3":{}}
+              data = {"j1": {"success":0, "total":0}, "j2": {"success":0, "total":0}, "j3": {"success":0, "total":0}, 
+                      "predictions_j1":{}, "predictions_j2":{}, "predictions_j3":{}}
 
           # 2. VERIFICATION DU JOUR
           today_str = datetime.now().strftime('%Y-%m-%d')
@@ -73,7 +57,7 @@ jobs:
           couleur_reelle = mapping.get(res_tempo.get('codeJour'), "INCONNU")
 
           if couleur_reelle != "INCONNU":
-              for key in ['j2', 'j3']:
+              for key in ['j1', 'j2', 'j3']:
                   pred_dict = data[f'predictions_{key}']
                   if today_str in pred_dict:
                       data[key]['total'] += 1
@@ -81,18 +65,17 @@ jobs:
                           data[key]['success'] += 1
                       del pred_dict[today_str]
 
-          # 3. NOUVELLES PREDICTIONS J+2 et J+3
+          # 3. NOUVELLES PREDICTIONS J+1, J+2, J+3
           meteo = requests.get("https://api.open-meteo.com/v1/forecast?latitude=48.8566&longitude=2.3522&daily=temperature_2m_min&timezone=Europe%2FBerlin").json()
           flux_data = requests.get("https://raw.githubusercontent.com/Zuldar/Tempo_data/main/archive_tempo.json").json()
           gw = flux_data[0]['prevision_j1'] / 1000
 
-          for offset in [2, 3]:
+          for offset in [1, 2, 3]:
               target_date = datetime.now() + timedelta(days=offset)
               t_str = target_date.strftime('%Y-%m-%d')
               temp = meteo['daily']['temperature_2m_min'][offset]
               data[f'predictions_j{offset}'][t_str] = get_tempo_color(temp, gw, target_date)
 
-          # 4. Sauvegarde
           with open('stats_fiabilite.json', 'w') as f:
               json.dump(data, f, indent=2)
           EOF
@@ -101,6 +84,6 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "TempoEngine"
           git add stats_fiabilite.json
-          git commit -m "MAJ Fiabilité avec Facteurs Poids" || exit 0
-          
-          git push
+          git commit -m "MAJ Engine (Poids & J+1/2/3)" || exit 0
+          g
+          it push
