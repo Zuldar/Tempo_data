@@ -23,22 +23,36 @@ jobs:
           from datetime import datetime, timedelta
 
           # --- CONFIGURATION DES POIDS ---
-          W_METEO = 0.65  
-          W_GRID  = 0.35  
+          W_METEO = 0.70  
+          W_GRID  = 0.30  
           THRESHOLD_ROUGE = 72
-          THRESHOLD_BLANC = 38
-          
+          THRESHOLD_BLANC = 30  # Seuil abaissé pour plus de prudence
+
           def get_tempo_color(temp, gw, target_date):
-              t_score = 100 if temp <= 0 else 85 if temp <= 4 else 60 if temp <= 8 else 30 if temp <= 12 else 0
-              g_score = 100 if gw >= 80 else 75 if gw >= 72 else 40 if gw >= 64 else 10 if gw >= 55 else 0
+              # Scores de Température
+              if temp <= 0: t_score = 100
+              elif temp <= 4: t_score = 90
+              elif temp <= 7: t_score = 75
+              elif temp <= 10: t_score = 45
+              elif temp <= 12: t_score = 25
+              else: t_score = 0
+              
+              # Scores Réseau (Flux GW)
+              g_score = 100 if gw >= 80 else 80 if gw >= 72 else 50 if gw >= 65 else 20 if gw >= 58 else 0
+              
+              # Calcul Global
               global_score = (t_score * W_METEO) + (g_score * W_GRID)
+              
               res = "BLEU"
               if global_score >= THRESHOLD_ROUGE: res = "ROUGE"
               elif global_score >= THRESHOLD_BLANC: res = "BLANC"
+              
+              # Verrous réglementaires
               day_wk = target_date.weekday()
+              month = target_date.month
               if day_wk >= 5 and res == "ROUGE": res = "BLANC"
               if day_wk == 6: res = "BLEU"
-              if not (11 <= target_date.month <= 12 or 1 <= target_date.month <= 3) and res == "ROUGE": res = "BLANC"
+              if not (11 <= month <= 12 or 1 <= month <= 3) and res == "ROUGE": res = "BLANC"
               return res
 
           # 1. Charger Stats
@@ -66,7 +80,7 @@ jobs:
                           del pred_dict[today_str]
           except: pass
 
-          # 3. NOUVELLES PREDICTIONS
+          # 3. NOUVELLES PREDICTIONS J+1, J+2, J+3
           try:
               meteo = requests.get("https://api.open-meteo.com/v1/forecast?latitude=48.8566&longitude=2.3522&daily=temperature_2m_min&timezone=Europe%2FBerlin").json()
               flux_data = requests.get("https://raw.githubusercontent.com/Zuldar/Tempo_data/main/archive_tempo.json").json()
@@ -79,6 +93,7 @@ jobs:
                   data[f'predictions_j{offset}'][t_str] = get_tempo_color(temp, gw, target_date)
           except: pass
 
+          # 4. Sauvegarde
           with open('stats_fiabilite.json', 'w') as f:
               json.dump(data, f, indent=2)
           EOF
@@ -87,6 +102,6 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "TempoEngine"
           git add stats_fiabilite.json
-          git commit -m "Update stats and predictions" || echo "No changes to commit"
-          git push || echo "No changes t
-          o push"
+          git commit -m "MAJ Engine: Correction seuil Blanc et triple fiabilité" || echo "No changes to commit"
+          git push || echo "No changes 
+          to push"
