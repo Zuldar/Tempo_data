@@ -148,32 +148,83 @@
         } catch (e) {}
     }
 
-    function calculateProb(temp, gw, targetDate) {
-        let r = 0, w = 0, b = 0;
-        const dayOfWeek = targetDate.getDay(); 
-        const month = targetDate.getMonth() + 1;
-
-        let tempScore = (temp <= 0) ? 100 : (temp <= 4) ? 85 : (temp <= 8) ? 60 : (temp <= 12) ? 30 : 0;
-        let gwScore = (gw >= 80) ? 100 : (gw >= 72) ? 75 : (gw >= 64) ? 40 : (gw >= 55) ? 10 : 0;
-        let globalScore = (tempScore * 0.65) + (gwScore * 0.35);
-
-        if (globalScore >= 72) { r = 70; w = 30; b = 0; }
-        else if (globalScore >= 38) { r = 10; w = 70; b = 20; }
-        else if (globalScore > 15) { r = 0; w = 25; b = 75; }
-        else { r = 0; w = 0; b = 100; }
-
-        if (dayOfWeek === 0 || dayOfWeek === 6) { w += r; r = 0; }
-        if (dayOfWeek === 0) { b = 100; w = 0; r = 0; }
-        if (month > 3 && month < 11) r = 0;
-        if (daysLeft.rouge <= 0) { w += r; r = 0; }
-        if (daysLeft.blanc <= 0) { b += w; w = 0; }
-
-        let total = Math.max(1, r + w + b);
-        let finalR = Math.round((r/total)*100);
-        let finalW = Math.round((w/total)*100);
-        let finalB = 100 - (finalR + finalW);
-
-        return { ROUGE: finalR, BLANC: finalW, BLEU: Math.max(0, finalB) };
+    function calculateProb(temp, gw, targetDate, historicalData) {
+    let r = 0, w = 0, b = 0;
+    const dayOfWeek = targetDate.getDay(); 
+    const month = targetDate.getMonth() + 1;
+    
+    // 🔥 NOUVEAU : Détection des patterns critiques
+    const isCriticalPeriod = (month >= 11 || month <= 2); // Hiver
+    const isWeekend = (dayOfWeek === 0 || dayOfWeek === 6);
+    
+    // 🔥 AMÉLIORATION 1 : Scores plus fins avec plus de paliers
+    let tempScore = 0;
+    if (temp <= -2) tempScore = 100;
+    else if (temp <= 0) tempScore = 95;
+    else if (temp <= 2) tempScore = 85;
+    else if (temp <= 4) tempScore = 70;
+    else if (temp <= 6) tempScore = 55;
+    else if (temp <= 8) tempScore = 40;
+    else if (temp <= 10) tempScore = 25;
+    else if (temp <= 12) tempScore = 15;
+    else tempScore = 0;
+    
+    // 🔥 AMÉLIORATION 2 : Seuils GW ajustés selon la saison
+    let gwThresholds = isCriticalPeriod 
+        ? { extreme: 85, high: 78, medium: 70, low: 62 }  // Hiver
+        : { extreme: 75, high: 68, medium: 60, low: 52 }; // Été
+    
+    let gwScore = 0;
+    if (gw >= gwThresholds.extreme) gwScore = 100;
+    else if (gw >= gwThresholds.high) gwScore = 80;
+    else if (gw >= gwThresholds.medium) gwScore = 50;
+    else if (gw >= gwThresholds.low) gwScore = 20;
+    else gwScore = 0;
+    
+    // 🔥 AMÉLIORATION 3 : Pondération dynamique selon contexte
+    let tempWeight = isCriticalPeriod ? 0.70 : 0.50; // Plus de poids à la température en hiver
+    let gwWeight = 1 - tempWeight;
+    
+    let globalScore = (tempScore * tempWeight) + (gwScore * gwWeight);
+    
+    // 🔥 AMÉLIORATION 4 : Ajustement selon jours restants (gestion plus intelligente)
+    const rougeRatio = daysLeft.rouge / 22;  // % de jours rouges restants
+    const blancRatio = daysLeft.blanc / 43;
+    
+    // Si fin de saison et peu de jours rouges restants, augmenter le seuil
+    if (month >= 2 && rougeRatio < 0.3) {
+        globalScore *= 1.15; // Augmente la probabilité de rouge
+    }
+    
+    // 🔥 AMÉLIORATION 5 : Distribution plus réaliste
+    if (globalScore >= 80) {
+        r = 85; w = 15; b = 0;
+    } else if (globalScore >= 65) {
+        r = 60; w = 35; b = 5;
+    } else if (globalScore >= 50) {
+        r = 25; w = 60; b = 15;
+    } else if (globalScore >= 35) {
+        r = 10; w = 50; b = 40;
+    } else if (globalScore >= 20) {
+        r = 0; w = 30; b = 70;
+    } else {
+        r = 0; w = 10; b = 90;
+    }
+    
+    // Règles strictes (inchangées)
+    if (isWeekend) { w += r; r = 0; }
+    if (dayOfWeek === 0) { b = 100; w = 0; r = 0; }
+    if (month > 3 && month < 11) r = 0;
+    if (daysLeft.rouge <= 0) { w += r; r = 0; }
+    if (daysLeft.blanc <= 0) { b += w; w = 0; }
+    
+    // Normalisation
+    let total = Math.max(1, r + w + b);
+    let finalR = Math.round((r/total)*100);
+    let finalW = Math.round((w/total)*100);
+    let finalB = 100 - (finalR + finalW);
+    
+    return { ROUGE: finalR, BLANC: finalW, BLEU: Math.max(0, finalB) };
     }
 
     function renderProbs(rowsId, probs) {
@@ -187,28 +238,70 @@
     }
 
     async function updateWeather() {
-        try {
-            const res = await fetch("https://api.open-meteo.com/v1/forecast?latitude=48.8566&longitude=2.3522&daily=temperature_2m_min&timezone=Europe%2FBerlin");
-            const data = await res.json(); const now = new Date(); const hour = now.getHours() + (now.getMinutes()/60);
-
-            if (hour < 6.5) {
-                const tomDate = new Date(); tomDate.setDate(tomDate.getDate() + 1);
-                const p = calculateProb(data.daily.temperature_2m_min[1], currentGW, tomDate);
+    try {
+        // 🔥 Récupérer données pour plusieurs villes françaises
+        const cities = [
+            { name: 'Paris', lat: 48.8566, lon: 2.3522, weight: 0.3 },
+            { name: 'Lyon', lat: 45.7640, lon: 4.8357, weight: 0.15 },
+            { name: 'Marseille', lat: 43.2965, lon: 5.3698, weight: 0.15 },
+            { name: 'Lille', lat: 50.6292, lon: 3.0573, weight: 0.15 },
+            { name: 'Toulouse', lat: 43.6047, lon: 1.4442, weight: 0.15 },
+            { name: 'Strasbourg', lat: 48.5734, lon: 7.7521, weight: 0.1 }
+        ];
+        
+        const weatherPromises = cities.map(city => 
+            fetch(`https://api.open-meteo.com/v1/forecast?latitude=${city.lat}&longitude=${city.lon}&daily=temperature_2m_min,temperature_2m_max,windspeed_10m_max&timezone=Europe%2FBerlin&forecast_days=7`)
+                .then(r => r.json())
+                .then(data => ({ ...city, data }))
+        );
+        
+        const weatherData = await Promise.all(weatherPromises);
+        
+        // 🔥 Calculer température pondérée nationale
+        const now = new Date();
+        const hour = now.getHours() + (now.getMinutes()/60);
+        
+        for (let dayOffset = 1; dayOffset <= 3; dayOffset++) {
+            let nationalTempMin = 0;
+            let nationalTempMax = 0;
+            let nationalWind = 0;
+            
+            weatherData.forEach(city => {
+                const tempMin = city.data.daily.temperature_2m_min[dayOffset];
+                const tempMax = city.data.daily.temperature_2m_max[dayOffset];
+                const wind = city.data.daily.windspeed_10m_max[dayOffset];
+                
+                nationalTempMin += tempMin * city.weight;
+                nationalTempMax += tempMax * city.weight;
+                nationalWind += wind * city.weight;
+            });
+            
+            // 🔥 Température ressentie approximative
+            const windChill = nationalTempMin - (nationalWind / 5);
+            const avgTemp = (nationalTempMin + nationalTempMax) / 2;
+            
+            // Utiliser la température ressentie pour les calculs
+            const targetDate = new Date();
+            targetDate.setDate(targetDate.getDate() + dayOffset);
+            
+            if (dayOffset === 1 && hour < 6.5) {
+                const p = calculateProb(windChill, currentGW, targetDate);
                 const dominant = Object.keys(p).reduce((a, b) => p[a] > p[b] ? a : b);
                 document.getElementById('text-tomorrow').innerText = dominant;
                 document.getElementById('card-tomorrow').className = `card-rt is-${dominant.toLowerCase()}`;
             }
-
-            [2, 3].forEach((off, i) => {
-                const id = i === 0 ? "2" : "3"; 
-                const targetDate = new Date(); targetDate.setDate(targetDate.getDate() + off);
-                const temp = data.daily.temperature_2m_min[off];
+            
+            if (dayOffset >= 2) {
+                const id = dayOffset === 2 ? "2" : "3";
                 document.getElementById(`label-j${id}`).innerText = targetDate.toLocaleDateString('fr-FR', {weekday:'short', day:'2-digit'}).toUpperCase();
-                document.getElementById(`temp-j${id}`).innerText = Math.round(temp) + "°C";
-                renderProbs(`prob-rows-j${id}`, calculateProb(temp, currentGW, targetDate));
-            });
-        } catch (e) {}
+                document.getElementById(`temp-j${id}`).innerText = Math.round(windChill) + "°C";
+                renderProbs(`prob-rows-j${id}`, calculateProb(windChill, currentGW, targetDate));
+            }
+        }
+    } catch (e) {
+        console.error('Weather error:', e);
     }
+}
 
     async function updateTempo() {
         try {
