@@ -1,26 +1,26 @@
 {
   "j1": {
+    "success": 2,
+    "total": 3
+  },
+  "j2": {
     "success": 1,
     "total": 2
   },
-  "j2": {
-    "success": 0,
+  "j3": {
+    "success": 1,
     "total": 1
   },
-  "j3": {
-    "success": 0,
-    "total": 0
-  },
   "predictions_j1": {
-    "2026-01-16": "BLANC"
-  },
-  "predictions_j2": {
-    "2026-01-16": "BLANC",
     "2026-01-17": "BLANC"
   },
-  "predictions_j3": {
-    "2026-01-16": "BLANC",
+  "predictions_j2": {
     "2026-01-17": "BLANC",
     "2026-01-18": "BLEU"
+  },
+  "predictions_j3": {
+    "2026-01-17": "BLANC",
+    "2026-01-18": "BLEU",
+    "2026-01-19": "BLANC"
   }
 }
