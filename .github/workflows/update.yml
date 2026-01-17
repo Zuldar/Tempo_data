@@ -2,10 +2,15 @@ name: Update Tempo Data
 
 on:
   schedule:
-    # Toutes les 5 minutes
-    - cron: '*/5 * * * *'
-  workflow_dispatch:  # Permet déclenchement manuel
-
+    # À 11h (annonce RTE)
+    - cron: '0 11 * * *'
+    # Puis toutes les 3 heures le reste de la journée
+    - cron: '0 0,3,6,9,12,15,18,21 * * *'
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      
 jobs:
   update-data:
     runs-on: ubuntu-latest
