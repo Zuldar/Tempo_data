@@ -36,6 +36,8 @@ def load_config():
 
 def is_jour_ferie(date_str, jours_feries):
     """Vérifie si une date est un jour férié"""
+    if not jours_feries:
+        return False
     return date_str in jours_feries
 
 def calculate_temp_score(temp, is_winter, config):
@@ -198,13 +200,27 @@ def main():
         return
     
     # Extraire les infos nécessaires
-    meteo = data.get("meteo", [])
-    flux = data.get("flux", {})
-    tempo = data.get("tempo_officiel", {})
+    meteo = data.get("meteo")
+    flux = data.get("flux")
+    tempo = data.get("tempo_officiel")
     feries = data.get("jours_feries", {})
     
-    gw_prevision = flux.get("prevision_j1", 65000) / 1000  # Convertir en GW
-    saison_stats = tempo.get("saison", {})
+    # 🔥 VÉRIFICATIONS AJOUTÉES
+    if not meteo or not isinstance(meteo, list) or len(meteo) == 0:
+        print("❌ Données météo manquantes ou invalides")
+        return
+    
+    if not flux:
+        print("⚠️  Données de flux manquantes, utilisation valeur par défaut")
+        gw_prevision = 65.0
+    else:
+        gw_prevision = flux.get("prevision_j1", 65000) / 1000  # Convertir en GW
+    
+    if not tempo:
+        print("⚠️  Données Tempo manquantes, utilisation valeurs par défaut")
+        saison_stats = {"rouge_restants": 22, "blanc_restants": 43}
+    else:
+        saison_stats = tempo.get("saison", {"rouge_restants": 22, "blanc_restants": 43})
     
     # Générer prévisions pour J+1, J+2, J+3
     predictions = []
@@ -212,19 +228,35 @@ def main():
     for offset in [1, 2, 3]:
         if offset < len(meteo):
             forecast = meteo[offset]
-            prediction = predict_color(
-                temp=forecast["temp_ressentie"],
-                gw=gw_prevision,
-                target_date=forecast["date"],
-                jours_feries=feries,
-                saison_stats=saison_stats,
-                config=config
-            )
-            predictions.append(prediction)
             
-            print(f"  J+{offset} ({forecast['date']}): {prediction['couleur_predite']} "
-                  f"({prediction['probabilites'][prediction['couleur_predite']]}% - "
-                  f"Confiance: {prediction['confiance']})")
+            # Vérifier que les données météo sont valides
+            if not forecast or "temp_ressentie" not in forecast or "date" not in forecast:
+                print(f"⚠️  Données météo J+{offset} invalides, ignoré")
+                continue
+            
+            try:
+                prediction = predict_color(
+                    temp=forecast["temp_ressentie"],
+                    gw=gw_prevision,
+                    target_date=forecast["date"],
+                    jours_feries=feries,
+                    saison_stats=saison_stats,
+                    config=config
+                )
+                predictions.append(prediction)
+                
+                print(f"  J+{offset} ({forecast['date']}): {prediction['couleur_predite']} "
+                      f"({prediction['probabilites'][prediction['couleur_predite']]}% - "
+                      f"Confiance: {prediction['confiance']})")
+            except Exception as e:
+                print(f"❌ Erreur prédiction J+{offset}: {e}")
+                continue
+        else:
+            print(f"⚠️  Pas de données météo pour J+{offset}")
+    
+    if len(predictions) == 0:
+        print("❌ Aucune prédiction générée")
+        return
     
     # Sauvegarder
     output = {
@@ -232,10 +264,13 @@ def main():
         "predictions": predictions
     }
     
-    with open("../data/predictions.json", "w", encoding="utf-8") as f:
-        json.dump(output, f, indent=2, ensure_ascii=False)
-    
-    print("✅ Prévisions sauvegardées dans data/predictions.json")
+    try:
+        with open("../data/predictions.json", "w", encoding="utf-8") as f:
+            json.dump(output, f, indent=2, ensure_ascii=False)
+        
+        print(f"✅ {len(predictions)} prévisions sauvegardées dans data/predictions.json")
+    except Exception as e:
+        print(f"❌ Erreur sauvegarde: {e}")
 
 if __name__ == "__main__":
     main()
