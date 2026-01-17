@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tempo Master - Dashboard</title>
+    <style>
+        :root {
+            --bg: #050505; --card: #111; 
+            --gold-linear: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c);
+            --blue: #2979ff; --red: #ff1744; --green: #00e676;
+            --grad-blue: linear-gradient(135deg, #0044ff 0%, #001133 100%);
+            --grad-white: linear-gradient(135deg, #ffffff 0%, #777777 100%);
+            --grad-rouge: linear-gradient(135deg, #ff0000 0%, #440000 100%);
+        }
+        body { background: var(--bg); color: white; font-family: -apple-system, sans-serif; margin: 0; padding: 10px; }
+        .container { max-width: 420px; margin: auto; display: flex; flex-direction: column; gap: 12px; }
+        
+        .status-bar { text-align: center; font-size: 0.65rem; font-weight: 900; padding: 8px; border-radius: 10px; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; }
+        .status-live { background: var(--green); color: black; }
+        .status-error { background: var(--red); color: white; }
+        
+        .badge-base { 
+            position: absolute; top: 10px; right: 10px; 
+            font-size: 0.5rem; padding: 4px 10px; border-radius: 5px; 
+            font-weight: 900; box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            letter-spacing: 0.5px; text-transform: uppercase;
+            background-size: 200% auto;
+            animation: shine 3s linear infinite;
+        }
+        @keyframes shine { to { background-position: 200% center; } }
+        .badge-officiel { background-image: var(--gold-linear); color: #111; }
+        .badge-prediction { background-image: linear-gradient(135deg, #6a11cb 0%, #ab66ff 25%, #6a11cb 50%, #ab66ff 75%, #6a11cb 100%); color: white; }
+        .badge-ferie { background: gold; color: #000; top: 35px; }
+
+        .card-main { background: var(--card); border-radius: 20px; padding: 15px; border: 1px solid #222; }
+        .flux-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+        .flux-item { background: #1a1a1a; padding: 8px 12px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; font-weight: 600; }
+        
+        .solde-container { text-align: center; padding-top: 15px; border-top: 1px dashed #333; display: flex; justify-content: center; align-items: center; gap: 12px; }
+        .solde-val { font-weight: 900; font-size: 1.5rem; }
+        .import-style { color: var(--red); }
+        .export-style { color: var(--green); }
+
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .card-rt { border-radius: 20px; padding: 15px; position: relative; border: 1px solid rgba(255,255,255,0.1); min-height: 85px; display: flex; flex-direction: column; justify-content: center; transition: all 0.5s ease; }
+        .is-bleu { background: var(--grad-blue); color: white; }
+        .is-blanc { background: var(--grad-white); color: #000 !important; }
+        .is-rouge { background: var(--grad-rouge); color: white; }
+        .is-attente { background: #222; color: #555; }
+
+        .prob-container { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .prob-card { background: #151515; border-radius: 18px; padding: 12px; border: 2px solid #222; }
+        .prob-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px solid #333; padding-bottom: 5px; }
+        .prob-line { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; font-size: 0.7rem; font-weight: 800; }
+        .dot { width: 10px; height: 10px; border-radius: 50%; }
+        .prob-bar-bg { flex-grow: 1; height: 6px; background: #222; border-radius: 3px; overflow: hidden; }
+        .prob-bar-fill { height: 100%; transition: width 1s ease; }
+        
+        .bar-wrap { margin-bottom: 12px; }
+        .bar-info { display: flex; justify-content: space-between; font-size: 0.7rem; font-weight: 900; margin-bottom: 5px; }
+        .bar-base { background: #1a1a1a; height: 10px; border-radius: 5px; overflow: hidden; }
+        .bar-fill { height: 100%; border-radius: 5px; transition: width 1s ease-in-out; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="data-status" class="status-bar">Chargement...</div>
+
+    <!-- Flux électriques -->
+    <div class="card-main">
+        <div class="flux-grid" id="flux-grid"></div>
+        <div class="solde-container" id="flux-display"></div>
+    </div>
+
+    <!-- Tempo aujourd'hui et demain -->
+    <div style="margin-top: 5px;">
+        <div class="status-bar" style="background:#008148;color:white;margin-bottom:8px;">TEMPO OFFICIEL</div>
+        <div class="grid-2">
+            <div id="card-today" class="card-rt">
+                <span class="badge-base badge-officiel">OFFICIEL</span>
+                <div id="date-today" style="font-size: 0.6rem; font-weight: 800; opacity: 0.8; text-transform: uppercase;"></div>
+                <div id="text-today" style="font-size: 1.1rem; font-weight: 900;"></div>
+            </div>
+            <div id="card-tomorrow" class="card-rt">
+                <span class="badge-base badge-officiel">OFFICIEL</span>
+                <div id="date-tomorrow" style="font-size: 0.6rem; font-weight: 800; opacity: 0.8; text-transform: uppercase;"></div>
+                <div id="text-tomorrow" style="font-size: 1.1rem; font-weight: 900;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Prévisions J+2 et J+3 -->
+    <div class="prob-container" id="predictions-container"></div>
+
+    <!-- Stats saison -->
+    <div class="card-main">
+        <div style="font-size: 0.6rem; font-weight: 900; color: #444; margin-bottom: 15px;">SAISON 2025-26 (RESTANTS)</div>
+        <div id="stats-container"></div>
+    </div>
+</div>
+
+<script>
+    const BASE_URL = "https://raw.githubusercontent.com/Zuldar/Tempo_data/main/data/";
+    
+    async function loadData() {
+        try {
+            const [currentRes, predictionsRes] = await Promise.all([
+                fetch(`${BASE_URL}current.json?t=${Date.now()}`),
+                fetch(`${BASE_URL}predictions.json?t=${Date.now()}`)
+            ]);
+            
+            const current = await currentRes.json();
+            const predictions = await predictionsRes.json();
+            
+            return { current, predictions };
+        } catch (e) {
+            console.error("Erreur chargement:", e);
+            return null;
+        }
+    }
+    
+    function renderFlux(flux) {
+        if (!flux) return;
+        
+        const pays = [
+            {id:'uk', n:'UK', f:'🇬🇧'},
+            {id:'de_be', n:'ALL/BEL', f:'🇩🇪🇧🇪'},
+            {id:'it', n:'ITA', f:'🇮🇹'},
+            {id:'es', n:'ESP', f:'🇪🇸'},
+            {id:'ch', n:'SUI', f:'🇨🇭'}
+        ];
+        
+        let solde = 0;
+        let html = "";
+        
+        const fluxData = flux.flux || {};
+        
+        pays.forEach(p => {
+            const v = fluxData[p.id] || 0;
+            solde += v;
+            html += `<div class="flux-item">
+                <span>${p.f} ${p.n}</span>
+                <span style="color:${v>0?'var(--red)':'var(--green)'}">${v>0?'↓':'↑'} ${Math.abs(v)}</span>
+            </div>`;
+        });
+        
+        document.getElementById('flux-grid').innerHTML = html;
+        
+        const absSolde = Math.abs(solde);
+        const display = document.getElementById('flux-display');
+        
+        if (solde > 0) {
+            display.innerHTML = `
+                <span class="solde-val import-style">${absSolde} MW</span>
+                <span style="font-size: 1.8rem;">➡</span>
+                <span style="font-size: 1.8rem;">🇫🇷</span>
+            `;
+        } else {
+            display.innerHTML = `
+                <span style="font-size: 1.8rem;">🇫🇷</span>
+                <span style="font-size: 1.8rem;">➡</span>
+                <span class="solde-val export-style">${absSolde} MW</span>
+            `;
+        }
+    }
+    
+    function renderTempo(tempo) {
+        if (!tempo) return;
+        
+        const labels = {1: "BLEU", 2: "BLANC", 3: "ROUGE"};
+        
+        // Aujourd'hui
+        const today = tempo.today || {};
+        document.getElementById('text-today').innerText = labels[today.code] || "...";
+        document.getElementById('card-today').className = `card-rt is-${(labels[today.code] || 'attente').toLowerCase()}`;
+        document.getElementById('date-today').innerText = new Date().toLocaleDateString('fr-FR', {weekday:'long', day:'2-digit'});
+        
+        // Demain
+        const tomorrow = tempo.tomorrow || {};
+        document.getElementById('text-tomorrow').innerText = labels[tomorrow.code] || "...";
+        document.getElementById('card-tomorrow').className = `card-rt is-${(labels[tomorrow.code] || 'attente').toLowerCase()}`;
+        const tomDate = new Date();
+        tomDate.setDate(tomDate.getDate() + 1);
+        document.getElementById('date-tomorrow').innerText = tomDate.toLocaleDateString('fr-FR', {weekday:'long', day:'2-digit'});
+    }
+    
+    function renderPredictions(predictions) {
+        if (!predictions || !predictions.predictions) return;
+        
+        const preds = predictions.predictions.filter((p, i) => i >= 1); // J+2 et J+3
+        const container = document.getElementById('predictions-container');
+        
+        container.innerHTML = preds.map(pred => {
+            const date = new Date(pred.date);
+            const probs = pred.probabilites;
+            
+            return `
+                <div class="prob-card">
+                    <span class="badge-base badge-prediction">${pred.confiance}</span>
+                    <div class="prob-header">
+                        <span style="font-size: 0.6rem; font-weight: 900; opacity: 0.6;">
+                            ${date.toLocaleDateString('fr-FR', {weekday:'short', day:'2-digit'}).toUpperCase()}
+                        </span>
+                        <span style="font-size: 0.8rem; font-weight: 900;">${pred.metadata.temp}°C</span>
+                    </div>
+                    <div>
+                        ${['ROUGE', 'BLANC', 'BLEU'].map(c => `
+                            <div class="prob-line">
+                                <span class="dot" style="background:${c==='ROUGE'?'var(--red)':c==='BLANC'?'#fff':'var(--blue)'}"></span>
+                                <div class="prob-bar-bg">
+                                    <div class="prob-bar-fill" style="width:${probs[c]}%; background:${c==='ROUGE'?'var(--red)':c==='BLANC'?'#fff':'var(--blue)'}"></div>
+                                </div>
+                                <span style="width:28px; text-align:right; font-size:0.6rem">${probs[c]}%</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div style="margin-top: 10px; text-align: center; font-size: 0.9rem; font-weight: 900;">
+                        ${pred.couleur_predite}
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+    
+    function renderStats(saison) {
+        if (!saison) return;
+        
+        const config = [
+            {n: 'BLEU', v: saison.bleu_restants || 0, t: 300, g: 'var(--grad-blue)'},
+            {n: 'BLANC', v: saison.blanc_restants || 0, t: 43, g: 'var(--grad-white)'},
+            {n: 'ROUGE', v: saison.rouge_restants || 0, t: 22, g: 'var(--grad-rouge)'}
+        ];
+        
+        document.getElementById('stats-container').innerHTML = config.map(c => `
+            <div class="bar-wrap">
+                <div class="bar-info">
+                    <span>${c.n}</span>
+                    <span>${c.v} / ${c.t}</span>
+                </div>
+                <div class="bar-base">
+                    <div class="bar-fill" style="width:${(c.v/c.t)*100}%; background:${c.g}"></div>
+                </div>
+            </div>
+        `).join('');
+    }
+    
+    async function init() {
+        document.getElementById('data-status').innerText = "CHARGEMENT...";
+        
+        const data = await loadData();
+        
+        if (!data) {
+            document.getElementById('data-status').className = "status-bar status-error";
+            document.getElementById('data-status').innerText = "ERREUR CHARGEMENT";
+            return;
+        }
+        
+        renderFlux(data.current.flux);
+        renderTempo(data.current.tempo_officiel);
+        renderPredictions(data.predictions);
+        renderStats(data.current.tempo_officiel?.saison);
+        
+        document.getElementById('data-status').className = "status-bar status-live";
+        document.getElementById('data-status').innerText = `LIVE • ${new Date().toLocaleTimeString()}`;
+    }
+    
+    init();
+    setInterval(init, 300000); // Refresh toutes les 5 minutes
+</script>
+</body>
+</html>
