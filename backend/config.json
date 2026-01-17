@@ -1,0 +1,38 @@
+{
+  "seuils_hiver": {
+    "temp": {
+      "extreme": -2,
+      "high": 0,
+      "medium": 4,
+      "low": 8
+    },
+    "gw": {
+      "extreme": 85,
+      "high": 78,
+      "medium": 70,
+      "low": 62
+    }
+  },
+  "seuils_ete": {
+    "temp": {
+      "extreme": 8,
+      "high": 12,
+      "medium": 16,
+      "low": 20
+    },
+    "gw": {
+      "extreme": 75,
+      "high": 68,
+      "medium": 60,
+      "low": 52
+    }
+  },
+  "poids": {
+    "temp_hiver": 0.70,
+    "temp_ete": 0.50,
+    "impact_ferie": 0.70,
+    "reduction_ferie": 0.85
+  },
+  "version": "1.0.0",
+  "derniere_modification": "2026-01-17"
+}
