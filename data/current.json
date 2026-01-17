@@ -1,17 +1,17 @@
 {
-  "timestamp": "2026-01-17T14:52:20.364805",
+  "timestamp": "2026-01-17T15:15:07.119350",
   "flux": {
-    "timestamp": "2026-01-17T14:52:15.529859",
-    "heure": "23:45",
+    "timestamp": "2026-01-17T15:15:02.250210",
+    "heure": "23:30",
     "date": "2026-01-17",
     "consommation_actuelle": null,
-    "prevision_j1": 58950,
+    "prevision_j1": 58600,
     "flux": {
       "uk": -1913,
-      "es": -3731,
+      "es": -3668,
       "it": -3564,
       "ch": -3200,
-      "de_be": 650
+      "de_be": 788
     }
   },
   "meteo": [
