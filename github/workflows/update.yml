@@ -1,0 +1,41 @@
+name: Update Tempo Data
+
+on:
+  schedule:
+    # Toutes les 5 minutes
+    - cron: '*/5 * * * *'
+  workflow_dispatch:  # Permet déclenchement manuel
+
+jobs:
+  update-data:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          pip install requests
+      
+      - name: Fetch data
+        run: |
+          cd backend
+          python fetch_data.py
+      
+      - name: Generate predictions
+        run: |
+          cd backend
+          python predict.py
+      
+      - name: Commit and push if changed
+        run: |
+          git config --global user.name 'GitHub Action'
+          git config --global user.email 'action@github.com'
+          git add data/
+          git diff --quiet && git diff --staged --quiet || (git commit -m "🤖 Update data $(date +'%Y-%m-%d %H:%M')" && git push)
