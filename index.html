@@ -31,7 +31,6 @@
         .badge-estimation { background-image: linear-gradient(135deg, #6a11cb 0%, #ab66ff 25%, #6a11cb 50%, #ab66ff 75%, #6a11cb 100%); color: white; }
         .badge-rte { background-image: linear-gradient(135deg, #00b09b 0%, #96ffea 25%, #00b09b 50%, #96ffea 75%, #00b09b 100%); color: #000; }
         .badge-officiel { background-image: var(--gold-linear); color: #111; }
-        .badge-ferie { background: gold; color: #000; padding: 2px 6px; font-size: 0.45rem; top: 35px; }
 
         .score-container { margin-top: 8px; text-align: right; font-size: 0.52rem; font-weight: 800; color: #555; text-transform: uppercase; }
         .score-val { color: var(--green); opacity: 0.8; }
@@ -129,42 +128,6 @@
     const labels = { 1: "BLEU", 2: "BLANC", 3: "ROUGE" };
     let currentGW = 65;
     let daysLeft = { rouge: 22, blanc: 43 };
-    let joursFeriesCache = {};
-
-    // 🔥 NOUVELLE FONCTION : Récupération jours fériés API gouvernementale
-    async function fetchJoursFeries(year) {
-        if (joursFeriesCache[year]) {
-            return joursFeriesCache[year];
-        }
-        
-        try {
-            const url = `https://calendrier.api.gouv.fr/jours-feries/metropole/${year}.json`;
-            const response = await fetch(url);
-            const data = await response.json();
-            joursFeriesCache[year] = data;
-            return data;
-        } catch (error) {
-            console.error('Erreur API jours fériés:', error);
-            return {};
-        }
-    }
-
-    // 🔥 NOUVELLE FONCTION : Vérifier si jour férié avec impact
-    async function getHolidayImpact(date) {
-        const year = date.getFullYear();
-        const joursFeries = await fetchJoursFeries(year);
-        const dateStr = date.toISOString().split('T')[0];
-        
-        if (joursFeries[dateStr]) {
-            return {
-                isFerie: true,
-                nom: joursFeries[dateStr],
-                impactFactor: 0.7
-            };
-        }
-        
-        return { isFerie: false, impactFactor: 1.0 };
-    }
 
     async function updateFlux() {
         try {
@@ -182,99 +145,35 @@
             display.innerHTML = solde > 0 ? `<span style="font-size: 1.8rem; order: 2;">🇫🇷</span><span class="arrow import-style" style="order: 1;">➡</span><span class="solde-val import-style" style="order: 0;">${absSolde} MW</span>` : `<span style="font-size: 1.8rem; order: 0;">🇫🇷</span><span class="arrow export-style" style="order: 1;">➡</span><span class="solde-val export-style" style="order: 2;">${absSolde} MW</span>`;
             document.getElementById('data-status').innerText = "RÉSEAU LIVE • " + new Date().toLocaleTimeString();
             document.getElementById('data-status').className = "status-bar status-live";
-        } catch (e) {
-            console.error('Erreur flux:', e);
-        }
+        } catch (e) {}
     }
 
-    // 🔥 FONCTION AMÉLIORÉE : Calcul probabilités avec jours fériés
-    async function calculateProb(temp, gw, targetDate) {
+    function calculateProb(temp, gw, targetDate) {
         let r = 0, w = 0, b = 0;
         const dayOfWeek = targetDate.getDay(); 
         const month = targetDate.getMonth() + 1;
-        
-        // 🔥 Récupérer l'impact du jour férié
-        const holiday = await getHolidayImpact(targetDate);
-        
-        // 🔥 Ajuster la consommation si jour férié
-        const adjustedGW = gw * holiday.impactFactor;
-        
-        const isCriticalPeriod = (month >= 11 || month <= 2);
-        const isWeekend = (dayOfWeek === 0 || dayOfWeek === 6);
-        
-        // Scores température améliorés
-        let tempScore = 0;
-        if (temp <= -2) tempScore = 100;
-        else if (temp <= 0) tempScore = 95;
-        else if (temp <= 2) tempScore = 85;
-        else if (temp <= 4) tempScore = 70;
-        else if (temp <= 6) tempScore = 55;
-        else if (temp <= 8) tempScore = 40;
-        else if (temp <= 10) tempScore = 25;
-        else if (temp <= 12) tempScore = 15;
-        else tempScore = 0;
-        
-        // Seuils GW ajustés selon la saison
-        let gwThresholds = isCriticalPeriod 
-            ? { extreme: 85, high: 78, medium: 70, low: 62 }
-            : { extreme: 75, high: 68, medium: 60, low: 52 };
-        
-        let gwScore = 0;
-        if (adjustedGW >= gwThresholds.extreme) gwScore = 100;
-        else if (adjustedGW >= gwThresholds.high) gwScore = 80;
-        else if (adjustedGW >= gwThresholds.medium) gwScore = 50;
-        else if (adjustedGW >= gwThresholds.low) gwScore = 20;
-        else gwScore = 0;
-        
-        let tempWeight = isCriticalPeriod ? 0.70 : 0.50;
-        let gwWeight = 1 - tempWeight;
-        
-        let globalScore = (tempScore * tempWeight) + (gwScore * gwWeight);
-        
-        // 🔥 Si jour férié, réduire encore le score global
-        if (holiday.isFerie) {
-            globalScore *= 0.85;
-        }
-        
-        // Gestion des jours restants
-        const rougeRatio = daysLeft.rouge / 22;
-        if (month >= 2 && rougeRatio < 0.3) {
-            globalScore *= 1.15;
-        }
-        
-        // Distribution des probabilités
-        if (globalScore >= 80) {
-            r = 85; w = 15; b = 0;
-        } else if (globalScore >= 65) {
-            r = 60; w = 35; b = 5;
-        } else if (globalScore >= 50) {
-            r = 25; w = 60; b = 15;
-        } else if (globalScore >= 35) {
-            r = 10; w = 50; b = 40;
-        } else if (globalScore >= 20) {
-            r = 0; w = 30; b = 70;
-        } else {
-            r = 0; w = 10; b = 90;
-        }
-        
-        // Règles strictes
-        if (isWeekend || holiday.isFerie) { w += r; r = 0; }
+
+        let tempScore = (temp <= 0) ? 100 : (temp <= 4) ? 85 : (temp <= 8) ? 60 : (temp <= 12) ? 30 : 0;
+        let gwScore = (gw >= 80) ? 100 : (gw >= 72) ? 75 : (gw >= 64) ? 40 : (gw >= 55) ? 10 : 0;
+        let globalScore = (tempScore * 0.65) + (gwScore * 0.35);
+
+        if (globalScore >= 72) { r = 70; w = 30; b = 0; }
+        else if (globalScore >= 38) { r = 10; w = 70; b = 20; }
+        else if (globalScore > 15) { r = 0; w = 25; b = 75; }
+        else { r = 0; w = 0; b = 100; }
+
+        if (dayOfWeek === 0 || dayOfWeek === 6) { w += r; r = 0; }
         if (dayOfWeek === 0) { b = 100; w = 0; r = 0; }
         if (month > 3 && month < 11) r = 0;
         if (daysLeft.rouge <= 0) { w += r; r = 0; }
         if (daysLeft.blanc <= 0) { b += w; w = 0; }
-        
+
         let total = Math.max(1, r + w + b);
         let finalR = Math.round((r/total)*100);
         let finalW = Math.round((w/total)*100);
         let finalB = 100 - (finalR + finalW);
-        
-        return { 
-            ROUGE: finalR, 
-            BLANC: finalW, 
-            BLEU: Math.max(0, finalB),
-            holidayInfo: holiday.isFerie ? holiday.nom : null
-        };
+
+        return { ROUGE: finalR, BLANC: finalW, BLEU: Math.max(0, finalB) };
     }
 
     function renderProbs(rowsId, probs) {
@@ -287,52 +186,28 @@
             </div>`).join('');
     }
 
-    // 🔥 FONCTION AMÉLIORÉE : Météo avec async/await
     async function updateWeather() {
         try {
-            const res = await fetch("https://api.open-meteo.com/v1/forecast?latitude=48.8566&longitude=2.3522&daily=temperature_2m_min&timezone=Europe%2FBerlin&forecast_days=7");
-            const data = await res.json();
-            const now = new Date();
-            const hour = now.getHours() + (now.getMinutes()/60);
+            const res = await fetch("https://api.open-meteo.com/v1/forecast?latitude=48.8566&longitude=2.3522&daily=temperature_2m_min&timezone=Europe%2FBerlin");
+            const data = await res.json(); const now = new Date(); const hour = now.getHours() + (now.getMinutes()/60);
 
             if (hour < 6.5) {
-                const tomDate = new Date();
-                tomDate.setDate(tomDate.getDate() + 1);
-                const p = await calculateProb(data.daily.temperature_2m_min[1], currentGW, tomDate);
-                const dominant = Object.keys(p).filter(k => k !== 'holidayInfo').reduce((a, b) => p[a] > p[b] ? a : b);
+                const tomDate = new Date(); tomDate.setDate(tomDate.getDate() + 1);
+                const p = calculateProb(data.daily.temperature_2m_min[1], currentGW, tomDate);
+                const dominant = Object.keys(p).reduce((a, b) => p[a] > p[b] ? a : b);
                 document.getElementById('text-tomorrow').innerText = dominant;
                 document.getElementById('card-tomorrow').className = `card-rt is-${dominant.toLowerCase()}`;
-                
-                // 🔥 Afficher badge jour férié si applicable
-                const existingBadge = document.querySelector('.badge-ferie');
-                if (existingBadge) existingBadge.remove();
-                
-                if (p.holidayInfo) {
-                    const badge = document.createElement('div');
-                    badge.className = 'badge-base badge-ferie';
-                    badge.innerText = '🎉 FÉRIÉ';
-                    badge.title = p.holidayInfo;
-                    document.getElementById('card-tomorrow').appendChild(badge);
-                    console.log(`🎉 Demain est férié : ${p.holidayInfo}`);
-                }
             }
 
-            for (let i = 0; i < 2; i++) {
-                const off = i + 2;
-                const id = i === 0 ? "2" : "3";
-                const targetDate = new Date();
-                targetDate.setDate(targetDate.getDate() + off);
+            [2, 3].forEach((off, i) => {
+                const id = i === 0 ? "2" : "3"; 
+                const targetDate = new Date(); targetDate.setDate(targetDate.getDate() + off);
                 const temp = data.daily.temperature_2m_min[off];
-                
                 document.getElementById(`label-j${id}`).innerText = targetDate.toLocaleDateString('fr-FR', {weekday:'short', day:'2-digit'}).toUpperCase();
                 document.getElementById(`temp-j${id}`).innerText = Math.round(temp) + "°C";
-                
-                const probs = await calculateProb(temp, currentGW, targetDate);
-                renderProbs(`prob-rows-j${id}`, probs);
-            }
-        } catch (e) {
-            console.error('Erreur météo:', e);
-        }
+                renderProbs(`prob-rows-j${id}`, calculateProb(temp, currentGW, targetDate));
+            });
+        } catch (e) {}
     }
 
     async function updateTempo() {
@@ -346,22 +221,20 @@
             
             const t = await tRes.json(), tom = await tomRes.json(), s = await sRes.json(), stats = await statsRes.json();
             
+            // Mise à jour des scores J+1, J+2 et J+3 depuis GitHub
             const rate = (obj) => (obj.total > 0 ? Math.round((obj.success / obj.total) * 100) : 100);
             document.getElementById('val-j1').innerText = `${rate(stats.j1)}%`;
             document.getElementById('val-j2').innerText = `${rate(stats.j2)}%`;
             document.getElementById('val-j3').innerText = `${rate(stats.j3)}%`;
 
             const findV = (obj, col) => { for (let [k, v] of Object.entries(obj)) { if (k.toLowerCase().includes(col)) return v; } return 0; };
-            daysLeft.rouge = 22 - findV(s, 'rouge'); 
-            daysLeft.blanc = 43 - findV(s, 'blanc');
+            daysLeft.rouge = 22 - findV(s, 'rouge'); daysLeft.blanc = 43 - findV(s, 'blanc');
             
-            const now = new Date(); 
-            const hour = now.getHours() + (now.getMinutes()/60);
+            const now = new Date(); const hour = now.getHours() + (now.getMinutes()/60);
             const badgeTom = document.getElementById('badge-tomorrow');
 
             if (hour < 6.5) {
-                badgeTom.innerText = "ESTIMATION"; 
-                badgeTom.className = "badge-base badge-estimation";
+                badgeTom.innerText = "ESTIMATION"; badgeTom.className = "badge-base badge-estimation";
             } else {
                 badgeTom.innerText = hour < 11 ? "RTE" : "OFFICIEL";
                 badgeTom.className = hour < 11 ? "badge-base badge-rte" : "badge-base badge-officiel";
@@ -372,13 +245,19 @@
             document.getElementById('card-today').className = `card-rt is-${(labels[t.codeJour]||'attente').toLowerCase()}`;
             document.getElementById('text-today').innerText = labels[t.codeJour] || '...';
             document.getElementById('date-today').innerText = now.toLocaleDateString('fr-FR', { weekday: 'long', day: '2-digit' });
-            const dTom = new Date(); 
-            dTom.setDate(dTom.getDate() + 1);
+            const dTom = new Date(); dTom.setDate(dTom.getDate() + 1);
             document.getElementById('date-tomorrow').innerText = dTom.toLocaleDateString('fr-FR', { weekday: 'long', day: '2-digit' });
 
-            const config = [
-                { n: 'BLEU', v: 300 - findV(s, 'bleu'), t: 300, g: 'var(--grad-blue)' }, 
-                { n: 'BLANC', v: daysLeft.blanc, t: 43, g: 'var(--grad-white)' }, 
-                { n: 'ROUGE', v: daysLeft.rouge, t: 22, g: 'var(--grad-rouge)' }
-            ];
-            document.getElementById('stats-container').innerHTML = c
+            const config = [{ n: 'BLEU', v: 300 - findV(s, 'bleu'), t: 300, g: 'var(--grad-blue)' }, { n: 'BLANC', v: daysLeft.blanc, t: 43, g: 'var(--grad-white)' }, { n: 'ROUGE', v: daysLeft.rouge, t: 22, g: 'var(--grad-rouge)' }];
+            document.getElementById('stats-container').innerHTML = config.map(c => `<div class="bar-wrap"><div class="bar-info"><span>${c.n}</span> <span>${c.v} / ${c.t}</span></div><div class="bar-base"><div class="bar-fill" style="width:${(c.v/c.t)*100}%; background:${c.g}"></div></div></div>`).join('');
+        } catch (e) {}
+    }
+
+    async function init() { await updateFlux(); await updateTempo(); await updateWeather(); }
+    init();
+    setInterval(updateFlux, 300000);
+    setInterval(updateTempo, 600000);
+    setInterval(updateWeather, 3600000);
+</script>
+</body>
+</html>
