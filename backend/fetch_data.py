@@ -58,36 +58,56 @@ def fetch_meteo():
         forecasts = []
         
         for city in cities:
-            url = f"https://api.open-meteo.com/v1/forecast?latitude={city['lat']}&longitude={city['lon']}&daily=temperature_2m_min,temperature_2m_max,windspeed_10m_max&timezone=Europe/Berlin&forecast_days=7"
-            response = requests.get(url, timeout=15)
-            response.raise_for_status()
-            data = response.json()
-            
-            forecasts.append({
-                "city": city["name"],
-                "weight": city["weight"],
-                "data": data["daily"]
-            })
+            try:
+                url = f"https://api.open-meteo.com/v1/forecast?latitude={city['lat']}&longitude={city['lon']}&daily=temperature_2m_min,temperature_2m_max,windspeed_10m_max&timezone=Europe/Berlin&forecast_days=7"
+                response = requests.get(url, timeout=15)
+                response.raise_for_status()
+                data = response.json()
+                
+                if "daily" not in data:
+                    print(f"⚠️  Pas de données daily pour {city['name']}")
+                    continue
+                
+                forecasts.append({
+                    "city": city["name"],
+                    "weight": city["weight"],
+                    "data": data["daily"]
+                })
+            except Exception as e:
+                print(f"⚠️  Erreur pour {city['name']}: {e}")
+                continue
+        
+        if len(forecasts) == 0:
+            print("❌ Aucune donnée météo récupérée")
+            return None
         
         # Calculer moyennes pondérées nationales
         national_forecast = []
         for day in range(7):
-            temp_min = sum(f["data"]["temperature_2m_min"][day] * f["weight"] for f in forecasts)
-            temp_max = sum(f["data"]["temperature_2m_max"][day] * f["weight"] for f in forecasts)
-            wind = sum(f["data"]["windspeed_10m_max"][day] * f["weight"] for f in forecasts)
-            
-            # Température ressentie approximative
-            wind_chill = temp_min - (wind / 5)
-            
-            date = (datetime.now() + timedelta(days=day)).strftime("%Y-%m-%d")
-            
-            national_forecast.append({
-                "date": date,
-                "temp_min": round(temp_min, 1),
-                "temp_max": round(temp_max, 1),
-                "temp_ressentie": round(wind_chill, 1),
-                "wind": round(wind, 1)
-            })
+            try:
+                temp_min = sum(f["data"]["temperature_2m_min"][day] * f["weight"] for f in forecasts)
+                temp_max = sum(f["data"]["temperature_2m_max"][day] * f["weight"] for f in forecasts)
+                wind = sum(f["data"]["windspeed_10m_max"][day] * f["weight"] for f in forecasts)
+                
+                # Température ressentie approximative
+                wind_chill = temp_min - (wind / 5)
+                
+                date = (datetime.now() + timedelta(days=day)).strftime("%Y-%m-%d")
+                
+                national_forecast.append({
+                    "date": date,
+                    "temp_min": round(temp_min, 1),
+                    "temp_max": round(temp_max, 1),
+                    "temp_ressentie": round(wind_chill, 1),
+                    "wind": round(wind, 1)
+                })
+            except Exception as e:
+                print(f"⚠️  Erreur calcul jour {day}: {e}")
+                continue
+        
+        if len(national_forecast) == 0:
+            print("❌ Erreur calcul prévisions nationales")
+            return None
         
         return national_forecast
         
