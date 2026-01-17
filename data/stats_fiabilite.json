@@ -1,0 +1,24 @@
+{
+  "derniere_mise_a_jour": "2026-01-17T00:00:00",
+  "j1": {
+    "success": 0,
+    "total": 0,
+    "taux": 100
+  },
+  "j2": {
+    "success": 0,
+    "total": 0,
+    "taux": 100
+  },
+  "j3": {
+    "success": 0,
+    "total": 0,
+    "taux": 100
+  },
+  "historique": [],
+  "erreurs_par_type": {
+    "faux_rouge": 0,
+    "faux_blanc": 0,
+    "faux_bleu": 0
+  }
+}
