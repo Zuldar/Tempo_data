@@ -1,7 +1,7 @@
 {
-  "timestamp": "2026-01-21T19:43:13.073241",
+  "timestamp": "2026-01-21T19:56:18.352724",
   "flux": {
-    "timestamp": "2026-01-21T19:43:07.572104",
+    "timestamp": "2026-01-21T19:56:13.035118",
     "heure": "23:45",
     "date": "2026-01-21",
     "consommation_actuelle": null,
@@ -24,14 +24,14 @@
     },
     {
       "date": "2026-01-22",
-      "temp_min": 6.0,
+      "temp_min": 6.1,
       "temp_max": 9.3,
       "temp_ressentie": 2.7,
-      "wind": 16.7
+      "wind": 16.6
     },
     {
       "date": "2026-01-23",
-      "temp_min": 4.9,
+      "temp_min": 4.8,
       "temp_max": 9.1,
       "temp_ressentie": 1.6,
       "wind": 16.1
@@ -40,8 +40,8 @@
       "date": "2026-01-24",
       "temp_min": 2.9,
       "temp_max": 8.4,
-      "temp_ressentie": 0.0,
-      "wind": 14.5
+      "temp_ressentie": 0.1,
+      "wind": 14.4
     },
     {
       "date": "2026-01-25",
