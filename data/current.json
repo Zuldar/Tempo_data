@@ -1,47 +1,34 @@
 {
-  "timestamp": "2026-01-21T12:48:46.727008",
-  "flux": {
-    "timestamp": "2026-01-21T12:48:40.408516",
-    "heure": "23:45",
-    "date": "2026-01-21",
-    "consommation_actuelle": null,
-    "prevision_j1": 60550,
-    "flux": {
-      "uk": -2417,
-      "es": 1953,
-      "it": -3560,
-      "ch": -3200,
-      "de_be": -3320
-    }
-  },
+  "timestamp": "2026-01-21T15:31:25.695016",
+  "flux": null,
   "meteo": [
     {
       "date": "2026-01-21",
       "temp_min": 5.6,
-      "temp_max": 11.1,
-      "temp_ressentie": 1.7,
-      "wind": 19.5
+      "temp_max": 11.2,
+      "temp_ressentie": 1.8,
+      "wind": 19.2
     },
     {
       "date": "2026-01-22",
       "temp_min": 6.1,
-      "temp_max": 9.5,
+      "temp_max": 9.3,
       "temp_ressentie": 2.6,
-      "wind": 17.1
+      "wind": 17.3
     },
     {
       "date": "2026-01-23",
       "temp_min": 5.1,
       "temp_max": 9.1,
-      "temp_ressentie": 1.9,
-      "wind": 16.1
+      "temp_ressentie": 1.7,
+      "wind": 17.1
     },
     {
       "date": "2026-01-24",
       "temp_min": 2.7,
       "temp_max": 8.4,
-      "temp_ressentie": -0.0,
-      "wind": 13.4
+      "temp_ressentie": -0.1,
+      "wind": 13.8
     },
     {
       "date": "2026-01-25",
