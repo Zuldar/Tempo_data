@@ -94,6 +94,12 @@
     <!-- Prévisions J+2 et J+3 -->
     <div class="prob-container" id="predictions-container"></div>
 
+    <!-- Fiabilité des prédictions -->
+    <div class="card-main">
+        <div style="font-size: 0.6rem; font-weight: 900; color: #444; margin-bottom: 15px;">FIABILITÉ DES PRÉDICTIONS</div>
+        <div id="fiabilite-container"></div>
+    </div>
+
     <!-- Stats saison -->
     <div class="card-main">
         <div style="font-size: 0.6rem; font-weight: 900; color: #444; margin-bottom: 15px;">SAISON 2025-26 (RESTANTS)</div>
@@ -106,15 +112,17 @@
     
     async function loadData() {
         try {
-            const [currentRes, predictionsRes] = await Promise.all([
+            const [currentRes, predictionsRes, statsRes] = await Promise.all([
                 fetch(`${BASE_URL}current.json?t=${Date.now()}`),
-                fetch(`${BASE_URL}predictions.json?t=${Date.now()}`)
+                fetch(`${BASE_URL}predictions.json?t=${Date.now()}`),
+                fetch(`${BASE_URL}stats_fiabilite.json?t=${Date.now()}`)
             ]);
             
             const current = await currentRes.json();
             const predictions = await predictionsRes.json();
+            const stats = await statsRes.json();
             
-            return { current, predictions };
+            return { current, predictions, stats };
         } catch (e) {
             console.error("Erreur chargement:", e);
             return null;
@@ -192,16 +200,17 @@
         const preds = predictions.predictions.filter((p, i) => i >= 1); // J+2 et J+3
         const container = document.getElementById('predictions-container');
         
-        container.innerHTML = preds.map(pred => {
+        container.innerHTML = preds.map((pred, idx) => {
             const date = new Date(pred.date);
             const probs = pred.probabilites;
+            const dayLabel = idx === 0 ? "J+2" : "J+3";
             
             return `
                 <div class="prob-card">
                     <span class="badge-base badge-prediction">${pred.confiance}</span>
                     <div class="prob-header">
                         <span style="font-size: 0.6rem; font-weight: 900; opacity: 0.6;">
-                            ${date.toLocaleDateString('fr-FR', {weekday:'short', day:'2-digit'}).toUpperCase()}
+                            ${dayLabel} - ${date.toLocaleDateString('fr-FR', {weekday:'short', day:'2-digit'}).toUpperCase()}
                         </span>
                         <span style="font-size: 0.8rem; font-weight: 900;">${pred.metadata.temp}°C</span>
                     </div>
@@ -218,6 +227,34 @@
                     </div>
                     <div style="margin-top: 10px; text-align: center; font-size: 0.9rem; font-weight: 900;">
                         ${pred.couleur_predite}
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+    
+    function renderFiabilite(stats) {
+        if (!stats) return;
+        
+        const container = document.getElementById('fiabilite-container');
+        const items = [
+            { label: 'J+1', data: stats.j1, color: 'var(--green)' },
+            { label: 'J+2', data: stats.j2, color: 'var(--blue)' },
+            { label: 'J+3', data: stats.j3, color: 'var(--orange)' }
+        ];
+        
+        container.innerHTML = items.map(item => {
+            const taux = item.data.taux || 100;
+            const barColor = taux >= 80 ? 'var(--green)' : taux >= 60 ? 'var(--orange)' : 'var(--red)';
+            
+            return `
+                <div class="bar-wrap">
+                    <div class="bar-info">
+                        <span>${item.label}</span>
+                        <span style="color:${barColor}">${taux}% (${item.data.success}/${item.data.total})</span>
+                    </div>
+                    <div class="bar-base">
+                        <div class="bar-fill" style="width:${taux}%; background:${barColor}"></div>
                     </div>
                 </div>
             `;
@@ -260,6 +297,7 @@
         renderFlux(data.current.flux);
         renderTempo(data.current.tempo_officiel);
         renderPredictions(data.predictions);
+        renderFiabilite(data.stats);
         renderStats(data.current.tempo_officiel?.saison);
         
         document.getElementById('data-status').className = "status-bar status-live";
