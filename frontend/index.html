@@ -87,18 +87,15 @@
                 <span class="badge-base badge-officiel">OFFICIEL</span>
                 <div id="date-tomorrow" style="font-size: 0.6rem; font-weight: 800; opacity: 0.8; text-transform: uppercase;"></div>
                 <div id="text-tomorrow" style="font-size: 1.1rem; font-weight: 900;"></div>
+                <div style="position: absolute; bottom: 5px; right: 10px; font-size: 0.5rem; opacity: 0.4; font-weight: 800;">
+                    FIABILITÉ J+1: <span id="val-j1" style="color:var(--green)">--%</span>
+                </div>
             </div>
         </div>
     </div>
 
     <!-- Prévisions J+2 et J+3 -->
     <div class="prob-container" id="predictions-container"></div>
-
-    <!-- Fiabilité des prédictions -->
-    <div class="card-main">
-        <div style="font-size: 0.6rem; font-weight: 900; color: #444; margin-bottom: 15px;">FIABILITÉ DES PRÉDICTIONS</div>
-        <div id="fiabilite-container"></div>
-    </div>
 
     <!-- Stats saison -->
     <div class="card-main">
@@ -194,7 +191,7 @@
         document.getElementById('date-tomorrow').innerText = tomDate.toLocaleDateString('fr-FR', {weekday:'long', day:'2-digit'});
     }
     
-    function renderPredictions(predictions) {
+    function renderPredictions(predictions, stats) {
         if (!predictions || !predictions.predictions) return;
         
         const preds = predictions.predictions.filter((p, i) => i >= 1); // J+2 et J+3
@@ -204,6 +201,10 @@
             const date = new Date(pred.date);
             const probs = pred.probabilites;
             const dayLabel = idx === 0 ? "J+2" : "J+3";
+            
+            // Récupérer le taux de fiabilité
+            const statsKey = idx === 0 ? 'j2' : 'j3';
+            const fiabilite = stats && stats[statsKey] ? stats[statsKey].taux : 100;
             
             return `
                 <div class="prob-card">
@@ -228,37 +229,24 @@
                     <div style="margin-top: 10px; text-align: center; font-size: 0.9rem; font-weight: 900;">
                         ${pred.couleur_predite}
                     </div>
+                    <div style="position: absolute; bottom: 5px; right: 10px; font-size: 0.5rem; opacity: 0.4; font-weight: 800;">
+                        FIABILITÉ ${dayLabel}: <span style="color:var(--green)">${fiabilite}%</span>
+                    </div>
                 </div>
             `;
         }).join('');
     }
     
     function renderFiabilite(stats) {
+        // Cette fonction n'est plus nécessaire mais je la garde pour ne pas casser le code
         if (!stats) return;
         
-        const container = document.getElementById('fiabilite-container');
-        const items = [
-            { label: 'J+1', data: stats.j1, color: 'var(--green)' },
-            { label: 'J+2', data: stats.j2, color: 'var(--blue)' },
-            { label: 'J+3', data: stats.j3, color: 'var(--orange)' }
-        ];
-        
-        container.innerHTML = items.map(item => {
-            const taux = item.data.taux || 100;
-            const barColor = taux >= 80 ? 'var(--green)' : taux >= 60 ? 'var(--orange)' : 'var(--red)';
-            
-            return `
-                <div class="bar-wrap">
-                    <div class="bar-info">
-                        <span>${item.label}</span>
-                        <span style="color:${barColor}">${taux}% (${item.data.success}/${item.data.total})</span>
-                    </div>
-                    <div class="bar-base">
-                        <div class="bar-fill" style="width:${taux}%; background:${barColor}"></div>
-                    </div>
-                </div>
-            `;
-        }).join('');
+        // Mettre à jour J+1 dans la carte demain
+        const j1Taux = stats.j1 ? stats.j1.taux : 100;
+        const j1Elem = document.getElementById('val-j1');
+        if (j1Elem) {
+            j1Elem.innerText = `${j1Taux}%`;
+        }
     }
     
     function renderStats(saison) {
@@ -296,7 +284,7 @@
         
         renderFlux(data.current.flux);
         renderTempo(data.current.tempo_officiel);
-        renderPredictions(data.predictions);
+        renderPredictions(data.predictions, data.stats);
         renderFiabilite(data.stats);
         renderStats(data.current.tempo_officiel?.saison);
         
