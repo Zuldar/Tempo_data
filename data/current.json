@@ -1,14 +1,14 @@
 {
-  "timestamp": "2026-01-23T06:34:23.226842",
+  "timestamp": "2026-01-23T09:29:09.712179",
   "flux": {
-    "timestamp": "2026-01-23T06:34:16.267118",
+    "timestamp": "2026-01-23T09:29:05.310547",
     "heure": "23:45",
     "date": "2026-01-23",
     "consommation_actuelle": null,
     "prevision_j1": 62729,
     "flux": {
       "uk": -278,
-      "es": 2914,
+      "es": 2729,
       "it": -4046,
       "ch": -3200,
       "de_be": -3719
@@ -18,22 +18,22 @@
     {
       "date": "2026-01-23",
       "temp_min": 5.2,
-      "temp_max": 9.5,
+      "temp_max": 9.4,
       "temp_ressentie": 1.9,
-      "wind": 16.9
+      "wind": 16.8
     },
     {
       "date": "2026-01-24",
-      "temp_min": 2.9,
-      "temp_max": 9.0,
+      "temp_min": 3.1,
+      "temp_max": 9.1,
       "temp_ressentie": 0.3,
-      "wind": 13.3
+      "wind": 14.3
     },
     {
       "date": "2026-01-25",
-      "temp_min": 2.8,
-      "temp_max": 7.4,
-      "temp_ressentie": 0.0,
+      "temp_min": 2.9,
+      "temp_max": 7.3,
+      "temp_ressentie": 0.1,
       "wind": 13.8
     },
     {
