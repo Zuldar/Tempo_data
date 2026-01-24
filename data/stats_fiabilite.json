@@ -1,9 +1,9 @@
 {
-  "derniere_mise_a_jour": "2026-01-24T06:30:47.337702",
+  "derniere_mise_a_jour": "2026-01-24T09:20:00.523838",
   "j1": {
     "success": 9,
-    "total": 21,
-    "taux": 42.9
+    "total": 22,
+    "taux": 40.9
   },
   "j2": {
     "success": 0,
@@ -351,11 +351,27 @@
         "temp_score": 55,
         "gw_score": 20
       }
+    },
+    {
+      "date": "2026-01-24",
+      "predit": "BLANC",
+      "reel": "BLEU",
+      "correct": false,
+      "metadata": {
+        "temp": 0.6,
+        "gw": 62.85,
+        "adjusted_gw": 62.9,
+        "is_ferie": false,
+        "is_weekend": true,
+        "global_score": 44.5,
+        "temp_score": 55,
+        "gw_score": 20
+      }
     }
   ],
   "erreurs_par_type": {
     "faux_rouge": 0,
-    "faux_blanc": 12,
+    "faux_blanc": 13,
     "faux_bleu": 0
   }
 }
