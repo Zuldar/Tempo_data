@@ -1,71 +1,6 @@
 {
   "predictions": [
     {
-      "timestamp": "2026-01-22T12:47:41.134107",
-      "predictions": [
-        {
-          "date": "2026-01-23",
-          "couleur_predite": "BLANC",
-          "probabilites": {
-            "ROUGE": 10,
-            "BLANC": 50,
-            "BLEU": 40
-          },
-          "confiance": "MEDIUM",
-          "metadata": {
-            "temp": 2.2,
-            "gw": 62.419,
-            "adjusted_gw": 62.4,
-            "is_ferie": false,
-            "is_weekend": false,
-            "global_score": 44.5,
-            "temp_score": 55,
-            "gw_score": 20
-          }
-        },
-        {
-          "date": "2026-01-24",
-          "couleur_predite": "BLANC",
-          "probabilites": {
-            "ROUGE": 0,
-            "BLANC": 60,
-            "BLEU": 40
-          },
-          "confiance": "MEDIUM",
-          "metadata": {
-            "temp": 0.3,
-            "gw": 62.419,
-            "adjusted_gw": 62.4,
-            "is_ferie": false,
-            "is_weekend": true,
-            "global_score": 44.5,
-            "temp_score": 55,
-            "gw_score": 20
-          }
-        },
-        {
-          "date": "2026-01-25",
-          "couleur_predite": "BLEU",
-          "probabilites": {
-            "ROUGE": 0,
-            "BLANC": 0,
-            "BLEU": 100
-          },
-          "confiance": "HIGH",
-          "metadata": {
-            "temp": -0.4,
-            "gw": 62.419,
-            "adjusted_gw": 62.4,
-            "is_ferie": false,
-            "is_weekend": true,
-            "global_score": 65.5,
-            "temp_score": 85,
-            "gw_score": 20
-          }
-        }
-      ]
-    },
-    {
       "timestamp": "2026-01-22T15:30:15.401962",
       "predictions": [
         {
@@ -1939,6 +1874,71 @@
           "confiance": "MEDIUM",
           "metadata": {
             "temp": 0.6,
+            "gw": 62.1,
+            "adjusted_gw": 62.1,
+            "is_ferie": false,
+            "is_weekend": false,
+            "global_score": 44.5,
+            "temp_score": 55,
+            "gw_score": 20
+          }
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-01-25T21:18:27.636825",
+      "predictions": [
+        {
+          "date": "2026-01-26",
+          "couleur_predite": "BLANC",
+          "probabilites": {
+            "ROUGE": 10,
+            "BLANC": 50,
+            "BLEU": 40
+          },
+          "confiance": "MEDIUM",
+          "metadata": {
+            "temp": 1.0,
+            "gw": 62.1,
+            "adjusted_gw": 62.1,
+            "is_ferie": false,
+            "is_weekend": false,
+            "global_score": 44.5,
+            "temp_score": 55,
+            "gw_score": 20
+          }
+        },
+        {
+          "date": "2026-01-27",
+          "couleur_predite": "ROUGE",
+          "probabilites": {
+            "ROUGE": 60,
+            "BLANC": 35,
+            "BLEU": 5
+          },
+          "confiance": "MEDIUM",
+          "metadata": {
+            "temp": 0.0,
+            "gw": 62.1,
+            "adjusted_gw": 62.1,
+            "is_ferie": false,
+            "is_weekend": false,
+            "global_score": 65.5,
+            "temp_score": 85,
+            "gw_score": 20
+          }
+        },
+        {
+          "date": "2026-01-28",
+          "couleur_predite": "BLANC",
+          "probabilites": {
+            "ROUGE": 10,
+            "BLANC": 50,
+            "BLEU": 40
+          },
+          "confiance": "MEDIUM",
+          "metadata": {
+            "temp": 0.3,
             "gw": 62.1,
             "adjusted_gw": 62.1,
             "is_ferie": false,
