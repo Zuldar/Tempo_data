@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-01-25T23:27:33.223341",
+  "timestamp": "2026-01-25T23:29:41.834630",
   "predictions": [
     {
       "date": "2026-01-26",
@@ -16,7 +16,7 @@
         "adjusted_gw": 62.1,
         "is_ferie": false,
         "is_weekend": false,
-        "global_score": 40.0,
+        "global_score": 44.0,
         "temp_score": 100,
         "gw_score": 20
       }
@@ -36,7 +36,7 @@
         "adjusted_gw": 62.1,
         "is_ferie": false,
         "is_weekend": false,
-        "global_score": 40.0,
+        "global_score": 44.0,
         "temp_score": 100,
         "gw_score": 20
       }
@@ -56,7 +56,7 @@
         "adjusted_gw": 62.1,
         "is_ferie": false,
         "is_weekend": false,
-        "global_score": 40.0,
+        "global_score": 44.0,
         "temp_score": 100,
         "gw_score": 20
       }
