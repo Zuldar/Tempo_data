@@ -57,7 +57,7 @@ def validate_predictions():
     if not history:
         history = {"predictions": []}
     
-    if not current or not predictions:
+    if not current:
         print("⚠️  Données manquantes, validation impossible")
         return
     
@@ -74,58 +74,68 @@ def validate_predictions():
     # Date d'aujourd'hui
     today_date = datetime.now().strftime("%Y-%m-%d")
     
-    # Chercher la prédiction J+1 d'hier
-    yesterday_predictions = None
-    for h in reversed(history.get("predictions", [])):
-        h_date = datetime.fromisoformat(h.get("timestamp", "")).strftime("%Y-%m-%d")
-        yesterday = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
-        
-        if h_date == yesterday:
-            yesterday_predictions = h.get("predictions", [])
-            break
+    print(f"📅 Validation pour {today_date} : couleur officielle = {today_color}")
     
-    # Vérifier si on a une prédiction pour aujourd'hui (qui était J+1 hier)
-    if yesterday_predictions:
-        for pred in yesterday_predictions:
-            if pred.get("date") == today_date:
-                predicted_color = pred.get("couleur_predite")
+    # 🔥 VALIDER J+1, J+2 et J+3
+    for days_ago in [1, 2, 3]:
+        j_label = f"j{days_ago}"
+        
+        # Chercher la prédiction faite il y a X jours
+        target_past_date = (datetime.now() - timedelta(days=days_ago)).strftime("%Y-%m-%d")
+        
+        # Chercher dans l'historique
+        found_prediction = None
+        for h in reversed(history.get("predictions", [])):
+            h_date = datetime.fromisoformat(h.get("timestamp", "")).strftime("%Y-%m-%d")
+            
+            if h_date == target_past_date:
+                # Chercher la prédiction pour aujourd'hui dans cet historique
+                for pred in h.get("predictions", []):
+                    if pred.get("date") == today_date:
+                        found_prediction = pred
+                        break
+                break
+        
+        if found_prediction:
+            predicted_color = found_prediction.get("couleur_predite")
+            is_correct = (predicted_color == today_color)
+            
+            # Mettre à jour stats
+            stats[j_label]["total"] += 1
+            if is_correct:
+                stats[j_label]["success"] += 1
+                print(f"✅ Prédiction J+{days_ago} correcte : {predicted_color}")
+            else:
+                print(f"❌ Prédiction J+{days_ago} incorrecte : {predicted_color} ≠ {today_color}")
                 
-                # Comparer
-                is_correct = (predicted_color == today_color)
-                
-                # Mettre à jour stats J+1
-                stats["j1"]["total"] += 1
-                if is_correct:
-                    stats["j1"]["success"] += 1
-                    print(f"✅ Prédiction J+1 correcte : {predicted_color}")
-                else:
-                    print(f"❌ Prédiction J+1 incorrecte : {predicted_color} ≠ {today_color}")
-                    
-                    # Tracker type d'erreur
+                # Tracker type d'erreur (seulement pour J+1)
+                if days_ago == 1:
                     if predicted_color == "ROUGE" and today_color != "ROUGE":
                         stats["erreurs_par_type"]["faux_rouge"] += 1
                     elif predicted_color == "BLANC" and today_color != "BLANC":
                         stats["erreurs_par_type"]["faux_blanc"] += 1
                     elif predicted_color == "BLEU" and today_color != "BLEU":
                         stats["erreurs_par_type"]["faux_bleu"] += 1
-                
-                # Calculer taux de réussite
-                stats["j1"]["taux"] = round((stats["j1"]["success"] / stats["j1"]["total"]) * 100, 1)
-                
-                # Ajouter à l'historique
+            
+            # Calculer taux de réussite
+            if stats[j_label]["total"] > 0:
+                stats[j_label]["taux"] = round((stats[j_label]["success"] / stats[j_label]["total"]) * 100, 1)
+            
+            # Ajouter à l'historique (seulement J+1 pour ne pas dupliquer)
+            if days_ago == 1:
                 stats["historique"].append({
                     "date": today_date,
                     "predit": predicted_color,
                     "reel": today_color,
                     "correct": is_correct,
-                    "metadata": pred.get("metadata", {})
+                    "metadata": found_prediction.get("metadata", {})
                 })
                 
                 # Limiter l'historique aux 100 derniers
                 if len(stats["historique"]) > 100:
                     stats["historique"] = stats["historique"][-100:]
-                
-                break
+        else:
+            print(f"⏭️  Pas de prédiction J+{days_ago} à valider (prédiction faite le {target_past_date} non trouvée)")
     
     # Mettre à jour timestamp
     stats["derniere_mise_a_jour"] = datetime.now().isoformat()
