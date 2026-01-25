@@ -1,8 +1,9 @@
 name: Update Tempo Data
 
-schedule:
+on:
+  schedule:
     # À minuit (changement de jour)
-    - cron: '1 0 * * *'
+    - cron: '5 0 * * *'
     # À 11h (annonce RTE)
     - cron: '0 11 * * *'
     # Puis toutes les 3 heures le reste de la journée
