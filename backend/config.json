@@ -1,16 +1,27 @@
 {
   "seuils_hiver": {
     "temp": {
-      "extreme": -2,
-      "high": 0,
-      "medium": 4,
-      "low": 8
+      "extreme": 2,
+      "high": 4,
+      "medium": 6,
+      "low": 10
     },
     "gw": {
-      "extreme": 85,
-      "high": 78,
-      "medium": 70,
-      "low": 62
+      "extreme": 80,
+      "high": 72,
+      "medium": 65,
+      "low": 58
+    },
+    "nuclear": {
+      "critique": 70,
+      "tendu": 80,
+      "normal": 90
+    },
+    "peak": {
+      "extreme": 95,
+      "high": 88,
+      "medium": 80,
+      "low": 72
     }
   },
   "seuils_ete": {
@@ -28,11 +39,27 @@
     }
   },
   "poids": {
-    "temp_hiver": 0.70,
-    "temp_ete": 0.50,
+    "temp_hiver": 0.25,
+    "gw_hiver": 0.20,
+    "nuclear_hiver": 0.30,
+    "peak_hiver": 0.15,
+    "trend_hiver": 0.10,
+    "temp_ete": 0.40,
+    "gw_ete": 0.30,
+    "nuclear_ete": 0.20,
+    "peak_ete": 0.10,
     "impact_ferie": 0.70,
-    "reduction_ferie": 0.85
+    "reduction_ferie": 0.85,
+    "weekend_modifier": 0.0,
+    "lundi_modifier": 0.8,
+    "vendredi_modifier": 0.9
   },
-  "version": "1.0.0",
-  "derniere_modification": "2026-01-17"
+  "quota_management": {
+    "recent_reds_threshold": 3,
+    "recent_reds_penalty": 0.7,
+    "end_season_boost": 1.15
+  },
+  "version": "2.0.0",
+  "derniere_modification": "2026-01-25",
+  "notes": "Version avancée avec nucléaire, pointe, et gestion de quota"
 }
