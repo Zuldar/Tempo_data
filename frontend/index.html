@@ -30,7 +30,7 @@
         }
         @keyframes shine { to { background-position: 200% center; } }
         .badge-officiel { background-image: var(--gold-linear); color: #111; }
-        .badge-prediction { background-image: linear-gradient(135deg, #6a11cb 0%, #ab66ff 25%, #6a11cb 50%, #ab66ff 75%, #6a11cb 100%); color: white; }
+        .badge-officiel { background-image: var(--gold-linear); color: #111; }
         .badge-ferie { background: gold; color: #000; top: 35px; }
 
         .card-main { background: var(--card); border-radius: 20px; padding: 15px; border: 1px solid #222; }
@@ -171,7 +171,7 @@
         }
     }
     
-    function renderTempo(tempo) {
+    function renderTempo(tempo, predictions) {
         if (!tempo) return;
         
         const labels = {1: "BLEU", 2: "BLANC", 3: "ROUGE"};
@@ -182,10 +182,50 @@
         document.getElementById('card-today').className = `card-rt is-${(labels[today.code] || 'attente').toLowerCase()}`;
         document.getElementById('date-today').innerText = new Date().toLocaleDateString('fr-FR', {weekday:'long', day:'2-digit'});
         
-        // Demain
+        // Demain - Logique selon l'heure
+        const now = new Date();
+        const hour = now.getHours();
         const tomorrow = tempo.tomorrow || {};
-        document.getElementById('text-tomorrow').innerText = labels[tomorrow.code] || "...";
-        document.getElementById('card-tomorrow').className = `card-rt is-${(labels[tomorrow.code] || 'attente').toLowerCase()}`;
+        const tomorrowCard = document.getElementById('card-tomorrow');
+        const tomorrowBadge = tomorrowCard.querySelector('.badge-base');
+        
+        // Si la couleur officielle n'est pas encore connue (code undefined ou 0) ET qu'on a une prédiction
+        const hasOfficialColor = tomorrow.code && tomorrow.code > 0;
+        
+        if (!hasOfficialColor && predictions && predictions.predictions && predictions.predictions.length > 0) {
+            // Afficher notre prédiction J+1
+            const predJ1 = predictions.predictions[0]; // Première prédiction = J+1
+            
+            if (predJ1) {
+                document.getElementById('text-tomorrow').innerText = predJ1.couleur_predite;
+                document.getElementById('card-tomorrow').className = `card-rt is-${predJ1.couleur_predite.toLowerCase()}`;
+                
+                // Badge ESTIMATION
+                tomorrowBadge.innerText = "ESTIMATION";
+                tomorrowBadge.className = "badge-base badge-prediction";
+            }
+        } else if (hasOfficialColor) {
+            // Afficher la couleur officielle
+            const color = labels[tomorrow.code];
+            document.getElementById('text-tomorrow').innerText = color || "ATTENTE";
+            document.getElementById('card-tomorrow').className = `card-rt is-${(color || 'attente').toLowerCase()}`;
+            
+            // Badge selon l'heure
+            if (hour < 11) {
+                tomorrowBadge.innerText = "RTE";
+                tomorrowBadge.className = "badge-base badge-rte";
+            } else {
+                tomorrowBadge.innerText = "OFFICIEL";
+                tomorrowBadge.className = "badge-base badge-officiel";
+            }
+        } else {
+            // Aucune info disponible
+            document.getElementById('text-tomorrow').innerText = "ATTENTE";
+            document.getElementById('card-tomorrow').className = `card-rt is-attente`;
+            tomorrowBadge.innerText = "EN ATTENTE";
+            tomorrowBadge.className = "badge-base badge-prediction";
+        }
+        
         const tomDate = new Date();
         tomDate.setDate(tomDate.getDate() + 1);
         document.getElementById('date-tomorrow').innerText = tomDate.toLocaleDateString('fr-FR', {weekday:'long', day:'2-digit'});
@@ -194,16 +234,34 @@
     function renderPredictions(predictions, stats) {
         if (!predictions || !predictions.predictions) return;
         
-        const preds = predictions.predictions.filter((p, i) => i >= 1); // J+2 et J+3
+        const allPreds = predictions.predictions;
         const container = document.getElementById('predictions-container');
+        
+        // Trouver J+2 et J+3 en comparant les dates
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        
+        const j2Date = new Date(today);
+        j2Date.setDate(today.getDate() + 2);
+        const j2DateStr = j2Date.toISOString().split('T')[0];
+        
+        const j3Date = new Date(today);
+        j3Date.setDate(today.getDate() + 3);
+        const j3DateStr = j3Date.toISOString().split('T')[0];
+        
+        // Trouver les prédictions correspondantes
+        const predJ2 = allPreds.find(p => p.date === j2DateStr);
+        const predJ3 = allPreds.find(p => p.date === j3DateStr);
+        
+        const preds = [predJ2, predJ3].filter(p => p); // Enlever les undefined
         
         container.innerHTML = preds.map((pred, idx) => {
             const date = new Date(pred.date);
             const probs = pred.probabilites;
-            const dayLabel = idx === 0 ? "J+2" : "J+3";
+            const dayLabel = pred.date === j2DateStr ? "J+2" : "J+3";
             
             // Récupérer le taux de fiabilité
-            const statsKey = idx === 0 ? 'j2' : 'j3';
+            const statsKey = pred.date === j2DateStr ? 'j2' : 'j3';
             const fiabilite = stats && stats[statsKey] ? stats[statsKey].taux : 100;
             
             return `
@@ -235,6 +293,15 @@
                 </div>
             `;
         }).join('');
+        
+        // Si on n'a pas trouvé les prédictions, afficher un message
+        if (preds.length === 0) {
+            container.innerHTML = `
+                <div style="grid-column: 1 / -1; text-align: center; padding: 20px; color: #666;">
+                    Prédictions en cours de génération...
+                </div>
+            `;
+        }
     }
     
     function renderFiabilite(stats) {
@@ -283,7 +350,7 @@
         }
         
         renderFlux(data.current.flux);
-        renderTempo(data.current.tempo_officiel);
+        renderTempo(data.current.tempo_officiel, data.predictions);
         renderPredictions(data.predictions, data.stats);
         renderFiabilite(data.stats);
         renderStats(data.current.tempo_officiel?.saison);
