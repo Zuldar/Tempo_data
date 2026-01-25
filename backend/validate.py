@@ -1,5 +1,12 @@
 import json
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
+
+# Fuseau horaire français
+PARIS_TZ = timezone(timedelta(hours=1))  # UTC+1 en hiver
+
+def get_paris_now():
+    """Retourne la date/heure actuelle à Paris"""
+    return datetime.now(PARIS_TZ)
 
 def load_json(filepath):
     """Charge un fichier JSON"""
@@ -71,8 +78,8 @@ def validate_predictions():
         print("⚠️  Couleur officielle non disponible")
         return
     
-    # Date d'aujourd'hui
-    today_date = datetime.now().strftime("%Y-%m-%d")
+    # Date d'aujourd'hui (heure de Paris)
+    today_date = get_paris_now().strftime("%Y-%m-%d")
     
     print(f"📅 Validation pour {today_date} : couleur officielle = {today_color}")
     
@@ -80,8 +87,8 @@ def validate_predictions():
     for days_ago in [1, 2, 3]:
         j_label = f"j{days_ago}"
         
-        # Chercher la prédiction faite il y a X jours
-        target_past_date = (datetime.now() - timedelta(days=days_ago)).strftime("%Y-%m-%d")
+        # Chercher la prédiction faite il y a X jours (heure de Paris)
+        target_past_date = (get_paris_now() - timedelta(days=days_ago)).strftime("%Y-%m-%d")
         
         # Chercher dans l'historique
         found_prediction = None
@@ -137,8 +144,8 @@ def validate_predictions():
         else:
             print(f"⏭️  Pas de prédiction J+{days_ago} à valider (prédiction faite le {target_past_date} non trouvée)")
     
-    # Mettre à jour timestamp
-    stats["derniere_mise_a_jour"] = datetime.now().isoformat()
+    # Mettre à jour timestamp (heure de Paris)
+    stats["derniere_mise_a_jour"] = get_paris_now().isoformat()
     
     # Sauvegarder les stats
     save_json("../data/stats_fiabilite.json", stats)
