@@ -12,16 +12,15 @@
       "medium": 65,
       "low": 58
     },
-    "nuclear": {
-      "critique": 70,
-      "tendu": 80,
-      "normal": 90
+    "temp_drop": {
+      "extreme": 6,
+      "high": 4,
+      "medium": 2
     },
-    "peak": {
-      "extreme": 95,
-      "high": 88,
-      "medium": 80,
-      "low": 72
+    "flux_import": {
+      "extreme": 8000,
+      "high": 5000,
+      "medium": 2000
     }
   },
   "seuils_ete": {
@@ -39,27 +38,34 @@
     }
   },
   "poids": {
-    "temp_hiver": 0.25,
-    "gw_hiver": 0.20,
-    "nuclear_hiver": 0.30,
-    "peak_hiver": 0.15,
-    "trend_hiver": 0.10,
-    "temp_ete": 0.40,
+    "temp_hiver": 0.30,
+    "gw_hiver": 0.25,
+    "trend_hiver": 0.20,
+    "flux_hiver": 0.15,
+    "history_hiver": 0.10,
+    "temp_ete": 0.50,
     "gw_ete": 0.30,
-    "nuclear_ete": 0.20,
-    "peak_ete": 0.10,
+    "trend_ete": 0.10,
+    "flux_ete": 0.10,
     "impact_ferie": 0.70,
-    "reduction_ferie": 0.85,
-    "weekend_modifier": 0.0,
-    "lundi_modifier": 0.8,
-    "vendredi_modifier": 0.9
+    "reduction_ferie": 0.85
+  },
+  "modificateurs_jour": {
+    "lundi": 0.85,
+    "mardi": 1.05,
+    "mercredi": 1.10,
+    "jeudi": 1.05,
+    "vendredi": 0.90,
+    "samedi": 0.0,
+    "dimanche": 0.0
   },
   "quota_management": {
     "recent_reds_threshold": 3,
-    "recent_reds_penalty": 0.7,
-    "end_season_boost": 1.15
+    "recent_reds_penalty": 0.75,
+    "recent_whites_threshold": 8,
+    "recent_whites_penalty": 0.85
   },
-  "version": "2.0.0",
+  "version": "1.1.0",
   "derniere_modification": "2026-01-25",
-  "notes": "Version avancée avec nucléaire, pointe, et gestion de quota"
+  "notes": "Version simple avec tendance temp, flux, historique et jour semaine"
 }
