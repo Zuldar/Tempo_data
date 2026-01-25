@@ -1,5 +1,12 @@
 import json
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
+
+# Fuseau horaire français
+PARIS_TZ = timezone(timedelta(hours=1))  # UTC+1 en hiver, à ajuster manuellement pour UTC+2 en été
+
+def get_paris_now():
+    """Retourne la date/heure actuelle à Paris"""
+    return datetime.now(PARIS_TZ)
 
 def load_data():
     """Charge les données actuelles"""
@@ -329,12 +336,16 @@ def main():
     
     predictions = []
     
-    today = datetime.now()
+    # 🔥 Utiliser l'heure de Paris au lieu de UTC
+    today = get_paris_now()
     target_dates = {
         1: (today + timedelta(days=1)).strftime("%Y-%m-%d"),
         2: (today + timedelta(days=2)).strftime("%Y-%m-%d"),
         3: (today + timedelta(days=3)).strftime("%Y-%m-%d")
     }
+    
+    print(f"📅 Date actuelle (Paris): {today.strftime('%Y-%m-%d %H:%M')}")
+    print(f"📅 Cibles: J+1={target_dates[1]}, J+2={target_dates[2]}, J+3={target_dates[3]}")
     
     temp_today = None
     for m in meteo:
@@ -388,7 +399,7 @@ def main():
         return
     
     output = {
-        "timestamp": datetime.now().isoformat(),
+        "timestamp": get_paris_now().isoformat(),
         "predictions": predictions
     }
     
