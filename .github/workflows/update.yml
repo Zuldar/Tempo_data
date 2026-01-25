@@ -1,11 +1,12 @@
 name: Update Tempo Data
 
-on:
-  schedule:
+schedule:
+    # À minuit (changement de jour)
+    - cron: '1 0 * * *'
     # À 11h (annonce RTE)
     - cron: '0 11 * * *'
     # Puis toutes les 3 heures le reste de la journée
-    - cron: '0 0,3,6,9,12,15,18,21 * * *'
+    - cron: '0 3,6,9,12,15,18,21 * * *'
   workflow_dispatch:  # Permet déclenchement manuel
   push:
     branches:
