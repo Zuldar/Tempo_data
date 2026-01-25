@@ -225,34 +225,50 @@ def main():
     # Générer prévisions pour J+1, J+2, J+3
     predictions = []
     
+    # Calculer les dates exactes de J+1, J+2, J+3
+    today = datetime.now()
+    target_dates = {
+        1: (today + timedelta(days=1)).strftime("%Y-%m-%d"),
+        2: (today + timedelta(days=2)).strftime("%Y-%m-%d"),
+        3: (today + timedelta(days=3)).strftime("%Y-%m-%d")
+    }
+    
     for offset in [1, 2, 3]:
-        if offset < len(meteo):
-            forecast = meteo[offset]
+        target_date = target_dates[offset]
+        
+        # Trouver la prévision météo correspondante
+        forecast = None
+        for m in meteo:
+            if m.get("date") == target_date:
+                forecast = m
+                break
+        
+        if not forecast:
+            print(f"⚠️  Pas de données météo pour J+{offset} ({target_date})")
+            continue
+        
+        # Vérifier que les données météo sont valides
+        if "temp_ressentie" not in forecast:
+            print(f"⚠️  Données météo J+{offset} invalides, ignoré")
+            continue
+        
+        try:
+            prediction = predict_color(
+                temp=forecast["temp_ressentie"],
+                gw=gw_prevision,
+                target_date=target_date,
+                jours_feries=feries,
+                saison_stats=saison_stats,
+                config=config
+            )
+            predictions.append(prediction)
             
-            # Vérifier que les données météo sont valides
-            if not forecast or "temp_ressentie" not in forecast or "date" not in forecast:
-                print(f"⚠️  Données météo J+{offset} invalides, ignoré")
-                continue
-            
-            try:
-                prediction = predict_color(
-                    temp=forecast["temp_ressentie"],
-                    gw=gw_prevision,
-                    target_date=forecast["date"],
-                    jours_feries=feries,
-                    saison_stats=saison_stats,
-                    config=config
-                )
-                predictions.append(prediction)
-                
-                print(f"  J+{offset} ({forecast['date']}): {prediction['couleur_predite']} "
-                      f"({prediction['probabilites'][prediction['couleur_predite']]}% - "
-                      f"Confiance: {prediction['confiance']})")
-            except Exception as e:
-                print(f"❌ Erreur prédiction J+{offset}: {e}")
-                continue
-        else:
-            print(f"⚠️  Pas de données météo pour J+{offset}")
+            print(f"  J+{offset} ({target_date}): {prediction['couleur_predite']} "
+                  f"({prediction['probabilites'][prediction['couleur_predite']]}% - "
+                  f"Confiance: {prediction['confiance']})")
+        except Exception as e:
+            print(f"❌ Erreur prédiction J+{offset}: {e}")
+            continue
     
     if len(predictions) == 0:
         print("❌ Aucune prédiction générée")
