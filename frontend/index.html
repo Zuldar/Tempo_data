@@ -107,12 +107,22 @@
 <script>
     const BASE_URL = "https://raw.githubusercontent.com/Zuldar/Tempo_data/main/data/";
     
+    function getCacheBuster() {
+        // Nouveau cache buster toutes les heures
+        const now = new Date();
+        const hour = now.getHours();
+        const day = now.getDate();
+        const month = now.getMonth();
+        return `${month}${day}${hour}`;
+    }
+    
     async function loadData() {
         try {
+            const cacheBuster = getCacheBuster();
             const [currentRes, predictionsRes, statsRes] = await Promise.all([
-                fetch(`${BASE_URL}current.json?t=${Date.now()}`),
-                fetch(`${BASE_URL}predictions.json?t=${Date.now()}`),
-                fetch(`${BASE_URL}stats_fiabilite.json?t=${Date.now()}`)
+                fetch(`${BASE_URL}current.json?v=${cacheBuster}`),
+                fetch(`${BASE_URL}predictions.json?v=${cacheBuster}`),
+                fetch(`${BASE_URL}stats_fiabilite.json?v=${cacheBuster}`)
             ]);
             
             const current = await currentRes.json();
@@ -249,19 +259,34 @@
         j3Date.setDate(today.getDate() + 3);
         const j3DateStr = j3Date.toISOString().split('T')[0];
         
+        console.log(`🔍 Recherche prédictions: J+2=${j2DateStr}, J+3=${j3DateStr}`);
+        console.log(`📊 Prédictions disponibles:`, allPreds.map(p => p.date));
+        
         // Trouver les prédictions correspondantes
         const predJ2 = allPreds.find(p => p.date === j2DateStr);
         const predJ3 = allPreds.find(p => p.date === j3DateStr);
         
-        const preds = [predJ2, predJ3].filter(p => p); // Enlever les undefined
+        const preds = [
+            predJ2 ? { ...predJ2, label: 'J+2' } : null,
+            predJ3 ? { ...predJ3, label: 'J+3' } : null
+        ].filter(p => p); // Enlever les undefined
         
-        container.innerHTML = preds.map((pred, idx) => {
+        if (preds.length === 0) {
+            container.innerHTML = `
+                <div style="grid-column: 1 / -1; text-align: center; padding: 20px; color: #666;">
+                    Prédictions en cours de génération...
+                </div>
+            `;
+            return;
+        }
+        
+        container.innerHTML = preds.map(pred => {
             const date = new Date(pred.date);
             const probs = pred.probabilites;
-            const dayLabel = pred.date === j2DateStr ? "J+2" : "J+3";
+            const dayLabel = pred.label;
             
             // Récupérer le taux de fiabilité
-            const statsKey = pred.date === j2DateStr ? 'j2' : 'j3';
+            const statsKey = pred.label === 'J+2' ? 'j2' : 'j3';
             const fiabilite = stats && stats[statsKey] ? stats[statsKey].taux : 100;
             
             return `
@@ -293,15 +318,6 @@
                 </div>
             `;
         }).join('');
-        
-        // Si on n'a pas trouvé les prédictions, afficher un message
-        if (preds.length === 0) {
-            container.innerHTML = `
-                <div style="grid-column: 1 / -1; text-align: center; padding: 20px; color: #666;">
-                    Prédictions en cours de génération...
-                </div>
-            `;
-        }
     }
     
     function renderFiabilite(stats) {
