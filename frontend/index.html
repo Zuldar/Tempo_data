@@ -186,11 +186,15 @@
         
         const labels = {1: "BLEU", 2: "BLANC", 3: "ROUGE"};
         
+        // 🔥 Utiliser la date depuis les données tempo au lieu de Date() local
+        const todayDateFromAPI = tempo.today?.date || new Date().toISOString().split('T')[0];
+        const todayDate = new Date(todayDateFromAPI + 'T12:00:00'); // Midi pour éviter problèmes timezone
+        
         // Aujourd'hui
         const today = tempo.today || {};
         document.getElementById('text-today').innerText = labels[today.code] || "...";
         document.getElementById('card-today').className = `card-rt is-${(labels[today.code] || 'attente').toLowerCase()}`;
-        document.getElementById('date-today').innerText = new Date().toLocaleDateString('fr-FR', {weekday:'long', day:'2-digit'});
+        document.getElementById('date-today').innerText = todayDate.toLocaleDateString('fr-FR', {weekday:'long', day:'2-digit'});
         
         // Demain - Logique selon l'heure
         const now = new Date();
@@ -199,28 +203,23 @@
         const tomorrowCard = document.getElementById('card-tomorrow');
         const tomorrowBadge = tomorrowCard.querySelector('.badge-base');
         
-        // Si la couleur officielle n'est pas encore connue (code undefined ou 0) ET qu'on a une prédiction
         const hasOfficialColor = tomorrow.code && tomorrow.code > 0;
         
         if (!hasOfficialColor && predictions && predictions.predictions && predictions.predictions.length > 0) {
-            // Afficher notre prédiction J+1
-            const predJ1 = predictions.predictions[0]; // Première prédiction = J+1
+            const predJ1 = predictions.predictions[0];
             
             if (predJ1) {
                 document.getElementById('text-tomorrow').innerText = predJ1.couleur_predite;
                 document.getElementById('card-tomorrow').className = `card-rt is-${predJ1.couleur_predite.toLowerCase()}`;
                 
-                // Badge ESTIMATION
                 tomorrowBadge.innerText = "ESTIMATION";
-                tomorrowBadge.className = "badge-base badge-prediction";
+                tomorrowBadge.className = "badge-base badge-estimation";
             }
         } else if (hasOfficialColor) {
-            // Afficher la couleur officielle
             const color = labels[tomorrow.code];
             document.getElementById('text-tomorrow').innerText = color || "ATTENTE";
             document.getElementById('card-tomorrow').className = `card-rt is-${(color || 'attente').toLowerCase()}`;
             
-            // Badge selon l'heure
             if (hour < 11) {
                 tomorrowBadge.innerText = "RTE";
                 tomorrowBadge.className = "badge-base badge-rte";
@@ -229,14 +228,13 @@
                 tomorrowBadge.className = "badge-base badge-officiel";
             }
         } else {
-            // Aucune info disponible
             document.getElementById('text-tomorrow').innerText = "ATTENTE";
             document.getElementById('card-tomorrow').className = `card-rt is-attente`;
             tomorrowBadge.innerText = "EN ATTENTE";
             tomorrowBadge.className = "badge-base badge-prediction";
         }
         
-        const tomDate = new Date();
+        const tomDate = new Date(todayDate);
         tomDate.setDate(tomDate.getDate() + 1);
         document.getElementById('date-tomorrow').innerText = tomDate.toLocaleDateString('fr-FR', {weekday:'long', day:'2-digit'});
     }
@@ -247,31 +245,11 @@
         const allPreds = predictions.predictions;
         const container = document.getElementById('predictions-container');
         
-        // Trouver J+2 et J+3 en comparant les dates
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
+        // 🔥 Utiliser les dates depuis predictions.json au lieu de Date() local
+        // Les prédictions contiennent J+1, J+2, J+3
+        // On veut afficher seulement J+2 et J+3
         
-        const j2Date = new Date(today);
-        j2Date.setDate(today.getDate() + 2);
-        const j2DateStr = j2Date.toISOString().split('T')[0];
-        
-        const j3Date = new Date(today);
-        j3Date.setDate(today.getDate() + 3);
-        const j3DateStr = j3Date.toISOString().split('T')[0];
-        
-        console.log(`🔍 Recherche prédictions: J+2=${j2DateStr}, J+3=${j3DateStr}`);
-        console.log(`📊 Prédictions disponibles:`, allPreds.map(p => p.date));
-        
-        // Trouver les prédictions correspondantes
-        const predJ2 = allPreds.find(p => p.date === j2DateStr);
-        const predJ3 = allPreds.find(p => p.date === j3DateStr);
-        
-        const preds = [
-            predJ2 ? { ...predJ2, label: 'J+2' } : null,
-            predJ3 ? { ...predJ3, label: 'J+3' } : null
-        ].filter(p => p); // Enlever les undefined
-        
-        if (preds.length === 0) {
+        if (allPreds.length < 2) {
             container.innerHTML = `
                 <div style="grid-column: 1 / -1; text-align: center; padding: 20px; color: #666;">
                     Prédictions en cours de génération...
@@ -280,23 +258,45 @@
             return;
         }
         
+        // Prendre les éléments 1 et 2 (indices 1 et 2) = J+2 et J+3
+        const predJ2 = allPreds[1]; // 2ème prédiction
+        const predJ3 = allPreds[2]; // 3ème prédiction
+        
+        const preds = [
+            predJ2 ? { ...predJ2, label: 'J+2' } : null,
+            predJ3 ? { ...predJ3, label: 'J+3' } : null
+        ].filter(p => p);
+        
+        if (preds.length === 0) {
+            container.innerHTML = `
+                <div style="grid-column: 1 / -1; text-align: center; padding: 20px; color: #666;">
+                    Prédictions J+2/J+3 non disponibles
+                </div>
+            `;
+            return;
+        }
+        
         container.innerHTML = preds.map(pred => {
-            const date = new Date(pred.date);
+            const date = new Date(pred.date + 'T12:00:00'); // Midi pour éviter problèmes timezone
             const probs = pred.probabilites;
             const dayLabel = pred.label;
             
-            // Récupérer le taux de fiabilité
             const statsKey = pred.label === 'J+2' ? 'j2' : 'j3';
             const fiabilite = stats && stats[statsKey] ? stats[statsKey].taux : 100;
             
+            // 🔥 Badge de confiance plus discret
+            const badgeText = pred.confiance === 'HIGH' ? 'HAUTE' : pred.confiance === 'MEDIUM' ? 'MOY' : 'FAIBLE';
+            
             return `
                 <div class="prob-card">
-                    <span class="badge-base badge-prediction">${pred.confiance}</span>
                     <div class="prob-header">
                         <span style="font-size: 0.6rem; font-weight: 900; opacity: 0.6;">
                             ${dayLabel} - ${date.toLocaleDateString('fr-FR', {weekday:'short', day:'2-digit'}).toUpperCase()}
                         </span>
                         <span style="font-size: 0.8rem; font-weight: 900;">${pred.metadata.temp}°C</span>
+                    </div>
+                    <div style="position: absolute; top: 8px; right: 8px; font-size: 0.45rem; padding: 3px 6px; border-radius: 4px; background: rgba(106, 17, 203, 0.3); color: #ab66ff; font-weight: 900;">
+                        ${badgeText}
                     </div>
                     <div>
                         ${['ROUGE', 'BLANC', 'BLEU'].map(c => `
