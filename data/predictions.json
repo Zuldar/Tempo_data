@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-01-28T00:16:47.116984+01:00",
+  "timestamp": "2026-01-28T04:42:51.627651+01:00",
   "predictions": [
     {
       "date": "2026-01-29",
@@ -11,14 +11,14 @@
       },
       "confiance": "MEDIUM",
       "metadata": {
-        "temp": 0.5,
-        "gw": 63.95,
-        "adjusted_gw": 64.0,
+        "temp": 0.1,
+        "gw": 65.5,
+        "adjusted_gw": 65.5,
         "is_ferie": false,
         "is_weekend": false,
-        "global_score": 40.8,
+        "global_score": 49.6,
         "temp_score": 100,
-        "gw_score": 20,
+        "gw_score": 50,
         "trend_score": 0,
         "flux_score": 0,
         "day_modifier": 1.05
@@ -26,22 +26,22 @@
     },
     {
       "date": "2026-01-30",
-      "couleur_predite": "BLEU",
+      "couleur_predite": "BLANC",
       "probabilites": {
-        "ROUGE": 0,
-        "BLANC": 30,
-        "BLEU": 70
+        "ROUGE": 10,
+        "BLANC": 50,
+        "BLEU": 40
       },
-      "confiance": "HIGH",
+      "confiance": "MEDIUM",
       "metadata": {
-        "temp": 2.3,
-        "gw": 63.95,
-        "adjusted_gw": 64.0,
+        "temp": 1.1,
+        "gw": 65.5,
+        "adjusted_gw": 65.5,
         "is_ferie": false,
         "is_weekend": false,
-        "global_score": 30.5,
-        "temp_score": 85,
-        "gw_score": 20,
+        "global_score": 42.5,
+        "temp_score": 100,
+        "gw_score": 50,
         "trend_score": 0,
         "flux_score": 0,
         "day_modifier": 0.9
@@ -57,14 +57,14 @@
       },
       "confiance": "HIGH",
       "metadata": {
-        "temp": 1.7,
-        "gw": 63.95,
-        "adjusted_gw": 64.0,
+        "temp": 2.1,
+        "gw": 65.5,
+        "adjusted_gw": 65.5,
         "is_ferie": false,
         "is_weekend": true,
         "global_score": 0.0,
-        "temp_score": 100,
-        "gw_score": 20,
+        "temp_score": 85,
+        "gw_score": 50,
         "trend_score": 0,
         "flux_score": 0,
         "day_modifier": 0.0
