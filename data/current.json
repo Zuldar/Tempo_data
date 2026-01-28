@@ -1,67 +1,54 @@
 {
-  "timestamp": "2026-01-28T10:19:41.363050",
-  "flux": {
-    "timestamp": "2026-01-28T10:19:37.092611",
-    "heure": "23:45",
-    "date": "2026-01-28",
-    "consommation_actuelle": null,
-    "prevision_j1": 65289,
-    "flux": {
-      "uk": -969,
-      "es": 1300,
-      "it": -3309,
-      "ch": -3200,
-      "de_be": -1814
-    }
-  },
+  "timestamp": "2026-01-28T13:45:29.126524",
+  "flux": null,
   "meteo": [
     {
       "date": "2026-01-28",
-      "temp_min": 4.1,
-      "temp_max": 8.5,
-      "temp_ressentie": 1.6,
-      "wind": 12.9
+      "temp_min": 4.2,
+      "temp_max": 8.7,
+      "temp_ressentie": 1.5,
+      "wind": 13.5
     },
     {
       "date": "2026-01-29",
-      "temp_min": 3.2,
-      "temp_max": 8.0,
-      "temp_ressentie": 0.5,
-      "wind": 13.6
+      "temp_min": 3.5,
+      "temp_max": 8.2,
+      "temp_ressentie": 0.8,
+      "wind": 13.2
     },
     {
       "date": "2026-01-30",
-      "temp_min": 4.8,
-      "temp_max": 11.0,
-      "temp_ressentie": 1.8,
-      "wind": 15.3
+      "temp_min": 5.0,
+      "temp_max": 10.8,
+      "temp_ressentie": 1.9,
+      "wind": 15.7
     },
     {
       "date": "2026-01-31",
-      "temp_min": 5.6,
-      "temp_max": 10.2,
-      "temp_ressentie": 2.3,
-      "wind": 16.4
+      "temp_min": 6.0,
+      "temp_max": 10.3,
+      "temp_ressentie": 2.6,
+      "wind": 16.8
     },
     {
       "date": "2026-02-01",
-      "temp_min": 4.6,
-      "temp_max": 9.1,
-      "temp_ressentie": 2.1,
-      "wind": 12.5
+      "temp_min": 4.8,
+      "temp_max": 9.0,
+      "temp_ressentie": 2.3,
+      "wind": 12.6
     },
     {
       "date": "2026-02-02",
-      "temp_min": 4.2,
-      "temp_max": 10.7,
-      "temp_ressentie": 1.0,
+      "temp_min": 4.5,
+      "temp_max": 11.0,
+      "temp_ressentie": 1.4,
       "wind": 15.6
     },
     {
       "date": "2026-02-03",
-      "temp_min": 9.1,
+      "temp_min": 9.0,
       "temp_max": 12.7,
-      "temp_ressentie": 5.3,
+      "temp_ressentie": 5.2,
       "wind": 18.9
     }
   ],
