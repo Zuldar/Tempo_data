@@ -1,29 +1,6 @@
 {
-  "timestamp": "2026-01-30T20:29:30.856911+01:00",
+  "timestamp": "2026-01-31T00:20:20.312714+01:00",
   "predictions": [
-    {
-      "date": "2026-01-31",
-      "couleur_predite": "BLEU",
-      "probabilites": {
-        "ROUGE": 0,
-        "BLANC": 10,
-        "BLEU": 90
-      },
-      "confiance": "HIGH",
-      "metadata": {
-        "temp": 3.1,
-        "gw": 62.5,
-        "adjusted_gw": 62.5,
-        "is_ferie": false,
-        "is_weekend": true,
-        "global_score": 0.0,
-        "temp_score": 85,
-        "gw_score": 20,
-        "trend_score": 0,
-        "flux_score": 0,
-        "day_modifier": 0.0
-      }
-    },
     {
       "date": "2026-02-01",
       "couleur_predite": "BLEU",
@@ -34,15 +11,15 @@
       },
       "confiance": "HIGH",
       "metadata": {
-        "temp": 2.5,
+        "temp": 0.3,
         "gw": 62.5,
         "adjusted_gw": 62.5,
         "is_ferie": false,
         "is_weekend": true,
         "global_score": 0.0,
-        "temp_score": 85,
+        "temp_score": 100,
         "gw_score": 20,
-        "trend_score": 0,
+        "trend_score": 40,
         "flux_score": 0,
         "day_modifier": 0.0
       }
@@ -57,7 +34,7 @@
       },
       "confiance": "HIGH",
       "metadata": {
-        "temp": 1.2,
+        "temp": 2.0,
         "gw": 62.5,
         "adjusted_gw": 62.5,
         "is_ferie": false,
@@ -68,6 +45,29 @@
         "trend_score": 0,
         "flux_score": 0,
         "day_modifier": 0.85
+      }
+    },
+    {
+      "date": "2026-02-03",
+      "couleur_predite": "BLANC",
+      "probabilites": {
+        "ROUGE": 10,
+        "BLANC": 50,
+        "BLEU": 40
+      },
+      "confiance": "MEDIUM",
+      "metadata": {
+        "temp": 2.2,
+        "gw": 62.5,
+        "adjusted_gw": 62.5,
+        "is_ferie": false,
+        "is_weekend": false,
+        "global_score": 35.6,
+        "temp_score": 85,
+        "gw_score": 20,
+        "trend_score": 0,
+        "flux_score": 0,
+        "day_modifier": 1.05
       }
     }
   ]
