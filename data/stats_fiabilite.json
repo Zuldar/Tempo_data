@@ -1,38 +1,22 @@
 {
-  "derniere_mise_a_jour": "2026-02-02T17:36:35.785525+01:00",
+  "derniere_mise_a_jour": "2026-02-03T00:22:32.559929+01:00",
   "j1": {
     "success": 34,
-    "total": 117,
-    "taux": 29.1
+    "total": 118,
+    "taux": 28.8
   },
   "j2": {
     "success": 8,
-    "total": 64,
-    "taux": 12.5
+    "total": 65,
+    "taux": 12.3
   },
   "j3": {
     "success": 16,
-    "total": 47,
-    "taux": 34.0
+    "total": 48,
+    "taux": 33.3
   },
   "historique": [
     {
-      "date": "2026-01-23",
-      "predit": "BLANC",
-      "reel": "BLEU",
-      "correct": false,
-      "metadata": {
-        "temp": 2.2,
-        "gw": 62.4,
-        "adjusted_gw": 62.4,
-        "is_ferie": false,
-        "is_weekend": false,
-        "global_score": 44.5,
-        "temp_score": 55,
-        "gw_score": 20
-      }
-    },
-    {
       "date": "2026-01-24",
       "predit": "BLANC",
       "reel": "BLEU",
@@ -1815,12 +1799,31 @@
         "trend_score": 0,
         "flux_score": 0,
         "day_modifier": 0.85
+      }
+    },
+    {
+      "date": "2026-02-03",
+      "predit": "BLEU",
+      "reel": "BLANC",
+      "correct": false,
+      "metadata": {
+        "temp": 3.2,
+        "gw": 59.55,
+        "adjusted_gw": 59.5,
+        "is_ferie": false,
+        "is_weekend": false,
+        "global_score": 30.2,
+        "temp_score": 85,
+        "gw_score": 20,
+        "trend_score": 0,
+        "flux_score": 0,
+        "day_modifier": 1.05
       }
     }
   ],
   "erreurs_par_type": {
     "faux_rouge": 0,
     "faux_blanc": 34,
-    "faux_bleu": 49
+    "faux_bleu": 50
   }
 }
