@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-02-02T07:01:33.442899+01:00",
+  "timestamp": "2026-02-02T09:39:29.246045+01:00",
   "predictions": [
     {
       "date": "2026-02-03",
@@ -57,13 +57,13 @@
       },
       "confiance": "HIGH",
       "metadata": {
-        "temp": 2.1,
+        "temp": 2.0,
         "gw": 59.644,
         "adjusted_gw": 59.6,
         "is_ferie": false,
         "is_weekend": false,
-        "global_score": 30.2,
-        "temp_score": 85,
+        "global_score": 34.7,
+        "temp_score": 100,
         "gw_score": 20,
         "trend_score": 0,
         "flux_score": 0,
