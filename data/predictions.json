@@ -1,22 +1,22 @@
 {
-  "timestamp": "2026-02-02T11:35:56.127854+01:00",
+  "timestamp": "2026-02-02T15:01:07.669643+01:00",
   "predictions": [
     {
       "date": "2026-02-03",
-      "couleur_predite": "BLANC",
+      "couleur_predite": "BLEU",
       "probabilites": {
-        "ROUGE": 10,
-        "BLANC": 50,
-        "BLEU": 40
+        "ROUGE": 0,
+        "BLANC": 30,
+        "BLEU": 70
       },
-      "confiance": "MEDIUM",
+      "confiance": "HIGH",
       "metadata": {
-        "temp": 3.2,
-        "gw": 59.577,
-        "adjusted_gw": 59.6,
+        "temp": 3.0,
+        "gw": 59.55,
+        "adjusted_gw": 59.5,
         "is_ferie": false,
         "is_weekend": false,
-        "global_score": 35.6,
+        "global_score": 30.2,
         "temp_score": 85,
         "gw_score": 20,
         "trend_score": 0,
@@ -26,21 +26,21 @@
     },
     {
       "date": "2026-02-04",
-      "couleur_predite": "BLANC",
+      "couleur_predite": "BLEU",
       "probabilites": {
-        "ROUGE": 10,
-        "BLANC": 50,
-        "BLEU": 40
+        "ROUGE": 0,
+        "BLANC": 30,
+        "BLEU": 70
       },
-      "confiance": "MEDIUM",
+      "confiance": "HIGH",
       "metadata": {
-        "temp": 1.8,
-        "gw": 59.577,
-        "adjusted_gw": 59.6,
+        "temp": 2.2,
+        "gw": 59.55,
+        "adjusted_gw": 59.5,
         "is_ferie": false,
         "is_weekend": false,
-        "global_score": 42.8,
-        "temp_score": 100,
+        "global_score": 31.7,
+        "temp_score": 85,
         "gw_score": 20,
         "trend_score": 0,
         "flux_score": 0,
@@ -49,20 +49,20 @@
     },
     {
       "date": "2026-02-05",
-      "couleur_predite": "BLANC",
+      "couleur_predite": "BLEU",
       "probabilites": {
-        "ROUGE": 10,
-        "BLANC": 50,
-        "BLEU": 40
+        "ROUGE": 0,
+        "BLANC": 30,
+        "BLEU": 70
       },
-      "confiance": "MEDIUM",
+      "confiance": "HIGH",
       "metadata": {
-        "temp": 2.2,
-        "gw": 59.577,
-        "adjusted_gw": 59.6,
+        "temp": 2.4,
+        "gw": 59.55,
+        "adjusted_gw": 59.5,
         "is_ferie": false,
         "is_weekend": false,
-        "global_score": 35.6,
+        "global_score": 30.2,
         "temp_score": 85,
         "gw_score": 20,
         "trend_score": 0,
