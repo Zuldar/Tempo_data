@@ -1,7 +1,7 @@
 {
-  "timestamp": "2026-02-07T04:06:13.839164",
+  "timestamp": "2026-02-07T05:39:17.537839",
   "flux": {
-    "timestamp": "2026-02-07T04:06:06.686866",
+    "timestamp": "2026-02-07T05:39:12.372578",
     "heure": "23:45",
     "date": "2026-02-07",
     "consommation_actuelle": null,
@@ -18,23 +18,23 @@
     {
       "date": "2026-02-07",
       "temp_min": 6.1,
-      "temp_max": 12.4,
-      "temp_ressentie": 3.2,
-      "wind": 14.7
+      "temp_max": 12.6,
+      "temp_ressentie": 3.3,
+      "wind": 14.1
     },
     {
       "date": "2026-02-08",
-      "temp_min": 5.2,
-      "temp_max": 11.3,
-      "temp_ressentie": 2.9,
-      "wind": 11.7
+      "temp_min": 5.8,
+      "temp_max": 11.2,
+      "temp_ressentie": 3.5,
+      "wind": 11.5
     },
     {
       "date": "2026-02-09",
       "temp_min": 4.0,
       "temp_max": 10.0,
-      "temp_ressentie": 2.1,
-      "wind": 9.4
+      "temp_ressentie": 2.2,
+      "wind": 9.1
     },
     {
       "date": "2026-02-10",
@@ -45,24 +45,24 @@
     },
     {
       "date": "2026-02-11",
-      "temp_min": 9.5,
-      "temp_max": 13.7,
-      "temp_ressentie": 5.1,
-      "wind": 22.0
+      "temp_min": 9.4,
+      "temp_max": 13.3,
+      "temp_ressentie": 5.4,
+      "wind": 20.1
     },
     {
       "date": "2026-02-12",
-      "temp_min": 8.2,
-      "temp_max": 12.7,
-      "temp_ressentie": 3.4,
-      "wind": 23.9
+      "temp_min": 8.6,
+      "temp_max": 12.0,
+      "temp_ressentie": 3.9,
+      "wind": 23.3
     },
     {
       "date": "2026-02-13",
-      "temp_min": 3.1,
-      "temp_max": 10.2,
-      "temp_ressentie": -1.8,
-      "wind": 24.4
+      "temp_min": 6.0,
+      "temp_max": 11.5,
+      "temp_ressentie": 2.5,
+      "wind": 17.9
     }
   ],
   "tempo_officiel": {
@@ -71,8 +71,8 @@
       "couleur": "BLEU"
     },
     "tomorrow": {
-      "code": 0,
-      "couleur": "INCONNU"
+      "code": 1,
+      "couleur": "BLEU"
     },
     "saison": {
       "bleu_utilises": 124,
