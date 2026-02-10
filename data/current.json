@@ -1,14 +1,14 @@
 {
-  "timestamp": "2026-02-10T10:44:44.420844",
+  "timestamp": "2026-02-10T14:20:17.083316",
   "flux": {
-    "timestamp": "2026-02-10T10:44:38.092846",
+    "timestamp": "2026-02-10T14:20:10.531543",
     "heure": "23:45",
     "date": "2026-02-10",
     "consommation_actuelle": null,
     "prevision_j1": 56784,
     "flux": {
       "uk": -3528,
-      "es": 1522,
+      "es": 1539,
       "it": -4019,
       "ch": -3200,
       "de_be": -4187
@@ -18,50 +18,50 @@
     {
       "date": "2026-02-10",
       "temp_min": 8.0,
-      "temp_max": 13.0,
-      "temp_ressentie": 4.6,
-      "wind": 16.8
+      "temp_max": 12.7,
+      "temp_ressentie": 4.5,
+      "wind": 17.5
     },
     {
       "date": "2026-02-11",
-      "temp_min": 10.4,
-      "temp_max": 14.2,
-      "temp_ressentie": 5.7,
-      "wind": 23.6
+      "temp_min": 10.5,
+      "temp_max": 14.0,
+      "temp_ressentie": 5.3,
+      "wind": 25.7
     },
     {
       "date": "2026-02-12",
-      "temp_min": 8.6,
+      "temp_min": 8.8,
       "temp_max": 12.3,
-      "temp_ressentie": 2.5,
-      "wind": 30.5
+      "temp_ressentie": 3.0,
+      "wind": 28.8
     },
     {
       "date": "2026-02-13",
-      "temp_min": 5.2,
-      "temp_max": 10.3,
+      "temp_min": 5.3,
+      "temp_max": 10.4,
       "temp_ressentie": 1.1,
-      "wind": 20.7
+      "wind": 21.0
     },
     {
       "date": "2026-02-14",
-      "temp_min": 1.2,
-      "temp_max": 6.9,
-      "temp_ressentie": -4.6,
-      "wind": 29.0
+      "temp_min": 1.1,
+      "temp_max": 6.6,
+      "temp_ressentie": -4.7,
+      "wind": 29.2
     },
     {
       "date": "2026-02-15",
-      "temp_min": -0.4,
-      "temp_max": 3.9,
-      "temp_ressentie": -5.1,
-      "wind": 23.6
+      "temp_min": -0.7,
+      "temp_max": 3.7,
+      "temp_ressentie": -5.3,
+      "wind": 23.3
     },
     {
       "date": "2026-02-16",
-      "temp_min": 2.1,
+      "temp_min": 1.6,
       "temp_max": 9.8,
-      "temp_ressentie": -3.1,
+      "temp_ressentie": -3.5,
       "wind": 25.6
     }
   ],
