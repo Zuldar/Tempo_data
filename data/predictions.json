@@ -1,48 +1,25 @@
 {
-  "timestamp": "2026-02-11T20:54:29.408793+01:00",
+  "timestamp": "2026-02-12T00:26:25.856733+01:00",
   "predictions": [
-    {
-      "date": "2026-02-12",
-      "couleur_predite": "BLEU",
-      "probabilites": {
-        "ROUGE": 0,
-        "BLANC": 30,
-        "BLEU": 70
-      },
-      "confiance": "HIGH",
-      "metadata": {
-        "temp": 2.6,
-        "gw": 56.0,
-        "adjusted_gw": 56.0,
-        "is_ferie": false,
-        "is_weekend": false,
-        "global_score": 33.2,
-        "temp_score": 85,
-        "gw_score": 0,
-        "trend_score": 40,
-        "flux_score": 0,
-        "day_modifier": 1.05
-      }
-    },
     {
       "date": "2026-02-13",
       "couleur_predite": "BLANC",
       "probabilites": {
-        "ROUGE": 10,
-        "BLANC": 50,
-        "BLEU": 40
+        "ROUGE": 25,
+        "BLANC": 60,
+        "BLEU": 15
       },
       "confiance": "MEDIUM",
       "metadata": {
-        "temp": 1.2,
+        "temp": -3.6,
         "gw": 56.0,
         "adjusted_gw": 56.0,
         "is_ferie": false,
         "is_weekend": false,
-        "global_score": 37.4,
+        "global_score": 50.0,
         "temp_score": 100,
         "gw_score": 0,
-        "trend_score": 70,
+        "trend_score": 100,
         "flux_score": 0,
         "day_modifier": 0.9
       }
@@ -57,7 +34,7 @@
       },
       "confiance": "HIGH",
       "metadata": {
-        "temp": -3.6,
+        "temp": -4.0,
         "gw": 56.0,
         "adjusted_gw": 56.0,
         "is_ferie": false,
@@ -66,6 +43,29 @@
         "temp_score": 100,
         "gw_score": 0,
         "trend_score": 100,
+        "flux_score": 0,
+        "day_modifier": 0.0
+      }
+    },
+    {
+      "date": "2026-02-15",
+      "couleur_predite": "BLEU",
+      "probabilites": {
+        "ROUGE": 0,
+        "BLANC": 0,
+        "BLEU": 100
+      },
+      "confiance": "HIGH",
+      "metadata": {
+        "temp": -0.2,
+        "gw": 56.0,
+        "adjusted_gw": 56.0,
+        "is_ferie": false,
+        "is_weekend": true,
+        "global_score": 0.0,
+        "temp_score": 100,
+        "gw_score": 0,
+        "trend_score": 40,
         "flux_score": 0,
         "day_modifier": 0.0
       }
