@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-02-13T06:57:25.903851+01:00",
+  "timestamp": "2026-02-13T09:39:06.190221+01:00",
   "predictions": [
     {
       "date": "2026-02-14",
@@ -11,7 +11,7 @@
       },
       "confiance": "HIGH",
       "metadata": {
-        "temp": -2.1,
+        "temp": -1.9,
         "gw": 58.923,
         "adjusted_gw": 58.9,
         "is_ferie": false,
@@ -49,23 +49,23 @@
     },
     {
       "date": "2026-02-16",
-      "couleur_predite": "BLEU",
+      "couleur_predite": "BLANC",
       "probabilites": {
-        "ROUGE": 0,
-        "BLANC": 30,
-        "BLEU": 70
+        "ROUGE": 10,
+        "BLANC": 50,
+        "BLEU": 40
       },
-      "confiance": "HIGH",
+      "confiance": "MEDIUM",
       "metadata": {
-        "temp": 1.4,
+        "temp": 1.2,
         "gw": 58.923,
         "adjusted_gw": 58.9,
         "is_ferie": false,
         "is_weekend": false,
-        "global_score": 33.1,
+        "global_score": 40.6,
         "temp_score": 100,
         "gw_score": 20,
-        "trend_score": 0,
+        "trend_score": 40,
         "flux_score": 0,
         "day_modifier": 0.85
       }
