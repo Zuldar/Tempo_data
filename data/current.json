@@ -1,11 +1,11 @@
 {
-  "timestamp": "2026-02-14T04:08:05.779029",
+  "timestamp": "2026-02-14T05:41:59.209595",
   "flux": {
-    "timestamp": "2026-02-14T04:07:59.306258",
+    "timestamp": "2026-02-14T05:41:54.395453",
     "heure": "23:45",
     "date": "2026-02-14",
     "consommation_actuelle": null,
-    "prevision_j1": 61250,
+    "prevision_j1": 61402,
     "flux": {
       "uk": -3119,
       "es": 2590,
@@ -17,24 +17,24 @@
   "meteo": [
     {
       "date": "2026-02-14",
-      "temp_min": 3.1,
-      "temp_max": 8.7,
-      "temp_ressentie": -2.0,
-      "wind": 25.4
+      "temp_min": 2.9,
+      "temp_max": 8.8,
+      "temp_ressentie": -2.3,
+      "wind": 25.6
     },
     {
       "date": "2026-02-15",
-      "temp_min": 1.6,
-      "temp_max": 8.4,
-      "temp_ressentie": -3.7,
-      "wind": 26.6
+      "temp_min": 1.5,
+      "temp_max": 7.9,
+      "temp_ressentie": -3.5,
+      "wind": 25.1
     },
     {
       "date": "2026-02-16",
-      "temp_min": 6.7,
-      "temp_max": 11.0,
-      "temp_ressentie": 1.9,
-      "wind": 24.0
+      "temp_min": 6.8,
+      "temp_max": 11.1,
+      "temp_ressentie": 2.0,
+      "wind": 23.8
     },
     {
       "date": "2026-02-17",
@@ -71,8 +71,8 @@
       "couleur": "BLEU"
     },
     "tomorrow": {
-      "code": 0,
-      "couleur": "INCONNU"
+      "code": 1,
+      "couleur": "BLEU"
     },
     "saison": {
       "bleu_utilises": 129,
