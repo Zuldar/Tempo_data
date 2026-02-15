@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-02-15T06:54:09.447013+01:00",
+  "timestamp": "2026-02-15T09:29:16.013898+01:00",
   "predictions": [
     {
       "date": "2026-02-16",
@@ -11,7 +11,7 @@
       },
       "confiance": "HIGH",
       "metadata": {
-        "temp": 2.2,
+        "temp": 2.5,
         "gw": 59.316,
         "adjusted_gw": 59.3,
         "is_ferie": false,
