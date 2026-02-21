@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-02-21T00:23:50.459000+01:00",
+  "timestamp": "2026-02-21T05:04:09.538669+01:00",
   "predictions": [
     {
       "date": "2026-02-22",
@@ -11,14 +11,14 @@
       },
       "confiance": "HIGH",
       "metadata": {
-        "temp": 4.3,
-        "gw": 59.7,
-        "adjusted_gw": 59.7,
+        "temp": 5.8,
+        "gw": 55.95,
+        "adjusted_gw": 56.0,
         "is_ferie": false,
         "is_weekend": true,
         "global_score": 0.0,
         "temp_score": 55,
-        "gw_score": 20,
+        "gw_score": 0,
         "trend_score": 0,
         "flux_score": 0,
         "day_modifier": 0.0
@@ -29,19 +29,19 @@
       "couleur_predite": "BLEU",
       "probabilites": {
         "ROUGE": 0,
-        "BLANC": 30,
-        "BLEU": 70
+        "BLANC": 10,
+        "BLEU": 90
       },
       "confiance": "HIGH",
       "metadata": {
-        "temp": 4.2,
-        "gw": 59.7,
-        "adjusted_gw": 59.7,
+        "temp": 5.7,
+        "gw": 55.95,
+        "adjusted_gw": 56.0,
         "is_ferie": false,
         "is_weekend": false,
-        "global_score": 20.3,
+        "global_score": 15.6,
         "temp_score": 55,
-        "gw_score": 20,
+        "gw_score": 0,
         "trend_score": 0,
         "flux_score": 0,
         "day_modifier": 0.85
@@ -49,22 +49,22 @@
     },
     {
       "date": "2026-02-24",
-      "couleur_predite": "BLANC",
+      "couleur_predite": "BLEU",
       "probabilites": {
-        "ROUGE": 10,
-        "BLANC": 50,
-        "BLEU": 40
+        "ROUGE": 0,
+        "BLANC": 10,
+        "BLEU": 90
       },
-      "confiance": "MEDIUM",
+      "confiance": "HIGH",
       "metadata": {
-        "temp": 3.9,
-        "gw": 59.7,
-        "adjusted_gw": 59.7,
+        "temp": 5.6,
+        "gw": 55.95,
+        "adjusted_gw": 56.0,
         "is_ferie": false,
         "is_weekend": false,
-        "global_score": 35.6,
-        "temp_score": 85,
-        "gw_score": 20,
+        "global_score": 19.2,
+        "temp_score": 55,
+        "gw_score": 0,
         "trend_score": 0,
         "flux_score": 0,
         "day_modifier": 1.05
