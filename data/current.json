@@ -1,14 +1,14 @@
 {
-  "timestamp": "2026-02-24T17:03:05.887010",
+  "timestamp": "2026-02-24T19:47:20.472364",
   "flux": {
-    "timestamp": "2026-02-24T17:02:59.017141",
+    "timestamp": "2026-02-24T19:47:15.968430",
     "heure": "23:45",
     "date": "2026-02-24",
     "consommation_actuelle": null,
     "prevision_j1": 53150,
     "flux": {
       "uk": -3528,
-      "es": -1182,
+      "es": -948,
       "it": -4138,
       "ch": -2385,
       "de_be": -3901
@@ -24,45 +24,45 @@
     },
     {
       "date": "2026-02-25",
-      "temp_min": 8.8,
-      "temp_max": 17.6,
-      "temp_ressentie": 6.2,
+      "temp_min": 8.7,
+      "temp_max": 17.7,
+      "temp_ressentie": 6.1,
       "wind": 13.1
     },
     {
       "date": "2026-02-26",
       "temp_min": 9.6,
-      "temp_max": 17.1,
+      "temp_max": 17.3,
       "temp_ressentie": 7.3,
-      "wind": 11.3
+      "wind": 11.5
     },
     {
       "date": "2026-02-27",
-      "temp_min": 9.0,
-      "temp_max": 16.4,
-      "temp_ressentie": 5.3,
-      "wind": 18.5
+      "temp_min": 8.8,
+      "temp_max": 16.5,
+      "temp_ressentie": 5.1,
+      "wind": 18.6
     },
     {
       "date": "2026-02-28",
       "temp_min": 7.4,
-      "temp_max": 12.7,
-      "temp_ressentie": 4.6,
-      "wind": 13.6
+      "temp_max": 12.9,
+      "temp_ressentie": 4.8,
+      "wind": 13.3
     },
     {
       "date": "2026-03-01",
-      "temp_min": 5.4,
-      "temp_max": 14.5,
-      "temp_ressentie": 2.6,
+      "temp_min": 5.7,
+      "temp_max": 14.3,
+      "temp_ressentie": 3.0,
       "wind": 13.8
     },
     {
       "date": "2026-03-02",
-      "temp_min": 6.4,
-      "temp_max": 15.8,
+      "temp_min": 6.3,
+      "temp_max": 15.5,
       "temp_ressentie": 2.7,
-      "wind": 18.5
+      "wind": 18.0
     }
   ],
   "tempo_officiel": {
