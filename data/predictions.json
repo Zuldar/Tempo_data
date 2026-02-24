@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-02-24T15:09:42.434315+01:00",
+  "timestamp": "2026-02-24T18:03:05.960764+01:00",
   "predictions": [
     {
       "date": "2026-02-25",
@@ -12,8 +12,8 @@
       "confiance": "HIGH",
       "metadata": {
         "temp": 6.2,
-        "gw": 53.281,
-        "adjusted_gw": 53.3,
+        "gw": 53.15,
+        "adjusted_gw": 53.1,
         "is_ferie": false,
         "is_weekend": false,
         "global_score": 9.2,
@@ -34,9 +34,9 @@
       },
       "confiance": "HIGH",
       "metadata": {
-        "temp": 7.1,
-        "gw": 53.281,
-        "adjusted_gw": 53.3,
+        "temp": 7.3,
+        "gw": 53.15,
+        "adjusted_gw": 53.1,
         "is_ferie": false,
         "is_weekend": false,
         "global_score": 8.8,
@@ -57,9 +57,9 @@
       },
       "confiance": "HIGH",
       "metadata": {
-        "temp": 5.4,
-        "gw": 53.281,
-        "adjusted_gw": 53.3,
+        "temp": 5.3,
+        "gw": 53.15,
+        "adjusted_gw": 53.1,
         "is_ferie": false,
         "is_weekend": false,
         "global_score": 16.5,
