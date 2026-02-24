@@ -1,11 +1,11 @@
 {
-  "timestamp": "2026-02-24T04:16:39.583840",
+  "timestamp": "2026-02-24T05:56:54.926265",
   "flux": {
-    "timestamp": "2026-02-24T04:16:33.149218",
+    "timestamp": "2026-02-24T05:56:50.758723",
     "heure": "23:45",
     "date": "2026-02-24",
     "consommation_actuelle": null,
-    "prevision_j1": 53500,
+    "prevision_j1": 53616,
     "flux": {
       "uk": -3528,
       "es": -1110,
@@ -18,23 +18,23 @@
     {
       "date": "2026-02-24",
       "temp_min": 9.6,
-      "temp_max": 16.8,
+      "temp_max": 16.5,
       "temp_ressentie": 7.2,
-      "wind": 12.1
+      "wind": 11.7
     },
     {
       "date": "2026-02-25",
       "temp_min": 8.7,
-      "temp_max": 17.5,
-      "temp_ressentie": 6.0,
-      "wind": 13.4
+      "temp_max": 17.4,
+      "temp_ressentie": 6.1,
+      "wind": 13.0
     },
     {
       "date": "2026-02-26",
       "temp_min": 8.6,
-      "temp_max": 17.5,
+      "temp_max": 17.2,
       "temp_ressentie": 6.2,
-      "wind": 12.4
+      "wind": 12.3
     },
     {
       "date": "2026-02-27",
@@ -71,8 +71,8 @@
       "couleur": "BLEU"
     },
     "tomorrow": {
-      "code": 0,
-      "couleur": "INCONNU"
+      "code": 1,
+      "couleur": "BLEU"
     },
     "saison": {
       "bleu_utilises": 136,
