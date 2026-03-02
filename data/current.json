@@ -1,68 +1,68 @@
 {
-  "timestamp": "2026-03-01T23:17:57.388922",
+  "timestamp": "2026-03-02T04:12:15.242666",
   "flux": {
-    "timestamp": "2026-03-01T23:17:53.474455",
+    "timestamp": "2026-03-02T04:12:08.902377",
     "heure": "23:45",
-    "date": "2026-03-01",
-    "consommation_actuelle": 52491,
-    "prevision_j1": 52850,
+    "date": "2026-03-02",
+    "consommation_actuelle": null,
+    "prevision_j1": 53850,
     "flux": {
-      "uk": -3480,
-      "es": 2800,
-      "it": -4107,
-      "ch": -3200,
-      "de_be": -3669
+      "uk": -3528,
+      "es": 3006,
+      "it": -3117,
+      "ch": -2385,
+      "de_be": -4496
     }
   },
   "meteo": [
     {
-      "date": "2026-03-01",
+      "date": "2026-03-02",
       "temp_min": 7.1,
       "temp_max": 16.4,
       "temp_ressentie": 4.1,
       "wind": 15.1
     },
     {
-      "date": "2026-03-02",
-      "temp_min": 8.1,
-      "temp_max": 17.1,
-      "temp_ressentie": 5.8,
-      "wind": 11.7
-    },
-    {
       "date": "2026-03-03",
-      "temp_min": 6.2,
-      "temp_max": 17.3,
-      "temp_ressentie": 3.8,
-      "wind": 12.3
+      "temp_min": 8.1,
+      "temp_max": 16.8,
+      "temp_ressentie": 6.0,
+      "wind": 10.5
     },
     {
       "date": "2026-03-04",
-      "temp_min": 6.6,
-      "temp_max": 17.7,
-      "temp_ressentie": 3.2,
-      "wind": 16.8
+      "temp_min": 6.7,
+      "temp_max": 17.3,
+      "temp_ressentie": 4.1,
+      "wind": 13.1
     },
     {
       "date": "2026-03-05",
-      "temp_min": 7.8,
-      "temp_max": 15.7,
-      "temp_ressentie": 5.2,
-      "wind": 13.5
+      "temp_min": 7.4,
+      "temp_max": 17.9,
+      "temp_ressentie": 3.6,
+      "wind": 19.1
     },
     {
       "date": "2026-03-06",
-      "temp_min": 7.9,
-      "temp_max": 16.2,
-      "temp_ressentie": 5.4,
-      "wind": 12.6
+      "temp_min": 6.9,
+      "temp_max": 13.3,
+      "temp_ressentie": 2.9,
+      "wind": 19.8
     },
     {
       "date": "2026-03-07",
-      "temp_min": 7.2,
-      "temp_max": 16.7,
-      "temp_ressentie": 4.3,
-      "wind": 14.8
+      "temp_min": 4.7,
+      "temp_max": 12.0,
+      "temp_ressentie": 2.7,
+      "wind": 10.4
+    },
+    {
+      "date": "2026-03-08",
+      "temp_min": 5.0,
+      "temp_max": 14.7,
+      "temp_ressentie": 1.9,
+      "wind": 15.2
     }
   ],
   "tempo_officiel": {
