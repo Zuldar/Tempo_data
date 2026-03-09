@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-03-09T17:54:40.462195+01:00",
+  "timestamp": "2026-03-09T20:38:32.376869+01:00",
   "predictions": [
     {
       "date": "2026-03-10",
@@ -11,7 +11,7 @@
       },
       "confiance": "MEDIUM",
       "metadata": {
-        "temp": 7.7,
+        "temp": 7.6,
         "gw": 51.7,
         "adjusted_gw": 51.7,
         "is_ferie": false,
@@ -34,7 +34,7 @@
       },
       "confiance": "MEDIUM",
       "metadata": {
-        "temp": 5.3,
+        "temp": 5.0,
         "gw": 51.7,
         "adjusted_gw": 51.7,
         "is_ferie": false,
