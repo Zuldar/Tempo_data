@@ -1,7 +1,7 @@
 {
-  "timestamp": "2026-03-12T08:38:28.736894",
+  "timestamp": "2026-03-12T10:30:20.339459",
   "flux": {
-    "timestamp": "2026-03-12T08:38:24.606271",
+    "timestamp": "2026-03-12T10:30:12.207619",
     "heure": "23:45",
     "date": "2026-03-12",
     "consommation_actuelle": null,
@@ -20,42 +20,42 @@
       "temp_min": 6.8,
       "temp_max": 14.0,
       "temp_ressentie": 3.4,
-      "wind": 16.8
+      "wind": 16.9
     },
     {
       "date": "2026-03-13",
-      "temp_min": 6.2,
-      "temp_max": 14.2,
+      "temp_min": 6.3,
+      "temp_max": 14.3,
       "temp_ressentie": 2.0,
-      "wind": 21.0
+      "wind": 21.3
     },
     {
       "date": "2026-03-14",
-      "temp_min": 4.6,
+      "temp_min": 4.5,
       "temp_max": 10.9,
       "temp_ressentie": 0.7,
-      "wind": 19.7
+      "wind": 19.0
     },
     {
       "date": "2026-03-15",
-      "temp_min": 3.1,
+      "temp_min": 2.6,
       "temp_max": 11.9,
-      "temp_ressentie": -1.3,
+      "temp_ressentie": -1.8,
       "wind": 21.8
     },
     {
       "date": "2026-03-16",
       "temp_min": 5.6,
-      "temp_max": 12.1,
-      "temp_ressentie": 1.2,
-      "wind": 21.8
+      "temp_max": 12.2,
+      "temp_ressentie": 1.5,
+      "wind": 20.8
     },
     {
       "date": "2026-03-17",
-      "temp_min": 5.1,
+      "temp_min": 5.0,
       "temp_max": 14.6,
-      "temp_ressentie": 1.8,
-      "wind": 16.3
+      "temp_ressentie": 2.0,
+      "wind": 15.0
     },
     {
       "date": "2026-03-18",
