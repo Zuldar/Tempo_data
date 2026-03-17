@@ -1,68 +1,68 @@
 {
-  "timestamp": "2026-03-17T19:52:49.754237",
+  "timestamp": "2026-03-17T23:26:50.042443",
   "flux": {
-    "timestamp": "2026-03-17T19:52:43.263142",
+    "timestamp": "2026-03-17T23:26:44.488500",
     "heure": "23:45",
     "date": "2026-03-17",
-    "consommation_actuelle": null,
+    "consommation_actuelle": 51392,
     "prevision_j1": 53000,
     "flux": {
       "uk": -4028,
-      "es": 997,
+      "es": 797,
       "it": -4249,
       "ch": -2385,
-      "de_be": -4170
+      "de_be": -4169
     }
   },
   "meteo": [
     {
       "date": "2026-03-17",
-      "temp_min": 6.5,
-      "temp_max": 17.3,
-      "temp_ressentie": 3.9,
-      "wind": 13.3
+      "temp_min": 7.7,
+      "temp_max": 16.4,
+      "temp_ressentie": 3.4,
+      "wind": 21.1
     },
     {
       "date": "2026-03-18",
-      "temp_min": 7.6,
-      "temp_max": 16.4,
-      "temp_ressentie": 3.6,
-      "wind": 20.2
+      "temp_min": 6.5,
+      "temp_max": 16.9,
+      "temp_ressentie": 3.2,
+      "wind": 16.4
     },
     {
       "date": "2026-03-19",
-      "temp_min": 6.4,
-      "temp_max": 17.0,
-      "temp_ressentie": 3.1,
-      "wind": 16.5
+      "temp_min": 4.9,
+      "temp_max": 16.5,
+      "temp_ressentie": 2.6,
+      "wind": 11.5
     },
     {
       "date": "2026-03-20",
-      "temp_min": 4.7,
-      "temp_max": 16.4,
-      "temp_ressentie": 2.7,
-      "wind": 10.1
+      "temp_min": 5.1,
+      "temp_max": 15.5,
+      "temp_ressentie": 2.1,
+      "wind": 15.2
     },
     {
       "date": "2026-03-21",
-      "temp_min": 4.8,
-      "temp_max": 14.7,
-      "temp_ressentie": 2.0,
-      "wind": 14.2
+      "temp_min": 5.0,
+      "temp_max": 14.8,
+      "temp_ressentie": 3.1,
+      "wind": 9.4
     },
     {
       "date": "2026-03-22",
-      "temp_min": 4.5,
-      "temp_max": 13.9,
-      "temp_ressentie": 2.1,
-      "wind": 11.7
-    },
-    {
-      "date": "2026-03-23",
       "temp_min": 3.9,
       "temp_max": 14.1,
       "temp_ressentie": 0.6,
       "wind": 16.1
+    },
+    {
+      "date": "2026-03-23",
+      "temp_min": 5.6,
+      "temp_max": 12.8,
+      "temp_ressentie": 1.6,
+      "wind": 20.0
     }
   ],
   "tempo_officiel": {
@@ -71,16 +71,16 @@
       "couleur": "ROUGE"
     },
     "tomorrow": {
-      "code": 3,
-      "couleur": "ROUGE"
+      "code": 0,
+      "couleur": "INCONNU"
     },
     "saison": {
       "bleu_utilises": 150,
       "blanc_utilises": 36,
-      "rouge_utilises": 12,
+      "rouge_utilises": 13,
       "bleu_restants": 150,
       "blanc_restants": 7,
-      "rouge_restants": 10
+      "rouge_restants": 9
     }
   },
   "jours_feries": {
