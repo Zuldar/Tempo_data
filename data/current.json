@@ -1,14 +1,14 @@
 {
-  "timestamp": "2026-03-17T14:17:12.715107",
+  "timestamp": "2026-03-17T17:01:18.535580",
   "flux": {
-    "timestamp": "2026-03-17T14:17:08.079082",
+    "timestamp": "2026-03-17T17:01:13.846675",
     "heure": "23:45",
     "date": "2026-03-17",
     "consommation_actuelle": null,
-    "prevision_j1": 53050,
+    "prevision_j1": 53000,
     "flux": {
       "uk": -4028,
-      "es": 1228,
+      "es": 1196,
       "it": -4249,
       "ch": -2385,
       "de_be": -4170
@@ -18,50 +18,50 @@
     {
       "date": "2026-03-17",
       "temp_min": 6.5,
-      "temp_max": 17.2,
-      "temp_ressentie": 4.0,
-      "wind": 12.6
+      "temp_max": 17.3,
+      "temp_ressentie": 3.9,
+      "wind": 13.3
     },
     {
       "date": "2026-03-18",
-      "temp_min": 7.3,
-      "temp_max": 16.3,
-      "temp_ressentie": 3.5,
-      "wind": 19.4
+      "temp_min": 7.5,
+      "temp_max": 16.5,
+      "temp_ressentie": 3.6,
+      "wind": 19.6
     },
     {
       "date": "2026-03-19",
-      "temp_min": 6.5,
-      "temp_max": 16.3,
-      "temp_ressentie": 3.2,
+      "temp_min": 6.4,
+      "temp_max": 16.8,
+      "temp_ressentie": 3.1,
       "wind": 16.5
     },
     {
       "date": "2026-03-20",
       "temp_min": 4.7,
-      "temp_max": 16.1,
-      "temp_ressentie": 2.1,
-      "wind": 12.8
+      "temp_max": 16.3,
+      "temp_ressentie": 2.6,
+      "wind": 10.4
     },
     {
       "date": "2026-03-21",
-      "temp_min": 4.7,
-      "temp_max": 15.1,
-      "temp_ressentie": 2.4,
-      "wind": 11.5
+      "temp_min": 4.6,
+      "temp_max": 14.7,
+      "temp_ressentie": 1.9,
+      "wind": 13.9
     },
     {
       "date": "2026-03-22",
-      "temp_min": 5.1,
-      "temp_max": 13.3,
-      "temp_ressentie": 3.1,
-      "wind": 10.3
+      "temp_min": 4.4,
+      "temp_max": 13.9,
+      "temp_ressentie": 2.0,
+      "wind": 11.6
     },
     {
       "date": "2026-03-23",
-      "temp_min": 4.5,
-      "temp_max": 14.5,
-      "temp_ressentie": 1.4,
+      "temp_min": 3.7,
+      "temp_max": 14.2,
+      "temp_ressentie": 0.7,
       "wind": 15.1
     }
   ],
