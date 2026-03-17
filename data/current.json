@@ -1,14 +1,14 @@
 {
-  "timestamp": "2026-03-17T04:16:17.246068",
+  "timestamp": "2026-03-17T05:56:45.646964",
   "flux": {
-    "timestamp": "2026-03-17T04:16:12.405206",
+    "timestamp": "2026-03-17T05:56:41.004209",
     "heure": "23:45",
     "date": "2026-03-17",
     "consommation_actuelle": null,
-    "prevision_j1": 53100,
+    "prevision_j1": 52957,
     "flux": {
       "uk": -4028,
-      "es": 356,
+      "es": 446,
       "it": -3285,
       "ch": -2385,
       "de_be": -4170
@@ -17,24 +17,24 @@
   "meteo": [
     {
       "date": "2026-03-17",
-      "temp_min": 7.3,
+      "temp_min": 6.9,
       "temp_max": 16.6,
-      "temp_ressentie": 4.6,
-      "wind": 13.4
+      "temp_ressentie": 4.2,
+      "wind": 13.3
     },
     {
       "date": "2026-03-18",
-      "temp_min": 7.4,
-      "temp_max": 16.4,
+      "temp_min": 7.3,
+      "temp_max": 16.2,
       "temp_ressentie": 3.6,
-      "wind": 19.1
+      "wind": 18.7
     },
     {
       "date": "2026-03-19",
-      "temp_min": 5.5,
-      "temp_max": 16.2,
-      "temp_ressentie": 2.1,
-      "wind": 16.9
+      "temp_min": 5.6,
+      "temp_max": 16.3,
+      "temp_ressentie": 2.2,
+      "wind": 16.7
     },
     {
       "date": "2026-03-20",
@@ -47,22 +47,22 @@
       "date": "2026-03-21",
       "temp_min": 5.1,
       "temp_max": 15.5,
-      "temp_ressentie": 2.7,
-      "wind": 12.0
+      "temp_ressentie": 2.9,
+      "wind": 11.1
     },
     {
       "date": "2026-03-22",
       "temp_min": 4.6,
       "temp_max": 13.3,
-      "temp_ressentie": 2.3,
-      "wind": 11.6
+      "temp_ressentie": 2.5,
+      "wind": 10.4
     },
     {
       "date": "2026-03-23",
       "temp_min": 4.6,
       "temp_max": 14.6,
-      "temp_ressentie": 2.3,
-      "wind": 11.4
+      "temp_ressentie": 1.8,
+      "wind": 13.7
     }
   ],
   "tempo_officiel": {
@@ -71,8 +71,8 @@
       "couleur": "ROUGE"
     },
     "tomorrow": {
-      "code": 0,
-      "couleur": "INCONNU"
+      "code": 3,
+      "couleur": "ROUGE"
     },
     "saison": {
       "bleu_utilises": 150,
