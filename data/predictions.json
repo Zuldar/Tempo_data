@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-03-19T15:06:43.952724+01:00",
+  "timestamp": "2026-03-19T17:54:54.863517+01:00",
   "predictions": [
     {
       "date": "2026-03-20",
@@ -11,7 +11,7 @@
       },
       "confiance": "MEDIUM",
       "metadata": {
-        "temp": 4.4,
+        "temp": 4.2,
         "gw": 52.65,
         "adjusted_gw": 52.6,
         "is_ferie": false,
@@ -34,7 +34,7 @@
       },
       "confiance": "HIGH",
       "metadata": {
-        "temp": 3.9,
+        "temp": 4.0,
         "gw": 52.65,
         "adjusted_gw": 52.6,
         "is_ferie": false,
@@ -57,7 +57,7 @@
       },
       "confiance": "HIGH",
       "metadata": {
-        "temp": 2.1,
+        "temp": 2.3,
         "gw": 52.65,
         "adjusted_gw": 52.6,
         "is_ferie": false,
