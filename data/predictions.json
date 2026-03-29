@@ -1,22 +1,22 @@
 {
-  "timestamp": "2026-03-29T00:25:30.306896+01:00",
+  "timestamp": "2026-03-29T05:35:43.175580+01:00",
   "predictions": [
     {
       "date": "2026-03-30",
-      "couleur_predite": "BLEU",
+      "couleur_predite": "BLANC",
       "probabilites": {
-        "ROUGE": 0,
-        "BLANC": 30,
-        "BLEU": 70
+        "ROUGE": 10,
+        "BLANC": 50,
+        "BLEU": 40
       },
-      "confiance": "HIGH",
+      "confiance": "MEDIUM",
       "metadata": {
-        "temp": 1.9,
-        "gw": 55.9,
-        "adjusted_gw": 55.9,
+        "temp": 1.6,
+        "gw": 54.707,
+        "adjusted_gw": 54.7,
         "is_ferie": false,
         "is_weekend": false,
-        "global_score": 34.9,
+        "global_score": 46.5,
         "temp_score": 100,
         "gw_score": 20,
         "trend_score": 0,
@@ -28,18 +28,18 @@
       "date": "2026-03-31",
       "couleur_predite": "BLANC",
       "probabilites": {
-        "ROUGE": 10,
-        "BLANC": 50,
-        "BLEU": 40
+        "ROUGE": 25,
+        "BLANC": 60,
+        "BLEU": 15
       },
       "confiance": "MEDIUM",
       "metadata": {
-        "temp": 3.9,
-        "gw": 55.9,
-        "adjusted_gw": 55.9,
+        "temp": 2.2,
+        "gw": 54.707,
+        "adjusted_gw": 54.7,
         "is_ferie": false,
         "is_weekend": false,
-        "global_score": 43.1,
+        "global_score": 57.5,
         "temp_score": 100,
         "gw_score": 20,
         "trend_score": 0,
@@ -52,17 +52,17 @@
       "couleur_predite": "BLANC",
       "probabilites": {
         "ROUGE": 0,
-        "BLANC": 56,
-        "BLEU": 44
+        "BLANC": 80,
+        "BLEU": 20
       },
-      "confiance": "MEDIUM",
+      "confiance": "HIGH",
       "metadata": {
-        "temp": 3.2,
-        "gw": 55.9,
-        "adjusted_gw": 55.9,
+        "temp": 4.4,
+        "gw": 54.707,
+        "adjusted_gw": 54.7,
         "is_ferie": false,
         "is_weekend": false,
-        "global_score": 45.2,
+        "global_score": 60.2,
         "temp_score": 100,
         "gw_score": 20,
         "trend_score": 0,
