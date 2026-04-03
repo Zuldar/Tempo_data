@@ -1,14 +1,14 @@
 {
-  "timestamp": "2026-04-03T16:36:33.914344",
+  "timestamp": "2026-04-03T19:36:01.539323",
   "flux": {
-    "timestamp": "2026-04-03T16:36:28.516405",
+    "timestamp": "2026-04-03T19:35:57.519226",
     "heure": "23:45",
     "date": "2026-04-03",
     "consommation_actuelle": null,
     "prevision_j1": 53150,
     "flux": {
-      "uk": -3528,
-      "es": 2276,
+      "uk": -1964,
+      "es": 1995,
       "it": -4412,
       "ch": -3200,
       "de_be": -3591
@@ -18,51 +18,51 @@
     {
       "date": "2026-04-03",
       "temp_min": 6.1,
-      "temp_max": 15.0,
+      "temp_max": 15.1,
       "temp_ressentie": 2.4,
-      "wind": 18.6
+      "wind": 18.5
     },
     {
       "date": "2026-04-04",
-      "temp_min": 10.7,
-      "temp_max": 19.0,
-      "temp_ressentie": 7.6,
-      "wind": 15.6
+      "temp_min": 10.5,
+      "temp_max": 18.9,
+      "temp_ressentie": 7.3,
+      "wind": 16.2
     },
     {
       "date": "2026-04-05",
       "temp_min": 9.5,
-      "temp_max": 18.6,
-      "temp_ressentie": 6.3,
-      "wind": 15.8
+      "temp_max": 18.9,
+      "temp_ressentie": 6.4,
+      "wind": 15.7
     },
     {
       "date": "2026-04-06",
       "temp_min": 6.5,
-      "temp_max": 18.1,
+      "temp_max": 18.2,
       "temp_ressentie": 4.3,
-      "wind": 11.1
+      "wind": 10.8
     },
     {
       "date": "2026-04-07",
       "temp_min": 7.5,
-      "temp_max": 21.2,
-      "temp_ressentie": 5.0,
-      "wind": 12.6
+      "temp_max": 21.1,
+      "temp_ressentie": 5.1,
+      "wind": 12.5
     },
     {
       "date": "2026-04-08",
-      "temp_min": 8.1,
+      "temp_min": 8.0,
       "temp_max": 23.7,
-      "temp_ressentie": 6.3,
-      "wind": 9.0
+      "temp_ressentie": 6.2,
+      "wind": 8.9
     },
     {
       "date": "2026-04-09",
-      "temp_min": 9.2,
-      "temp_max": 21.8,
-      "temp_ressentie": 5.7,
-      "wind": 17.4
+      "temp_min": 9.3,
+      "temp_max": 22.0,
+      "temp_ressentie": 5.8,
+      "wind": 17.5
     }
   ],
   "tempo_officiel": {
