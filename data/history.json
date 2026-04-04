@@ -1,80 +1,6 @@
 {
   "predictions": [
     {
-      "timestamp": "2026-03-31T15:25:12.046905+01:00",
-      "predictions": [
-        {
-          "date": "2026-04-01",
-          "couleur_predite": "BLANC",
-          "probabilites": {
-            "ROUGE": 0,
-            "BLANC": 80,
-            "BLEU": 20
-          },
-          "confiance": "HIGH",
-          "metadata": {
-            "temp": 3.8,
-            "gw": 56.1,
-            "adjusted_gw": 56.1,
-            "is_ferie": false,
-            "is_weekend": false,
-            "global_score": 60.2,
-            "temp_score": 100,
-            "gw_score": 20,
-            "trend_score": 0,
-            "flux_score": 0,
-            "day_modifier": 1.1
-          }
-        },
-        {
-          "date": "2026-04-02",
-          "couleur_predite": "BLANC",
-          "probabilites": {
-            "ROUGE": 0,
-            "BLANC": 80,
-            "BLEU": 20
-          },
-          "confiance": "HIGH",
-          "metadata": {
-            "temp": 3.2,
-            "gw": 56.1,
-            "adjusted_gw": 56.1,
-            "is_ferie": false,
-            "is_weekend": false,
-            "global_score": 57.5,
-            "temp_score": 100,
-            "gw_score": 20,
-            "trend_score": 0,
-            "flux_score": 0,
-            "day_modifier": 1.05
-          }
-        },
-        {
-          "date": "2026-04-03",
-          "couleur_predite": "BLANC",
-          "probabilites": {
-            "ROUGE": 0,
-            "BLANC": 56,
-            "BLEU": 44
-          },
-          "confiance": "MEDIUM",
-          "metadata": {
-            "temp": 2.2,
-            "gw": 56.1,
-            "adjusted_gw": 56.1,
-            "is_ferie": false,
-            "is_weekend": false,
-            "global_score": 49.3,
-            "temp_score": 100,
-            "gw_score": 20,
-            "trend_score": 0,
-            "flux_score": 0,
-            "day_modifier": 0.9
-          }
-        }
-      ]
-    },
-    {
       "timestamp": "2026-03-31T17:54:07.747336+01:00",
       "predictions": [
         {
@@ -2206,6 +2132,80 @@
           "confiance": "HIGH",
           "metadata": {
             "temp": 5.3,
+            "gw": 47.167,
+            "adjusted_gw": 47.2,
+            "is_ferie": false,
+            "is_weekend": false,
+            "global_score": 51.3,
+            "temp_score": 100,
+            "gw_score": 0,
+            "trend_score": 0,
+            "flux_score": 0,
+            "day_modifier": 1.05
+          }
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-04-04T09:37:03.581794+01:00",
+      "predictions": [
+        {
+          "date": "2026-04-05",
+          "couleur_predite": "BLEU",
+          "probabilites": {
+            "ROUGE": 0,
+            "BLANC": 0,
+            "BLEU": 100
+          },
+          "confiance": "HIGH",
+          "metadata": {
+            "temp": 6.7,
+            "gw": 47.167,
+            "adjusted_gw": 47.2,
+            "is_ferie": false,
+            "is_weekend": true,
+            "global_score": 0.0,
+            "temp_score": 100,
+            "gw_score": 0,
+            "trend_score": 0,
+            "flux_score": 0,
+            "day_modifier": 0.0
+          }
+        },
+        {
+          "date": "2026-04-06",
+          "couleur_predite": "BLANC",
+          "probabilites": {
+            "ROUGE": 0,
+            "BLANC": 60,
+            "BLEU": 40
+          },
+          "confiance": "MEDIUM",
+          "metadata": {
+            "temp": 5.1,
+            "gw": 47.167,
+            "adjusted_gw": 33.0,
+            "is_ferie": true,
+            "is_weekend": false,
+            "global_score": 35.3,
+            "temp_score": 100,
+            "gw_score": 0,
+            "trend_score": 0,
+            "flux_score": 0,
+            "day_modifier": 0.85
+          }
+        },
+        {
+          "date": "2026-04-07",
+          "couleur_predite": "BLANC",
+          "probabilites": {
+            "ROUGE": 0,
+            "BLANC": 80,
+            "BLEU": 20
+          },
+          "confiance": "HIGH",
+          "metadata": {
+            "temp": 5.4,
             "gw": 47.167,
             "adjusted_gw": 47.2,
             "is_ferie": false,
