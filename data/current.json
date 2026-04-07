@@ -1,14 +1,14 @@
 {
-  "timestamp": "2026-04-07T08:58:56.460477",
+  "timestamp": "2026-04-07T10:47:15.456359",
   "flux": {
-    "timestamp": "2026-04-07T08:58:22.125141",
+    "timestamp": "2026-04-07T10:47:09.773301",
     "heure": "23:45",
     "date": "2026-04-07",
     "consommation_actuelle": null,
-    "prevision_j1": 46560,
+    "prevision_j1": 46663,
     "flux": {
       "uk": -3527,
-      "es": 63,
+      "es": 71,
       "it": -3847,
       "ch": -2385,
       "de_be": -4278
