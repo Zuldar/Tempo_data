@@ -1,14 +1,14 @@
 {
-  "timestamp": "2026-04-07T04:32:48.161567",
+  "timestamp": "2026-04-07T06:18:39.873764",
   "flux": {
-    "timestamp": "2026-04-07T04:31:46.858078",
+    "timestamp": "2026-04-07T06:17:54.443932",
     "heure": "23:45",
     "date": "2026-04-07",
     "consommation_actuelle": null,
     "prevision_j1": 46560,
     "flux": {
       "uk": -3527,
-      "es": 220,
+      "es": 107,
       "it": -3847,
       "ch": -2385,
       "de_be": -4278
@@ -21,8 +21,8 @@
       "couleur": "BLEU"
     },
     "tomorrow": {
-      "code": 0,
-      "couleur": "INCONNU"
+      "code": 1,
+      "couleur": "BLEU"
     },
     "saison": {
       "bleu_utilises": 159,
