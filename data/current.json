@@ -1,14 +1,14 @@
 {
-  "timestamp": "2026-04-10T10:43:37.594955",
+  "timestamp": "2026-04-10T14:15:11.298951",
   "flux": {
-    "timestamp": "2026-04-10T10:43:31.231796",
+    "timestamp": "2026-04-10T14:15:05.268511",
     "heure": "23:45",
     "date": "2026-04-10",
     "consommation_actuelle": null,
     "prevision_j1": 45800,
     "flux": {
       "uk": -2669,
-      "es": -1481,
+      "es": -1470,
       "it": -3451,
       "ch": -2385,
       "de_be": -5036
@@ -18,51 +18,51 @@
     {
       "date": "2026-04-10",
       "temp_min": 11.1,
-      "temp_max": 18.7,
+      "temp_max": 18.2,
       "temp_ressentie": 8.0,
-      "wind": 15.5
+      "wind": 15.4
     },
     {
       "date": "2026-04-11",
-      "temp_min": 10.5,
-      "temp_max": 19.6,
-      "temp_ressentie": 6.4,
-      "wind": 20.4
+      "temp_min": 10.6,
+      "temp_max": 19.2,
+      "temp_ressentie": 7.0,
+      "wind": 18.1
     },
     {
       "date": "2026-04-12",
-      "temp_min": 7.6,
-      "temp_max": 15.0,
-      "temp_ressentie": 4.7,
-      "wind": 14.8
+      "temp_min": 7.8,
+      "temp_max": 15.2,
+      "temp_ressentie": 4.8,
+      "wind": 15.0
     },
     {
       "date": "2026-04-13",
-      "temp_min": 7.6,
-      "temp_max": 13.6,
-      "temp_ressentie": 4.7,
+      "temp_min": 7.5,
+      "temp_max": 13.3,
+      "temp_ressentie": 4.6,
       "wind": 14.4
     },
     {
       "date": "2026-04-14",
-      "temp_min": 6.1,
+      "temp_min": 5.8,
       "temp_max": 16.0,
-      "temp_ressentie": 2.7,
-      "wind": 17.3
+      "temp_ressentie": 2.4,
+      "wind": 17.4
     },
     {
       "date": "2026-04-15",
-      "temp_min": 6.8,
-      "temp_max": 18.6,
+      "temp_min": 7.0,
+      "temp_max": 18.7,
       "temp_ressentie": 4.3,
-      "wind": 12.9
+      "wind": 13.2
     },
     {
       "date": "2026-04-16",
-      "temp_min": 9.7,
+      "temp_min": 10.1,
       "temp_max": 19.9,
-      "temp_ressentie": 6.9,
-      "wind": 14.1
+      "temp_ressentie": 7.1,
+      "wind": 14.8
     }
   ],
   "tempo_officiel": {
