@@ -1,16 +1,16 @@
 {
-  "timestamp": "2026-04-13T17:00:41.416209",
+  "timestamp": "2026-04-13T20:03:32.199471",
   "flux": {
-    "timestamp": "2026-04-13T17:00:33.793979",
+    "timestamp": "2026-04-13T20:03:25.716553",
     "heure": "23:45",
     "date": "2026-04-13",
     "consommation_actuelle": null,
     "prevision_j1": 50850,
     "flux": {
-      "uk": -3046,
-      "es": 3145,
+      "uk": -2600,
+      "es": 3000,
       "it": -3429,
-      "ch": -2346,
+      "ch": -1878,
       "de_be": -3860
     }
   },
@@ -19,50 +19,50 @@
       "date": "2026-04-13",
       "temp_min": 8.1,
       "temp_max": 13.4,
-      "temp_ressentie": 4.9,
-      "wind": 16.0
+      "temp_ressentie": 5.0,
+      "wind": 15.4
     },
     {
       "date": "2026-04-14",
       "temp_min": 6.7,
       "temp_max": 17.2,
-      "temp_ressentie": 4.0,
-      "wind": 13.6
+      "temp_ressentie": 4.1,
+      "wind": 12.8
     },
     {
       "date": "2026-04-15",
-      "temp_min": 9.2,
-      "temp_max": 18.4,
-      "temp_ressentie": 6.6,
-      "wind": 12.7
+      "temp_min": 9.0,
+      "temp_max": 18.8,
+      "temp_ressentie": 6.4,
+      "wind": 13.0
     },
     {
       "date": "2026-04-16",
-      "temp_min": 9.5,
-      "temp_max": 20.0,
+      "temp_min": 9.6,
+      "temp_max": 19.9,
       "temp_ressentie": 7.0,
-      "wind": 12.6
+      "wind": 12.8
     },
     {
       "date": "2026-04-17",
-      "temp_min": 10.1,
+      "temp_min": 10.3,
       "temp_max": 21.0,
-      "temp_ressentie": 8.1,
-      "wind": 10.3
+      "temp_ressentie": 8.3,
+      "wind": 10.0
     },
     {
       "date": "2026-04-18",
-      "temp_min": 10.4,
+      "temp_min": 10.1,
       "temp_max": 22.5,
-      "temp_ressentie": 7.9,
-      "wind": 12.4
+      "temp_ressentie": 7.6,
+      "wind": 12.3
     },
     {
       "date": "2026-04-19",
-      "temp_min": 9.8,
-      "temp_max": 17.7,
-      "temp_ressentie": 6.4,
-      "wind": 17.3
+      "temp_min": 10.0,
+      "temp_max": 17.6,
+      "temp_ressentie": 6.6,
+      "wind": 17.0
     }
   ],
   "tempo_officiel": {
