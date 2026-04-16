@@ -1,16 +1,16 @@
 {
-  "timestamp": "2026-04-16T17:11:09.033493",
+  "timestamp": "2026-04-16T19:58:06.959094",
   "flux": {
-    "timestamp": "2026-04-16T17:11:05.019614",
+    "timestamp": "2026-04-16T19:58:00.292278",
     "heure": "23:45",
     "date": "2026-04-16",
     "consommation_actuelle": null,
     "prevision_j1": 46000,
     "flux": {
       "uk": -2827,
-      "es": 73,
+      "es": -73,
       "it": -3807,
-      "ch": -2375,
+      "ch": -2381,
       "de_be": -5855
     }
   },
@@ -18,51 +18,51 @@
     {
       "date": "2026-04-16",
       "temp_min": 10.4,
-      "temp_max": 20.6,
+      "temp_max": 20.5,
       "temp_ressentie": 8.0,
       "wind": 12.3
     },
     {
       "date": "2026-04-17",
-      "temp_min": 11.5,
-      "temp_max": 21.5,
-      "temp_ressentie": 9.5,
-      "wind": 10.1
+      "temp_min": 11.4,
+      "temp_max": 21.6,
+      "temp_ressentie": 9.4,
+      "wind": 9.6
     },
     {
       "date": "2026-04-18",
-      "temp_min": 11.8,
-      "temp_max": 21.1,
-      "temp_ressentie": 9.6,
-      "wind": 11.1
+      "temp_min": 11.6,
+      "temp_max": 22.4,
+      "temp_ressentie": 9.4,
+      "wind": 11.0
     },
     {
       "date": "2026-04-19",
-      "temp_min": 10.0,
+      "temp_min": 9.9,
       "temp_max": 19.1,
-      "temp_ressentie": 7.4,
-      "wind": 13.1
+      "temp_ressentie": 7.3,
+      "wind": 13.2
     },
     {
       "date": "2026-04-20",
-      "temp_min": 9.3,
-      "temp_max": 17.2,
+      "temp_min": 9.1,
+      "temp_max": 17.3,
       "temp_ressentie": 6.2,
-      "wind": 15.4
+      "wind": 14.7
     },
     {
       "date": "2026-04-21",
-      "temp_min": 6.5,
-      "temp_max": 15.1,
-      "temp_ressentie": 2.6,
-      "wind": 19.5
+      "temp_min": 6.8,
+      "temp_max": 15.4,
+      "temp_ressentie": 2.8,
+      "wind": 19.9
     },
     {
       "date": "2026-04-22",
       "temp_min": 5.5,
-      "temp_max": 17.1,
-      "temp_ressentie": 1.3,
-      "wind": 20.9
+      "temp_max": 17.0,
+      "temp_ressentie": 1.4,
+      "wind": 20.2
     }
   ],
   "tempo_officiel": {
