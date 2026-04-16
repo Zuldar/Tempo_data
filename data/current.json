@@ -1,11 +1,11 @@
 {
-  "timestamp": "2026-04-16T06:55:35.545616",
+  "timestamp": "2026-04-16T09:15:38.829902",
   "flux": {
-    "timestamp": "2026-04-16T06:55:31.448751",
+    "timestamp": "2026-04-16T09:15:32.144229",
     "heure": "23:45",
     "date": "2026-04-16",
     "consommation_actuelle": null,
-    "prevision_j1": 45915,
+    "prevision_j1": 45886,
     "flux": {
       "uk": -2827,
       "es": -730,
@@ -18,51 +18,51 @@
     {
       "date": "2026-04-16",
       "temp_min": 10.4,
-      "temp_max": 20.4,
-      "temp_ressentie": 8.0,
-      "wind": 11.9
+      "temp_max": 20.2,
+      "temp_ressentie": 8.1,
+      "wind": 11.5
     },
     {
       "date": "2026-04-17",
-      "temp_min": 11.4,
-      "temp_max": 21.5,
-      "temp_ressentie": 9.7,
-      "wind": 8.7
+      "temp_min": 11.6,
+      "temp_max": 21.2,
+      "temp_ressentie": 9.5,
+      "wind": 10.2
     },
     {
       "date": "2026-04-18",
-      "temp_min": 11.2,
-      "temp_max": 21.4,
-      "temp_ressentie": 8.8,
-      "wind": 11.7
+      "temp_min": 11.6,
+      "temp_max": 21.2,
+      "temp_ressentie": 9.4,
+      "wind": 11.4
     },
     {
       "date": "2026-04-19",
       "temp_min": 9.9,
-      "temp_max": 19.8,
-      "temp_ressentie": 7.3,
-      "wind": 12.7
+      "temp_max": 19.6,
+      "temp_ressentie": 7.2,
+      "wind": 13.3
     },
     {
       "date": "2026-04-20",
-      "temp_min": 9.3,
-      "temp_max": 17.0,
-      "temp_ressentie": 5.5,
-      "wind": 19.0
+      "temp_min": 9.2,
+      "temp_max": 17.2,
+      "temp_ressentie": 5.6,
+      "wind": 18.5
     },
     {
       "date": "2026-04-21",
-      "temp_min": 6.7,
-      "temp_max": 14.2,
-      "temp_ressentie": 1.9,
-      "wind": 24.0
+      "temp_min": 7.0,
+      "temp_max": 14.4,
+      "temp_ressentie": 2.2,
+      "wind": 23.7
     },
     {
       "date": "2026-04-22",
-      "temp_min": 5.6,
-      "temp_max": 14.4,
+      "temp_min": 5.8,
+      "temp_max": 14.6,
       "temp_ressentie": 1.2,
-      "wind": 22.3
+      "wind": 22.6
     }
   ],
   "tempo_officiel": {
