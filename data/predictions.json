@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-04-17T17:52:19.103873+01:00",
+  "timestamp": "2026-04-17T20:57:13.554944+01:00",
   "predictions": [
     {
       "date": "2026-04-18",
@@ -34,13 +34,13 @@
       },
       "confiance": "HIGH",
       "metadata": {
-        "temp": 8.3,
+        "temp": 8.0,
         "gw": 44.55,
         "adjusted_gw": 44.5,
         "is_ferie": false,
         "is_weekend": true,
         "global_score": 0.0,
-        "temp_score": 85,
+        "temp_score": 100,
         "gw_score": 0,
         "trend_score": 0,
         "flux_score": 0,
