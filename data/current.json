@@ -1,14 +1,14 @@
 {
-  "timestamp": "2026-04-20T17:01:06.110526",
+  "timestamp": "2026-04-20T19:58:12.883240",
   "flux": {
-    "timestamp": "2026-04-20T17:01:01.192555",
+    "timestamp": "2026-04-20T19:58:08.536363",
     "heure": "23:45",
     "date": "2026-04-20",
     "consommation_actuelle": null,
     "prevision_j1": 45900,
     "flux": {
       "uk": -3027,
-      "es": -2400,
+      "es": -2200,
       "it": -4229,
       "ch": -3200,
       "de_be": -5011
@@ -19,49 +19,49 @@
       "date": "2026-04-20",
       "temp_min": 9.2,
       "temp_max": 18.2,
-      "temp_ressentie": 6.6,
-      "wind": 12.9
+      "temp_ressentie": 6.7,
+      "wind": 12.4
     },
     {
       "date": "2026-04-21",
-      "temp_min": 8.6,
-      "temp_max": 19.2,
-      "temp_ressentie": 5.3,
-      "wind": 16.3
+      "temp_min": 8.5,
+      "temp_max": 19.5,
+      "temp_ressentie": 5.2,
+      "wind": 16.6
     },
     {
       "date": "2026-04-22",
-      "temp_min": 9.4,
-      "temp_max": 20.3,
-      "temp_ressentie": 6.0,
-      "wind": 17.1
+      "temp_min": 9.6,
+      "temp_max": 20.4,
+      "temp_ressentie": 6.2,
+      "wind": 16.7
     },
     {
       "date": "2026-04-23",
-      "temp_min": 8.8,
-      "temp_max": 21.3,
-      "temp_ressentie": 5.7,
-      "wind": 15.4
+      "temp_min": 8.9,
+      "temp_max": 21.4,
+      "temp_ressentie": 5.8,
+      "wind": 15.3
     },
     {
       "date": "2026-04-24",
       "temp_min": 8.6,
-      "temp_max": 21.8,
-      "temp_ressentie": 5.7,
-      "wind": 14.6
+      "temp_max": 22.0,
+      "temp_ressentie": 5.8,
+      "wind": 14.2
     },
     {
       "date": "2026-04-25",
-      "temp_min": 8.2,
-      "temp_max": 21.6,
-      "temp_ressentie": 5.2,
-      "wind": 14.8
+      "temp_min": 8.1,
+      "temp_max": 21.9,
+      "temp_ressentie": 5.1,
+      "wind": 14.7
     },
     {
       "date": "2026-04-26",
-      "temp_min": 8.0,
-      "temp_max": 20.6,
-      "temp_ressentie": 5.3,
+      "temp_min": 8.4,
+      "temp_max": 20.2,
+      "temp_ressentie": 5.6,
       "wind": 13.9
     }
   ],
