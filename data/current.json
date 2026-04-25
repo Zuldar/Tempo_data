@@ -1,14 +1,14 @@
 {
-  "timestamp": "2026-04-25T06:19:07.644097",
+  "timestamp": "2026-04-25T08:48:59.387876",
   "flux": {
-    "timestamp": "2026-04-25T06:19:03.429168",
+    "timestamp": "2026-04-25T08:48:53.760123",
     "heure": "23:45",
     "date": "2026-04-25",
     "consommation_actuelle": null,
     "prevision_j1": 42180,
     "flux": {
       "uk": -3028,
-      "es": -2914,
+      "es": -3099,
       "it": -4292,
       "ch": -3200,
       "de_be": -4940
@@ -17,52 +17,52 @@
   "meteo": [
     {
       "date": "2026-04-25",
-      "temp_min": 9.8,
-      "temp_max": 22.3,
+      "temp_min": 9.9,
+      "temp_max": 22.0,
       "temp_ressentie": 7.4,
       "wind": 12.1
     },
     {
       "date": "2026-04-26",
-      "temp_min": 10.9,
-      "temp_max": 22.6,
-      "temp_ressentie": 8.5,
-      "wind": 11.8
+      "temp_min": 10.7,
+      "temp_max": 22.4,
+      "temp_ressentie": 8.4,
+      "wind": 11.7
     },
     {
       "date": "2026-04-27",
-      "temp_min": 10.8,
-      "temp_max": 22.6,
-      "temp_ressentie": 8.3,
-      "wind": 12.1
+      "temp_min": 11.0,
+      "temp_max": 22.9,
+      "temp_ressentie": 8.5,
+      "wind": 12.5
     },
     {
       "date": "2026-04-28",
       "temp_min": 11.2,
       "temp_max": 18.8,
-      "temp_ressentie": 8.2,
-      "wind": 15.0
+      "temp_ressentie": 8.1,
+      "wind": 15.2
     },
     {
       "date": "2026-04-29",
       "temp_min": 11.3,
-      "temp_max": 20.4,
-      "temp_ressentie": 7.2,
+      "temp_max": 20.5,
+      "temp_ressentie": 7.3,
       "wind": 20.3
     },
     {
       "date": "2026-04-30",
-      "temp_min": 12.2,
-      "temp_max": 22.3,
-      "temp_ressentie": 8.5,
-      "wind": 18.7
+      "temp_min": 12.4,
+      "temp_max": 22.8,
+      "temp_ressentie": 8.8,
+      "wind": 18.4
     },
     {
       "date": "2026-05-01",
-      "temp_min": 14.1,
-      "temp_max": 21.5,
-      "temp_ressentie": 11.2,
-      "wind": 14.5
+      "temp_min": 13.8,
+      "temp_max": 20.9,
+      "temp_ressentie": 11.0,
+      "wind": 14.1
     }
   ],
   "tempo_officiel": {
