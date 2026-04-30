@@ -1,10 +1,10 @@
 {
-  "timestamp": "2026-04-30T20:07:20.394138",
+  "timestamp": "2026-04-30T23:45:52.304718",
   "flux": {
-    "timestamp": "2026-04-30T20:07:16.280469",
+    "timestamp": "2026-04-30T23:45:46.381053",
     "heure": "23:45",
     "date": "2026-04-30",
-    "consommation_actuelle": null,
+    "consommation_actuelle": 42380,
     "prevision_j1": 43600,
     "flux": {
       "uk": -3028,
@@ -17,52 +17,52 @@
   "meteo": [
     {
       "date": "2026-04-30",
-      "temp_min": 12.6,
-      "temp_max": 23.3,
-      "temp_ressentie": 8.7,
-      "wind": 19.9
+      "temp_min": 12.5,
+      "temp_max": 24.5,
+      "temp_ressentie": 9.4,
+      "wind": 15.8
     },
     {
       "date": "2026-05-01",
-      "temp_min": 12.8,
-      "temp_max": 24.3,
-      "temp_ressentie": 9.6,
-      "wind": 15.7
+      "temp_min": 15.1,
+      "temp_max": 24.8,
+      "temp_ressentie": 11.3,
+      "wind": 19.0
     },
     {
       "date": "2026-05-02",
-      "temp_min": 15.2,
-      "temp_max": 24.6,
+      "temp_min": 14.7,
+      "temp_max": 19.5,
       "temp_ressentie": 11.6,
-      "wind": 18.0
+      "wind": 15.5
     },
     {
       "date": "2026-05-03",
-      "temp_min": 14.5,
-      "temp_max": 19.2,
-      "temp_ressentie": 11.4,
-      "wind": 15.2
+      "temp_min": 12.8,
+      "temp_max": 17.7,
+      "temp_ressentie": 10.0,
+      "wind": 13.8
     },
     {
       "date": "2026-05-04",
-      "temp_min": 12.5,
-      "temp_max": 17.6,
-      "temp_ressentie": 9.9,
-      "wind": 12.9
+      "temp_min": 11.2,
+      "temp_max": 16.8,
+      "temp_ressentie": 8.0,
+      "wind": 16.3
     },
     {
       "date": "2026-05-05",
-      "temp_min": 11.0,
-      "temp_max": 16.7,
-      "temp_ressentie": 7.7,
-      "wind": 16.4
-    },
-    {
-      "date": "2026-05-06",
       "temp_min": 10.0,
       "temp_max": 16.0,
       "temp_ressentie": 6.7,
       "wind": 16.4
+    },
+    {
+      "date": "2026-05-06",
+      "temp_min": 9.3,
+      "temp_max": 17.0,
+      "temp_ressentie": 6.6,
+      "wind": 13.7
     }
   ],
   "tempo_officiel": {
@@ -71,14 +71,14 @@
       "couleur": "BLEU"
     },
     "tomorrow": {
-      "code": 1,
-      "couleur": "BLEU"
+      "code": 0,
+      "couleur": "INCONNU"
     },
     "saison": {
-      "bleu_utilises": 182,
+      "bleu_utilises": 183,
       "blanc_utilises": 38,
       "rouge_utilises": 22,
-      "bleu_restants": 118,
+      "bleu_restants": 117,
       "blanc_restants": 5,
       "rouge_restants": 0
     }
