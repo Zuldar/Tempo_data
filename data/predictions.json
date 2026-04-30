@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-04-30T06:28:09.369092+01:00",
+  "timestamp": "2026-04-30T11:03:18.700203+01:00",
   "predictions": [
     {
       "date": "2026-05-01",
@@ -11,8 +11,8 @@
       },
       "confiance": "MEDIUM",
       "metadata": {
-        "temp": 9.5,
-        "gw": 43.493,
+        "temp": 9.8,
+        "gw": 43.422,
         "adjusted_gw": 30.4,
         "is_ferie": true,
         "is_weekend": false,
@@ -34,9 +34,9 @@
       },
       "confiance": "HIGH",
       "metadata": {
-        "temp": 10.2,
-        "gw": 43.493,
-        "adjusted_gw": 43.5,
+        "temp": 10.4,
+        "gw": 43.422,
+        "adjusted_gw": 43.4,
         "is_ferie": false,
         "is_weekend": true,
         "global_score": 0.0,
@@ -58,8 +58,8 @@
       "confiance": "HIGH",
       "metadata": {
         "temp": 11.1,
-        "gw": 43.493,
-        "adjusted_gw": 43.5,
+        "gw": 43.422,
+        "adjusted_gw": 43.4,
         "is_ferie": false,
         "is_weekend": true,
         "global_score": 0.0,
