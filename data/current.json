@@ -1,17 +1,17 @@
 {
-  "timestamp": "2026-05-01T11:01:20.658132",
+  "timestamp": "2026-05-01T14:15:38.598622",
   "flux": {
-    "timestamp": "2026-05-01T11:01:14.941385",
+    "timestamp": "2026-05-01T14:15:34.469344",
     "heure": "23:45",
     "date": "2026-05-01",
     "consommation_actuelle": null,
-    "prevision_j1": 40070,
+    "prevision_j1": 40150,
     "flux": {
       "uk": -3028,
-      "es": -2250,
-      "it": -3879,
-      "ch": -2767,
-      "de_be": -4859
+      "es": -1850,
+      "it": -3789,
+      "ch": -2803,
+      "de_be": -5162
     }
   },
   "meteo": [
@@ -19,21 +19,21 @@
       "date": "2026-05-01",
       "temp_min": 12.4,
       "temp_max": 24.6,
-      "temp_ressentie": 9.2,
-      "wind": 16.0
+      "temp_ressentie": 8.4,
+      "wind": 20.4
     },
     {
       "date": "2026-05-02",
-      "temp_min": 15.0,
-      "temp_max": 24.5,
-      "temp_ressentie": 11.0,
+      "temp_min": 14.9,
+      "temp_max": 24.3,
+      "temp_ressentie": 10.9,
       "wind": 20.0
     },
     {
       "date": "2026-05-03",
-      "temp_min": 15.2,
-      "temp_max": 20.0,
-      "temp_ressentie": 12.1,
+      "temp_min": 15.1,
+      "temp_max": 19.9,
+      "temp_ressentie": 11.9,
       "wind": 15.7
     },
     {
@@ -41,27 +41,27 @@
       "temp_min": 12.8,
       "temp_max": 18.3,
       "temp_ressentie": 10.0,
-      "wind": 13.8
+      "wind": 14.1
     },
     {
       "date": "2026-05-05",
-      "temp_min": 11.8,
+      "temp_min": 11.9,
       "temp_max": 17.7,
-      "temp_ressentie": 8.6,
-      "wind": 15.9
+      "temp_ressentie": 8.7,
+      "wind": 16.1
     },
     {
       "date": "2026-05-06",
-      "temp_min": 9.7,
-      "temp_max": 16.5,
-      "temp_ressentie": 6.4,
-      "wind": 16.5
+      "temp_min": 9.9,
+      "temp_max": 16.6,
+      "temp_ressentie": 6.5,
+      "wind": 17.4
     },
     {
       "date": "2026-05-07",
-      "temp_min": 9.0,
+      "temp_min": 8.6,
       "temp_max": 17.5,
-      "temp_ressentie": 6.9,
+      "temp_ressentie": 6.6,
       "wind": 10.3
     }
   ],
