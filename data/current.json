@@ -1,17 +1,17 @@
 {
-  "timestamp": "2026-05-03T09:19:49.387512",
+  "timestamp": "2026-05-03T10:44:49.494186",
   "flux": {
-    "timestamp": "2026-05-03T09:19:45.169706",
+    "timestamp": "2026-05-03T10:44:45.087712",
     "heure": "23:45",
     "date": "2026-05-03",
     "consommation_actuelle": null,
     "prevision_j1": 40488,
     "flux": {
       "uk": -3028,
-      "es": -1904,
-      "it": -2629,
+      "es": -943,
+      "it": -3564,
       "ch": -3000,
-      "de_be": -5515
+      "de_be": -5681
     }
   },
   "meteo": [
@@ -19,42 +19,42 @@
       "date": "2026-05-03",
       "temp_min": 14.9,
       "temp_max": 21.1,
-      "temp_ressentie": 11.5,
-      "wind": 16.9
+      "temp_ressentie": 11.4,
+      "wind": 17.2
     },
     {
       "date": "2026-05-04",
       "temp_min": 13.9,
-      "temp_max": 18.5,
-      "temp_ressentie": 11.2,
-      "wind": 13.4
+      "temp_max": 19.1,
+      "temp_ressentie": 11.1,
+      "wind": 14.0
     },
     {
       "date": "2026-05-05",
-      "temp_min": 12.6,
-      "temp_max": 17.2,
-      "temp_ressentie": 10.1,
-      "wind": 12.8
+      "temp_min": 13.0,
+      "temp_max": 16.6,
+      "temp_ressentie": 10.4,
+      "wind": 13.3
     },
     {
       "date": "2026-05-06",
-      "temp_min": 10.3,
-      "temp_max": 16.5,
-      "temp_ressentie": 7.2,
-      "wind": 15.5
+      "temp_min": 10.6,
+      "temp_max": 16.1,
+      "temp_ressentie": 7.5,
+      "wind": 15.4
     },
     {
       "date": "2026-05-07",
       "temp_min": 8.9,
-      "temp_max": 18.2,
-      "temp_ressentie": 6.7,
-      "wind": 11.4
+      "temp_max": 17.2,
+      "temp_ressentie": 6.8,
+      "wind": 10.4
     },
     {
       "date": "2026-05-08",
-      "temp_min": 9.3,
+      "temp_min": 9.2,
       "temp_max": 20.0,
-      "temp_ressentie": 6.3,
+      "temp_ressentie": 6.2,
       "wind": 15.0
     },
     {
