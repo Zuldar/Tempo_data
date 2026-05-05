@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-05-05T05:58:13.469289+01:00",
+  "timestamp": "2026-05-05T08:19:51.160738+01:00",
   "predictions": [
     {
       "date": "2026-05-06",
@@ -34,7 +34,7 @@
       },
       "confiance": "HIGH",
       "metadata": {
-        "temp": 6.8,
+        "temp": 7.2,
         "gw": 45.426,
         "adjusted_gw": 45.4,
         "is_ferie": false,
