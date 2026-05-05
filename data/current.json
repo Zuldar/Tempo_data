@@ -1,14 +1,14 @@
 {
-  "timestamp": "2026-05-05T17:20:29.357882",
+  "timestamp": "2026-05-05T20:04:53.625906",
   "flux": {
-    "timestamp": "2026-05-05T17:20:25.302614",
+    "timestamp": "2026-05-05T20:04:46.905345",
     "heure": "23:45",
     "date": "2026-05-05",
     "consommation_actuelle": null,
     "prevision_j1": 45550,
     "flux": {
       "uk": -3028,
-      "es": 676,
+      "es": 1007,
       "it": -3017,
       "ch": -3000,
       "de_be": -5032
@@ -18,29 +18,29 @@
     {
       "date": "2026-05-05",
       "temp_min": 12.7,
-      "temp_max": 17.3,
+      "temp_max": 17.2,
       "temp_ressentie": 9.6,
-      "wind": 15.6
+      "wind": 15.5
     },
     {
       "date": "2026-05-06",
-      "temp_min": 11.2,
-      "temp_max": 16.3,
-      "temp_ressentie": 8.4,
-      "wind": 13.9
+      "temp_min": 11.1,
+      "temp_max": 16.1,
+      "temp_ressentie": 8.2,
+      "wind": 14.3
     },
     {
       "date": "2026-05-07",
-      "temp_min": 11.0,
-      "temp_max": 17.8,
-      "temp_ressentie": 9.1,
-      "wind": 9.5
+      "temp_min": 10.8,
+      "temp_max": 18.0,
+      "temp_ressentie": 8.6,
+      "wind": 11.0
     },
     {
       "date": "2026-05-08",
-      "temp_min": 9.5,
+      "temp_min": 9.8,
       "temp_max": 20.4,
-      "temp_ressentie": 7.0,
+      "temp_ressentie": 7.3,
       "wind": 12.5
     },
     {

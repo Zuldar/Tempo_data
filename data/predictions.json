@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-05-05T18:20:29.424936+01:00",
+  "timestamp": "2026-05-05T21:04:53.699570+01:00",
   "predictions": [
     {
       "date": "2026-05-06",
@@ -11,7 +11,7 @@
       },
       "confiance": "MEDIUM",
       "metadata": {
-        "temp": 8.4,
+        "temp": 8.2,
         "gw": 45.55,
         "adjusted_gw": 45.5,
         "is_ferie": false,
@@ -34,7 +34,7 @@
       },
       "confiance": "MEDIUM",
       "metadata": {
-        "temp": 9.1,
+        "temp": 8.6,
         "gw": 45.55,
         "adjusted_gw": 45.5,
         "is_ferie": false,
@@ -57,7 +57,7 @@
       },
       "confiance": "MEDIUM",
       "metadata": {
-        "temp": 7.0,
+        "temp": 7.3,
         "gw": 45.55,
         "adjusted_gw": 31.9,
         "is_ferie": true,
