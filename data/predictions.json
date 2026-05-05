@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-05-05T10:59:14.396457+01:00",
+  "timestamp": "2026-05-05T12:10:58.024702+01:00",
   "predictions": [
     {
       "date": "2026-05-06",
@@ -11,7 +11,7 @@
       },
       "confiance": "MEDIUM",
       "metadata": {
-        "temp": 8.4,
+        "temp": 8.5,
         "gw": 45.539,
         "adjusted_gw": 45.5,
         "is_ferie": false,
@@ -29,18 +29,18 @@
       "couleur_predite": "BLANC",
       "probabilites": {
         "ROUGE": 0,
-        "BLANC": 80,
-        "BLEU": 20
+        "BLANC": 56,
+        "BLEU": 44
       },
-      "confiance": "HIGH",
+      "confiance": "MEDIUM",
       "metadata": {
-        "temp": 7.6,
+        "temp": 8.6,
         "gw": 45.539,
         "adjusted_gw": 45.5,
         "is_ferie": false,
         "is_weekend": false,
-        "global_score": 51.3,
-        "temp_score": 100,
+        "global_score": 43.6,
+        "temp_score": 85,
         "gw_score": 0,
         "trend_score": 0,
         "flux_score": 0,
@@ -57,7 +57,7 @@
       },
       "confiance": "MEDIUM",
       "metadata": {
-        "temp": 6.6,
+        "temp": 7.1,
         "gw": 45.539,
         "adjusted_gw": 31.9,
         "is_ferie": true,
