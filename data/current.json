@@ -1,14 +1,14 @@
 {
-  "timestamp": "2026-05-07T10:21:47.318159",
+  "timestamp": "2026-05-07T11:41:58.004707",
   "flux": {
-    "timestamp": "2026-05-07T10:21:30.827627",
+    "timestamp": "2026-05-07T11:41:53.316748",
     "heure": "23:45",
     "date": "2026-05-07",
     "consommation_actuelle": null,
     "prevision_j1": 44535,
     "flux": {
       "uk": -2507,
-      "es": 1502,
+      "es": 1497,
       "it": -2574,
       "ch": -3000,
       "de_be": -5107
@@ -18,37 +18,37 @@
     {
       "date": "2026-05-07",
       "temp_min": 10.5,
-      "temp_max": 17.7,
+      "temp_max": 17.8,
       "temp_ressentie": 8.3,
-      "wind": 11.1
+      "wind": 10.9
     },
     {
       "date": "2026-05-08",
-      "temp_min": 11.1,
-      "temp_max": 21.4,
+      "temp_min": 11.0,
+      "temp_max": 21.2,
       "temp_ressentie": 8.6,
-      "wind": 13.0
+      "wind": 12.4
     },
     {
       "date": "2026-05-09",
-      "temp_min": 12.3,
+      "temp_min": 12.6,
       "temp_max": 23.4,
-      "temp_ressentie": 9.0,
-      "wind": 16.6
+      "temp_ressentie": 9.4,
+      "wind": 15.8
     },
     {
       "date": "2026-05-10",
-      "temp_min": 13.2,
-      "temp_max": 20.4,
-      "temp_ressentie": 9.5,
-      "wind": 18.7
+      "temp_min": 13.4,
+      "temp_max": 20.3,
+      "temp_ressentie": 9.9,
+      "wind": 17.4
     },
     {
       "date": "2026-05-11",
       "temp_min": 10.8,
-      "temp_max": 17.6,
-      "temp_ressentie": 7.7,
-      "wind": 15.5
+      "temp_max": 17.7,
+      "temp_ressentie": 7.5,
+      "wind": 16.4
     },
     {
       "date": "2026-05-12",
@@ -65,7 +65,24 @@
       "wind": 21.7
     }
   ],
-  "tempo_officiel": null,
+  "tempo_officiel": {
+    "today": {
+      "code": 1,
+      "couleur": "BLEU"
+    },
+    "tomorrow": {
+      "code": 1,
+      "couleur": "BLEU"
+    },
+    "saison": {
+      "bleu_utilises": 189,
+      "blanc_utilises": 38,
+      "rouge_utilises": 22,
+      "bleu_restants": 111,
+      "blanc_restants": 5,
+      "rouge_restants": 0
+    }
+  },
   "jours_feries": {
     "2026-01-01": "1er janvier",
     "2026-04-06": "Lundi de Pâques",
