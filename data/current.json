@@ -1,14 +1,14 @@
 {
-  "timestamp": "2026-05-08T04:51:10.132724",
+  "timestamp": "2026-05-08T06:50:26.019378",
   "flux": {
-    "timestamp": "2026-05-08T04:51:05.434831",
+    "timestamp": "2026-05-08T06:50:21.848173",
     "heure": "23:45",
     "date": "2026-05-08",
     "consommation_actuelle": null,
     "prevision_j1": 41319,
     "flux": {
       "uk": -3028,
-      "es": -3145,
+      "es": -3099,
       "it": -2850,
       "ch": -3000,
       "de_be": -6895
@@ -17,52 +17,52 @@
   "meteo": [
     {
       "date": "2026-05-08",
-      "temp_min": 10.0,
+      "temp_min": 10.1,
       "temp_max": 21.1,
-      "temp_ressentie": 7.5,
+      "temp_ressentie": 7.6,
       "wind": 12.2
     },
     {
       "date": "2026-05-09",
-      "temp_min": 12.1,
-      "temp_max": 23.6,
-      "temp_ressentie": 8.9,
+      "temp_min": 12.2,
+      "temp_max": 23.5,
+      "temp_ressentie": 9.0,
       "wind": 16.0
     },
     {
       "date": "2026-05-10",
       "temp_min": 13.2,
-      "temp_max": 20.3,
-      "temp_ressentie": 10.2,
-      "wind": 15.3
+      "temp_max": 20.4,
+      "temp_ressentie": 10.1,
+      "wind": 15.2
     },
     {
       "date": "2026-05-11",
-      "temp_min": 10.5,
-      "temp_max": 17.8,
-      "temp_ressentie": 7.1,
-      "wind": 17.1
+      "temp_min": 10.4,
+      "temp_max": 17.7,
+      "temp_ressentie": 7.0,
+      "wind": 17.0
     },
     {
       "date": "2026-05-12",
-      "temp_min": 8.8,
-      "temp_max": 17.6,
-      "temp_ressentie": 6.5,
-      "wind": 11.4
+      "temp_min": 8.5,
+      "temp_max": 17.2,
+      "temp_ressentie": 6.0,
+      "wind": 12.7
     },
     {
       "date": "2026-05-13",
-      "temp_min": 9.4,
-      "temp_max": 17.4,
-      "temp_ressentie": 5.4,
-      "wind": 20.2
+      "temp_min": 9.3,
+      "temp_max": 16.9,
+      "temp_ressentie": 5.2,
+      "wind": 20.4
     },
     {
       "date": "2026-05-14",
-      "temp_min": 9.4,
-      "temp_max": 14.3,
-      "temp_ressentie": 5.2,
-      "wind": 20.6
+      "temp_min": 9.2,
+      "temp_max": 14.0,
+      "temp_ressentie": 4.9,
+      "wind": 21.8
     }
   ],
   "tempo_officiel": {
